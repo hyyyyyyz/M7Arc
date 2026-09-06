@@ -313,6 +313,8 @@ CArchiveExtractCallback::CArchiveExtractCallback():
 
 void CArchiveExtractCallback::InitBeforeNewArchive()
 {
+  M7Arc_WrittenIndices.Clear();
+  M7Arc_WrittenPaths.Clear();
 #if defined(_WIN32) && !defined(UNDER_CE) && !defined(Z7_SFX)
   ZoneBuf.Free();
 #endif
@@ -2885,6 +2887,14 @@ Z7_COM7F_IMF(CArchiveExtractCallback::SetOperationResult(Int32 opRes))
     SetAttrib(_diskFilePath);
 
   SET_OWNER
+
+  if (opRes == NArchive::NExtract::NOperationResult::kOK
+      && !_itemFailure && _extractMode && !_stdOutMode
+      && !_diskFilePath.IsEmpty())
+  {
+    M7Arc_WrittenIndices.Add(_index);
+    M7Arc_WrittenPaths.Add(_diskFilePath);
+  }
 
   return _extractCallback2->SetOperationResult(opRes, BoolToInt(_encrypted));
   

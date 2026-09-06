@@ -493,6 +493,11 @@ public:
   
   FString DirPathPrefix_for_HashFiles;
 
+  // M7Arc records completed writes for native metadata restoration. Paths reflect
+  // overwrite renaming and path transformations performed by this callback.
+  CRecordVector<UInt32> M7Arc_WrittenIndices;
+  FStringVector M7Arc_WrittenPaths;
+
   CArchiveExtractCallback();
 
   void InitForMulti(bool multiArchives,
