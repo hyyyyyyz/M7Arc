@@ -1,0 +1,74 @@
+{
+  "engine": "7-Zip 26.03",
+  "arch": "arm64",
+  "roundtrips": [
+    {
+      "format": "7z",
+      "create_test_extract": true,
+      "file_bytes_equal": true,
+      "unicode_name": true,
+      "empty_dir": true,
+      "executable": true,
+      "xattr_preserved": false
+    },
+    {
+      "format": "zip",
+      "create_test_extract": true,
+      "file_bytes_equal": true,
+      "unicode_name": true,
+      "empty_dir": true,
+      "executable": true,
+      "xattr_preserved": false
+    },
+    {
+      "format": "tar",
+      "create_test_extract": true,
+      "file_bytes_equal": true,
+      "unicode_name": true,
+      "empty_dir": true,
+      "executable": true,
+      "xattr_preserved": false
+    }
+  ],
+  "7z_header_encryption_roundtrip": true,
+  "split_roundtrip": true,
+  "split_parts": 3,
+  "date": "2026-09-06",
+  "upstream_repository": "https://github.com/ip7z/7zip",
+  "upstream_commit": "0766b733fe3e06dd2a7f9a3cfbf2108ac73abd17",
+  "host_os": {
+    "name": "macOS",
+    "version": "27.0",
+    "build": "26A5425a"
+  },
+  "compiler": "Apple clang 21.0.0 (clang-2100.3.33.1)",
+  "build": {
+    "target": "CPP/7zip/Bundles/Alone2",
+    "makefile": "../../cmpl_mac_arm64.mak",
+    "jobs": 4,
+    "output_directory": "external temporary directory",
+    "exit_code": 0,
+    "assembly_enabled": true,
+    "source_modified": false
+  },
+  "fixture": {
+    "files": [
+      "input/中文 文件.txt",
+      "input/run.sh"
+    ],
+    "empty_directory": "input/empty",
+    "executable_mode": "0755",
+    "extended_attribute": {
+      "name": "com.apple.metadata:m7arc-probe",
+      "value": "m7arc-test"
+    },
+    "content_comparison": "direct byte comparison",
+    "encryption_options": [
+      "-p<test password>",
+      "-mhe=on"
+    ],
+    "volume_size_bytes": 128
+  },
+  "scope": "Official arm64 CLI build and small generated fixtures. No Qt integration, Intel runtime, minimum macOS version, full format corpus, benchmark, or Mac metadata implementation validated.",
+  "project_source_root": "third_party/7zip"
+}

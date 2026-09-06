@@ -1,0 +1,26 @@
+<div id="m7arc-fm" aria-label="M7Arc 文件管理器交互原型">
+  <div class="p-window">
+    <header class="p-titlebar">
+      <div class="p-traffic" aria-hidden="true"><span></span><span></span><span></span></div>
+      <div class="p-window-title">M7Arc <span>— 7-Zip File Manager</span></div>
+      <span class="p-platform">macOS</span>
+    </header>
+    <nav class="p-menubar" id="p-menubar" aria-label="主菜单"></nav>
+    <div class="p-toolbar" aria-label="文件与归档操作">
+      <div id="p-toolbar-main" class="p-toolbar-main"></div>
+      <div class="p-toolbar-extra">
+        <button type="button" data-command="formats" class="p-format-entry"><i data-lucide="archive" class="p-chrome-icon" aria-hidden="true"></i><strong>格式与方法</strong><span id="p-format-summary">完整格式目录</span></button>
+        <button type="button" data-command="two-panels" id="p-dual-button" class="p-small-button" aria-pressed="false"><i data-lucide="columns-2" class="p-chrome-icon" aria-hidden="true"></i><span>双面板 · F9</span></button>
+      </div>
+    </div>
+    <div class="p-dialog-region" id="p-dialog-region" hidden>
+      <section class="p-dialog" role="dialog" aria-labelledby="p-dialog-title">
+        <header class="p-dialog-header"><h2 id="p-dialog-title"></h2><button type="button" id="p-dialog-close" aria-label="关闭对话框"><i data-lucide="x" class="p-chrome-icon" aria-hidden="true"></i></button></header>
+        <div id="p-dialog-body"></div>
+      </section>
+    </div>
+    <main class="p-panels" id="p-panels"></main>
+    <section class="p-progress-region" id="p-progress-region" hidden aria-label="模拟任务进度"></section>
+    <footer class="p-bottom"><span>交互原型 · 内置示例文件</span><span id="p-message" aria-live="polite">F9 双面板 · 空格预览 · F2 重命名</span></footer>
+  </div>
+</div>

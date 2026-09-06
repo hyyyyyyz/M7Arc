@@ -1,0 +1,7 @@
+/build/
+/out/
+/.cache/
+/.qt/
+/CMakeUserPresets.json
+.DS_Store
+*.dSYM/

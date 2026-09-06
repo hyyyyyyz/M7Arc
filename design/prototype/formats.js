@@ -1,0 +1,1778 @@
+window.M7ArcFormats = {
+  "version": "26.03",
+  "baseline": "Apple Silicon / Format7zF / 7zz",
+  "counts": {
+    "handlers": 61,
+    "archiveWrite": 7,
+    "hashWrite": 1,
+    "codecs": 25,
+    "hashers": 10
+  },
+  "formats": [
+    {
+      "id": "7z",
+      "name": "7z",
+      "extensions": [
+        "7z"
+      ],
+      "category": "归档与软件包",
+      "read": true,
+      "write": true,
+      "kind": "archive",
+      "note": "可创建、浏览、提取和更新；支持固实压缩与 AES-256 文件名加密。",
+      "source": "third_party/7zip/CPP/7zip/Archive/7z/7zRegister.cpp"
+    },
+    {
+      "id": "apfs",
+      "name": "APFS",
+      "extensions": [
+        "apfs",
+        "img"
+      ],
+      "category": "文件系统",
+      "read": true,
+      "write": false,
+      "kind": "filesystem",
+      "note": "读取 APFS 文件系统镜像；不能将本机 APFS 卷当作归档直接写入。",
+      "source": "third_party/7zip/CPP/7zip/Archive/ApfsHandler.cpp"
+    },
+    {
+      "id": "apm",
+      "name": "APM",
+      "extensions": [
+        "apm"
+      ],
+      "category": "磁盘与分区",
+      "read": true,
+      "write": false,
+      "kind": "partition",
+      "note": "读取 Apple Partition Map 分区表及分区内容。",
+      "source": "third_party/7zip/CPP/7zip/Archive/ApmHandler.cpp"
+    },
+    {
+      "id": "ar",
+      "name": "Ar",
+      "extensions": [
+        "ar",
+        "a",
+        "deb",
+        "udeb",
+        "lib"
+      ],
+      "category": "归档与软件包",
+      "read": true,
+      "write": false,
+      "kind": "archive",
+      "note": "读取 ar 静态库与 Debian 软件包容器。",
+      "source": "third_party/7zip/CPP/7zip/Archive/ArHandler.cpp"
+    },
+    {
+      "id": "arj",
+      "name": "Arj",
+      "extensions": [
+        "arj"
+      ],
+      "category": "归档与软件包",
+      "read": true,
+      "write": false,
+      "kind": "archive",
+      "note": "读取 ARJ 归档。",
+      "source": "third_party/7zip/CPP/7zip/Archive/ArjHandler.cpp"
+    },
+    {
+      "id": "base64",
+      "name": "Base64",
+      "extensions": [
+        "b64"
+      ],
+      "category": "压缩与编码流",
+      "read": true,
+      "write": false,
+      "kind": "stream",
+      "note": "解码 Base64 文本流；按扩展名或指定格式打开。",
+      "source": "third_party/7zip/CPP/7zip/Archive/Base64Handler.cpp"
+    },
+    {
+      "id": "coff",
+      "name": "COFF",
+      "extensions": [
+        "obj"
+      ],
+      "category": "可执行文件与固件",
+      "read": true,
+      "write": false,
+      "kind": "executable",
+      "note": "浏览、提取 COFF 目标文件内部内容。",
+      "source": "third_party/7zip/CPP/7zip/Archive/PeHandler.cpp"
+    },
+    {
+      "id": "cab",
+      "name": "Cab",
+      "extensions": [
+        "cab"
+      ],
+      "category": "归档与软件包",
+      "read": true,
+      "write": false,
+      "kind": "archive",
+      "note": "读取 Microsoft Cabinet，含分卷与多种内置解码方法。",
+      "source": "third_party/7zip/CPP/7zip/Archive/Cab/CabRegister.cpp"
+    },
+    {
+      "id": "chm",
+      "name": "Chm",
+      "extensions": [
+        "chm",
+        "chi",
+        "chq",
+        "chw"
+      ],
+      "category": "文档与媒体",
+      "read": true,
+      "write": false,
+      "kind": "document",
+      "note": "读取编译 HTML 帮助及关联容器。",
+      "source": "third_party/7zip/CPP/7zip/Archive/Chm/ChmHandler.cpp"
+    },
+    {
+      "id": "compound",
+      "name": "Compound",
+      "extensions": [
+        "msi",
+        "msp",
+        "msm",
+        "doc",
+        "xls",
+        "ppt",
+        "aaf"
+      ],
+      "category": "文档与媒体",
+      "read": true,
+      "write": false,
+      "kind": "document",
+      "note": "读取 OLE Compound 容器；文档后缀对应容器结构浏览。",
+      "source": "third_party/7zip/CPP/7zip/Archive/ComHandler.cpp"
+    },
+    {
+      "id": "cpio",
+      "name": "Cpio",
+      "extensions": [
+        "cpio"
+      ],
+      "category": "归档与软件包",
+      "read": true,
+      "write": false,
+      "kind": "archive",
+      "note": "读取 CPIO 多种头格式。",
+      "source": "third_party/7zip/CPP/7zip/Archive/CpioHandler.cpp"
+    },
+    {
+      "id": "cramfs",
+      "name": "CramFS",
+      "extensions": [
+        "cramfs"
+      ],
+      "category": "文件系统",
+      "read": true,
+      "write": false,
+      "kind": "filesystem",
+      "note": "读取 CramFS 只读文件系统镜像。",
+      "source": "third_party/7zip/CPP/7zip/Archive/CramfsHandler.cpp"
+    },
+    {
+      "id": "dmg",
+      "name": "Dmg",
+      "extensions": [
+        "dmg"
+      ],
+      "category": "磁盘与分区",
+      "read": true,
+      "write": false,
+      "kind": "image",
+      "note": "读取 Apple DMG 容器及内层镜像，支持情况由容器实际压缩方法决定。",
+      "source": "third_party/7zip/CPP/7zip/Archive/DmgHandler.cpp"
+    },
+    {
+      "id": "elf",
+      "name": "ELF",
+      "extensions": [
+        "elf"
+      ],
+      "category": "可执行文件与固件",
+      "read": true,
+      "write": false,
+      "kind": "executable",
+      "note": "浏览、提取 ELF 内部内容。",
+      "source": "third_party/7zip/CPP/7zip/Archive/ElfHandler.cpp"
+    },
+    {
+      "id": "ext",
+      "name": "Ext",
+      "extensions": [
+        "ext",
+        "ext2",
+        "ext3",
+        "ext4",
+        "img"
+      ],
+      "category": "文件系统",
+      "read": true,
+      "write": false,
+      "kind": "filesystem",
+      "note": "读取 Ext 系列文件系统镜像。",
+      "source": "third_party/7zip/CPP/7zip/Archive/ExtHandler.cpp"
+    },
+    {
+      "id": "fat",
+      "name": "FAT",
+      "extensions": [
+        "fat",
+        "img"
+      ],
+      "category": "文件系统",
+      "read": true,
+      "write": false,
+      "kind": "filesystem",
+      "note": "读取 FAT 文件系统镜像。",
+      "source": "third_party/7zip/CPP/7zip/Archive/FatHandler.cpp"
+    },
+    {
+      "id": "flv",
+      "name": "FLV",
+      "extensions": [
+        "flv"
+      ],
+      "category": "文档与媒体",
+      "read": true,
+      "write": false,
+      "kind": "media",
+      "note": "浏览、提取 Flash Video 内部流。",
+      "source": "third_party/7zip/CPP/7zip/Archive/FlvHandler.cpp"
+    },
+    {
+      "id": "gpt",
+      "name": "GPT",
+      "extensions": [
+        "gpt",
+        "mbr"
+      ],
+      "category": "磁盘与分区",
+      "read": true,
+      "write": false,
+      "kind": "partition",
+      "note": "读取 GUID Partition Table 及分区内容。",
+      "source": "third_party/7zip/CPP/7zip/Archive/GptHandler.cpp"
+    },
+    {
+      "id": "hfs",
+      "name": "HFS",
+      "extensions": [
+        "hfs",
+        "hfsx"
+      ],
+      "category": "文件系统",
+      "read": true,
+      "write": false,
+      "kind": "filesystem",
+      "note": "读取 HFS/HFS+ 系列文件系统镜像。",
+      "source": "third_party/7zip/CPP/7zip/Archive/HfsHandler.cpp"
+    },
+    {
+      "id": "hxs",
+      "name": "Hxs",
+      "extensions": [
+        "hxs",
+        "hxi",
+        "hxr",
+        "hxq",
+        "hxw",
+        "lit"
+      ],
+      "category": "文档与媒体",
+      "read": true,
+      "write": false,
+      "kind": "document",
+      "note": "读取 Microsoft Help 2 与相关容器。",
+      "source": "third_party/7zip/CPP/7zip/Archive/Chm/ChmHandler.cpp"
+    },
+    {
+      "id": "ihex",
+      "name": "IHex",
+      "extensions": [
+        "ihex"
+      ],
+      "category": "压缩与编码流",
+      "read": true,
+      "write": false,
+      "kind": "stream",
+      "note": "读取 Intel HEX 编码流。",
+      "source": "third_party/7zip/CPP/7zip/Archive/IhexHandler.cpp"
+    },
+    {
+      "id": "iso",
+      "name": "Iso",
+      "extensions": [
+        "iso",
+        "img"
+      ],
+      "category": "磁盘与分区",
+      "read": true,
+      "write": false,
+      "kind": "image",
+      "note": "读取 ISO 光盘镜像；同一扩展名也可能由 UDF 处理。",
+      "source": "third_party/7zip/CPP/7zip/Archive/Iso/IsoRegister.cpp"
+    },
+    {
+      "id": "lp",
+      "name": "LP",
+      "extensions": [
+        "lpimg",
+        "img"
+      ],
+      "category": "磁盘与分区",
+      "read": true,
+      "write": false,
+      "kind": "partition",
+      "note": "读取 Android Logical Partition 镜像。",
+      "source": "third_party/7zip/CPP/7zip/Archive/LpHandler.cpp"
+    },
+    {
+      "id": "lzh",
+      "name": "Lzh",
+      "extensions": [
+        "lzh",
+        "lha"
+      ],
+      "category": "归档与软件包",
+      "read": true,
+      "write": false,
+      "kind": "archive",
+      "note": "读取 LZH/LHA 归档。",
+      "source": "third_party/7zip/CPP/7zip/Archive/LzhHandler.cpp"
+    },
+    {
+      "id": "mbr",
+      "name": "MBR",
+      "extensions": [
+        "mbr"
+      ],
+      "category": "磁盘与分区",
+      "read": true,
+      "write": false,
+      "kind": "partition",
+      "note": "读取 Master Boot Record 分区表及分区内容。",
+      "source": "third_party/7zip/CPP/7zip/Archive/MbrHandler.cpp"
+    },
+    {
+      "id": "macho",
+      "name": "MachO",
+      "extensions": [
+        "macho"
+      ],
+      "category": "可执行文件与固件",
+      "read": true,
+      "write": false,
+      "kind": "executable",
+      "note": "浏览、提取 Mach-O 内部内容。",
+      "source": "third_party/7zip/CPP/7zip/Archive/MachoHandler.cpp"
+    },
+    {
+      "id": "mslz",
+      "name": "MsLZ",
+      "extensions": [
+        "mslz"
+      ],
+      "category": "压缩与编码流",
+      "read": true,
+      "write": false,
+      "kind": "stream",
+      "note": "读取 Microsoft SZDD 压缩流。",
+      "source": "third_party/7zip/CPP/7zip/Archive/MslzHandler.cpp"
+    },
+    {
+      "id": "mub",
+      "name": "Mub",
+      "extensions": [
+        "mub"
+      ],
+      "category": "可执行文件与固件",
+      "read": true,
+      "write": false,
+      "kind": "executable",
+      "note": "读取 Mach-O Universal Binary 容器与架构切片。",
+      "source": "third_party/7zip/CPP/7zip/Archive/MubHandler.cpp"
+    },
+    {
+      "id": "ntfs",
+      "name": "NTFS",
+      "extensions": [
+        "ntfs",
+        "img"
+      ],
+      "category": "文件系统",
+      "read": true,
+      "write": false,
+      "kind": "filesystem",
+      "note": "读取 NTFS 文件系统镜像及其元数据。",
+      "source": "third_party/7zip/CPP/7zip/Archive/NtfsHandler.cpp"
+    },
+    {
+      "id": "nsis",
+      "name": "Nsis",
+      "extensions": [
+        "nsis"
+      ],
+      "category": "可执行文件与固件",
+      "read": true,
+      "write": false,
+      "kind": "executable",
+      "note": "读取 NSIS 安装包；可在 EXE 中定位嵌入容器。",
+      "source": "third_party/7zip/CPP/7zip/Archive/Nsis/NsisRegister.cpp"
+    },
+    {
+      "id": "pe",
+      "name": "PE",
+      "extensions": [
+        "exe",
+        "dll",
+        "sys"
+      ],
+      "category": "可执行文件与固件",
+      "read": true,
+      "write": false,
+      "kind": "executable",
+      "note": "浏览、提取 PE 内部内容；可进一步打开嵌入归档。",
+      "source": "third_party/7zip/CPP/7zip/Archive/PeHandler.cpp"
+    },
+    {
+      "id": "ppmd",
+      "name": "Ppmd",
+      "extensions": [
+        "pmd"
+      ],
+      "category": "压缩与编码流",
+      "read": true,
+      "write": false,
+      "kind": "stream",
+      "note": "读取独立 PPMd 流；7z 内 PPMd 编码能力不意味着可创建 .pmd 文件。",
+      "source": "third_party/7zip/CPP/7zip/Archive/PpmdHandler.cpp"
+    },
+    {
+      "id": "qcow",
+      "name": "QCOW",
+      "extensions": [
+        "qcow",
+        "qcow2",
+        "qcow2c"
+      ],
+      "category": "磁盘与分区",
+      "read": true,
+      "write": false,
+      "kind": "image",
+      "note": "读取 QCOW 系列虚拟磁盘镜像。",
+      "source": "third_party/7zip/CPP/7zip/Archive/QcowHandler.cpp"
+    },
+    {
+      "id": "rar",
+      "name": "Rar",
+      "extensions": [
+        "rar",
+        "r00"
+      ],
+      "category": "归档与软件包",
+      "read": true,
+      "write": false,
+      "kind": "archive",
+      "note": "读取旧版 RAR 与分卷；不提供 RAR 编码器。",
+      "source": "third_party/7zip/CPP/7zip/Archive/Rar/RarHandler.cpp"
+    },
+    {
+      "id": "rar5",
+      "name": "Rar5",
+      "extensions": [
+        "rar",
+        "r00"
+      ],
+      "category": "归档与软件包",
+      "read": true,
+      "write": false,
+      "kind": "archive",
+      "note": "读取 RAR5 与分卷；按签名和内容区分 Rar/Rar5。",
+      "source": "third_party/7zip/CPP/7zip/Archive/Rar/Rar5Handler.cpp"
+    },
+    {
+      "id": "rpm",
+      "name": "Rpm",
+      "extensions": [
+        "rpm"
+      ],
+      "category": "归档与软件包",
+      "read": true,
+      "write": false,
+      "kind": "archive",
+      "note": "读取 RPM 软件包外层并进入内层压缩流和 CPIO。",
+      "source": "third_party/7zip/CPP/7zip/Archive/RpmHandler.cpp"
+    },
+    {
+      "id": "swf",
+      "name": "SWF",
+      "extensions": [
+        "swf"
+      ],
+      "category": "文档与媒体",
+      "read": true,
+      "write": false,
+      "kind": "media",
+      "note": "读取未压缩 Flash SWF 内容。",
+      "source": "third_party/7zip/CPP/7zip/Archive/SwfHandler.cpp"
+    },
+    {
+      "id": "swfc",
+      "name": "SWFc",
+      "extensions": [
+        "swf"
+      ],
+      "category": "文档与媒体",
+      "read": true,
+      "write": false,
+      "kind": "media",
+      "note": "读取压缩 Flash SWF；与 SWF 共享后缀而使用不同 handler。",
+      "source": "third_party/7zip/CPP/7zip/Archive/SwfHandler.cpp"
+    },
+    {
+      "id": "sparse",
+      "name": "Sparse",
+      "extensions": [
+        "simg",
+        "img"
+      ],
+      "category": "磁盘与分区",
+      "read": true,
+      "write": false,
+      "kind": "image",
+      "note": "读取 Android sparse 镜像并提供展开后的虚拟流。",
+      "source": "third_party/7zip/CPP/7zip/Archive/SparseHandler.cpp"
+    },
+    {
+      "id": "split",
+      "name": "Split",
+      "extensions": [
+        "001"
+      ],
+      "category": "分卷",
+      "read": true,
+      "write": false,
+      "kind": "split",
+      "note": "读取 .001 起始的原始分割文件组；分割/合并是文件操作。",
+      "source": "third_party/7zip/CPP/7zip/Archive/SplitHandler.cpp"
+    },
+    {
+      "id": "squashfs",
+      "name": "SquashFS",
+      "extensions": [
+        "squashfs"
+      ],
+      "category": "文件系统",
+      "read": true,
+      "write": false,
+      "kind": "filesystem",
+      "note": "读取 SquashFS 文件系统镜像。",
+      "source": "third_party/7zip/CPP/7zip/Archive/SquashfsHandler.cpp"
+    },
+    {
+      "id": "te",
+      "name": "TE",
+      "extensions": [
+        "te"
+      ],
+      "category": "可执行文件与固件",
+      "read": true,
+      "write": false,
+      "kind": "executable",
+      "note": "浏览、提取 Terse Executable 内部内容。",
+      "source": "third_party/7zip/CPP/7zip/Archive/PeHandler.cpp"
+    },
+    {
+      "id": "uefic",
+      "name": "UEFIc",
+      "extensions": [
+        "scap"
+      ],
+      "category": "可执行文件与固件",
+      "read": true,
+      "write": false,
+      "kind": "firmware",
+      "note": "读取 UEFI Capsule 容器。",
+      "source": "third_party/7zip/CPP/7zip/Archive/UefiHandler.cpp"
+    },
+    {
+      "id": "uefif",
+      "name": "UEFIf",
+      "extensions": [
+        "uefif"
+      ],
+      "category": "可执行文件与固件",
+      "read": true,
+      "write": false,
+      "kind": "firmware",
+      "note": "读取 UEFI Firmware Volume。",
+      "source": "third_party/7zip/CPP/7zip/Archive/UefiHandler.cpp"
+    },
+    {
+      "id": "udf",
+      "name": "Udf",
+      "extensions": [
+        "udf",
+        "iso",
+        "img"
+      ],
+      "category": "磁盘与分区",
+      "read": true,
+      "write": false,
+      "kind": "image",
+      "note": "读取 UDF 光盘文件系统镜像。",
+      "source": "third_party/7zip/CPP/7zip/Archive/Udf/UdfHandler.cpp"
+    },
+    {
+      "id": "vdi",
+      "name": "VDI",
+      "extensions": [
+        "vdi"
+      ],
+      "category": "磁盘与分区",
+      "read": true,
+      "write": false,
+      "kind": "image",
+      "note": "读取 VirtualBox 虚拟磁盘容器。",
+      "source": "third_party/7zip/CPP/7zip/Archive/VdiHandler.cpp"
+    },
+    {
+      "id": "vhd",
+      "name": "VHD",
+      "extensions": [
+        "vhd"
+      ],
+      "category": "磁盘与分区",
+      "read": true,
+      "write": false,
+      "kind": "image",
+      "note": "读取 VHD 虚拟磁盘容器。",
+      "source": "third_party/7zip/CPP/7zip/Archive/VhdHandler.cpp"
+    },
+    {
+      "id": "vhdx",
+      "name": "VHDX",
+      "extensions": [
+        "vhdx",
+        "avhdx"
+      ],
+      "category": "磁盘与分区",
+      "read": true,
+      "write": false,
+      "kind": "image",
+      "note": "读取 VHDX 系列虚拟磁盘容器。",
+      "source": "third_party/7zip/CPP/7zip/Archive/VhdxHandler.cpp"
+    },
+    {
+      "id": "vmdk",
+      "name": "VMDK",
+      "extensions": [
+        "vmdk"
+      ],
+      "category": "磁盘与分区",
+      "read": true,
+      "write": false,
+      "kind": "image",
+      "note": "读取 VMDK 虚拟磁盘容器。",
+      "source": "third_party/7zip/CPP/7zip/Archive/VmdkHandler.cpp"
+    },
+    {
+      "id": "xar",
+      "name": "Xar",
+      "extensions": [
+        "xar",
+        "pkg",
+        "xip"
+      ],
+      "category": "归档与软件包",
+      "read": true,
+      "write": false,
+      "kind": "archive",
+      "note": "读取 XAR 容器；PKG/XIP 为扩展别名，内部条目另按实际编码解析。",
+      "source": "third_party/7zip/CPP/7zip/Archive/XarHandler.cpp"
+    },
+    {
+      "id": "z",
+      "name": "Z",
+      "extensions": [
+        "z",
+        "taz"
+      ],
+      "category": "压缩与编码流",
+      "read": true,
+      "write": false,
+      "kind": "stream",
+      "note": "读取 Unix compress 流；.taz 解码后的建议后缀为 .tar。",
+      "source": "third_party/7zip/CPP/7zip/Archive/ZHandler.cpp"
+    },
+    {
+      "id": "bzip2",
+      "name": "bzip2",
+      "extensions": [
+        "bz2",
+        "bzip2",
+        "tbz2",
+        "tbz"
+      ],
+      "category": "压缩与编码流",
+      "read": true,
+      "write": true,
+      "kind": "stream",
+      "note": "可创建单一 BZip2 流；多个文件先组成 TAR。",
+      "source": "third_party/7zip/CPP/7zip/Archive/Bz2Handler.cpp"
+    },
+    {
+      "id": "gzip",
+      "name": "gzip",
+      "extensions": [
+        "gz",
+        "gzip",
+        "tgz",
+        "tpz",
+        "apk"
+      ],
+      "category": "压缩与编码流",
+      "read": true,
+      "write": true,
+      "kind": "stream",
+      "note": "可创建单一 GZip 流；.tgz/.tpz 等别名含内层 .tar 提示；.apk 后缀也被 ZIP 使用。",
+      "source": "third_party/7zip/CPP/7zip/Archive/GzHandler.cpp"
+    },
+    {
+      "id": "lzma",
+      "name": "lzma",
+      "extensions": [
+        "lzma"
+      ],
+      "category": "压缩与编码流",
+      "read": true,
+      "write": false,
+      "kind": "stream",
+      "note": "读取独立 .lzma 流；默认完整 7zz 无此格式写入 handler。",
+      "source": "third_party/7zip/CPP/7zip/Archive/LzmaHandler.cpp"
+    },
+    {
+      "id": "lzma86",
+      "name": "lzma86",
+      "extensions": [
+        "lzma86"
+      ],
+      "category": "压缩与编码流",
+      "read": true,
+      "write": false,
+      "kind": "stream",
+      "note": "读取带 x86 分支转换信息的 LZMA86 流。",
+      "source": "third_party/7zip/CPP/7zip/Archive/LzmaHandler.cpp"
+    },
+    {
+      "id": "tar",
+      "name": "tar",
+      "extensions": [
+        "tar",
+        "ova"
+      ],
+      "category": "归档与软件包",
+      "read": true,
+      "write": true,
+      "kind": "archive",
+      "note": "可创建和更新 TAR，GNU/POSIX 是头格式选择；自身不压缩。",
+      "source": "third_party/7zip/CPP/7zip/Archive/Tar/TarRegister.cpp"
+    },
+    {
+      "id": "wim",
+      "name": "wim",
+      "extensions": [
+        "wim",
+        "swm",
+        "esd",
+        "ppkg"
+      ],
+      "category": "磁盘与分区",
+      "read": true,
+      "write": true,
+      "kind": "image",
+      "note": "新建仅 Store；可读取压缩 WIM/ESD，更新须符合具体镜像条件。",
+      "source": "third_party/7zip/CPP/7zip/Archive/Wim/WimRegister.cpp"
+    },
+    {
+      "id": "xz",
+      "name": "xz",
+      "extensions": [
+        "xz",
+        "txz"
+      ],
+      "category": "压缩与编码流",
+      "read": true,
+      "write": true,
+      "kind": "stream",
+      "note": "可创建单一 XZ 流，使用 LZMA2；多个文件先组成 TAR。",
+      "source": "third_party/7zip/CPP/7zip/Archive/XzHandler.cpp"
+    },
+    {
+      "id": "zip",
+      "name": "zip",
+      "extensions": [
+        "zip",
+        "z01",
+        "zipx",
+        "jar",
+        "xpi",
+        "odt",
+        "ods",
+        "docx",
+        "xlsx",
+        "epub",
+        "ipa",
+        "apk",
+        "appx"
+      ],
+      "category": "归档与软件包",
+      "read": true,
+      "write": true,
+      "kind": "archive",
+      "note": "可创建与更新 ZIP；别名并非独立创建格式，签名 APK、分卷及带嵌入 stub 等实例可能只读。",
+      "source": "third_party/7zip/CPP/7zip/Archive/Zip/ZipRegister.cpp"
+    },
+    {
+      "id": "zstd",
+      "name": "zstd",
+      "extensions": [
+        "zst",
+        "tzst"
+      ],
+      "category": "压缩与编码流",
+      "read": true,
+      "write": false,
+      "kind": "stream",
+      "note": "默认 26.03 基线只读；.tzst 的内层建议后缀为 .tar。",
+      "source": "third_party/7zip/CPP/7zip/Archive/ZstdHandler.cpp"
+    },
+    {
+      "id": "hash",
+      "name": "Hash",
+      "extensions": [
+        "sha256",
+        "sha512",
+        "sha384",
+        "sha224",
+        "sha512-224",
+        "sha512-256",
+        "sha3-224",
+        "sha3-256",
+        "sha3-384",
+        "sha3-512",
+        "sha1",
+        "sha2",
+        "sha3",
+        "sha",
+        "md5",
+        "blake2s",
+        "blake2b",
+        "blake2sp",
+        "xxh64",
+        "crc32",
+        "crc64",
+        "cksum",
+        "asc"
+      ],
+      "category": "校验摘要",
+      "read": true,
+      "write": true,
+      "kind": "hash",
+      "note": "读取、生成和验证摘要清单；可计算算法取当前 10 个 hasher，后缀识别范围更广；不是承载文件内容的归档。",
+      "source": "third_party/7zip/CPP/7zip/UI/Common/HashCalc.cpp"
+    }
+  ],
+  "createFormats": [
+    {
+      "id": "7z",
+      "label": "7z",
+      "extension": "7z",
+      "methods": [
+        "LZMA2",
+        "LZMA",
+        "PPMd",
+        "BZip2",
+        "Deflate",
+        "Deflate64",
+        "Copy"
+      ],
+      "guiMethods": [
+        "LZMA2",
+        "LZMA",
+        "PPMd",
+        "BZip2"
+      ],
+      "advancedMethods": [
+        "Deflate",
+        "Deflate64"
+      ],
+      "levels": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "defaultLevel": 5,
+      "encryption": [
+        "AES-256"
+      ],
+      "headerEncryption": true,
+      "solid": true,
+      "singleStream": false,
+      "multithread": true,
+      "filters": true,
+      "note": "0 级为 Store；普通算法列表保留 Windows 原项，高级方法开放引擎支持的 Deflate/Deflate64。"
+    },
+    {
+      "id": "zip",
+      "label": "ZIP",
+      "extension": "zip",
+      "methods": [
+        "Deflate",
+        "Deflate64",
+        "BZip2",
+        "LZMA",
+        "PPMd",
+        "Copy"
+      ],
+      "guiMethods": [
+        "Deflate",
+        "Deflate64",
+        "BZip2",
+        "LZMA",
+        "PPMd"
+      ],
+      "advancedMethods": [],
+      "levels": [
+        0,
+        1,
+        3,
+        5,
+        7,
+        9
+      ],
+      "defaultLevel": 5,
+      "encryption": [
+        "ZipCrypto",
+        "AES-256"
+      ],
+      "headerEncryption": false,
+      "solid": false,
+      "singleStream": false,
+      "multithread": true,
+      "filters": false,
+      "note": "0 级为 Store；ZIP 文件名不加密；归档已有内容能否修改由实际打开状态决定。"
+    },
+    {
+      "id": "gzip",
+      "label": "GZip",
+      "extension": "gz",
+      "methods": [
+        "Deflate"
+      ],
+      "guiMethods": [
+        "Deflate"
+      ],
+      "advancedMethods": [],
+      "levels": [
+        1,
+        5,
+        7,
+        9
+      ],
+      "defaultLevel": 5,
+      "encryption": [],
+      "headerEncryption": false,
+      "solid": false,
+      "singleStream": true,
+      "multithread": false,
+      "filters": false,
+      "note": "仅压缩一个文件流。选中目录或多个文件时使用 TAR + GZip 组合。"
+    },
+    {
+      "id": "bzip2",
+      "label": "BZip2",
+      "extension": "bz2",
+      "methods": [
+        "BZip2"
+      ],
+      "guiMethods": [
+        "BZip2"
+      ],
+      "advancedMethods": [],
+      "levels": [
+        1,
+        3,
+        5,
+        7,
+        9
+      ],
+      "defaultLevel": 5,
+      "encryption": [],
+      "headerEncryption": false,
+      "solid": false,
+      "singleStream": true,
+      "multithread": true,
+      "filters": false,
+      "note": "仅压缩一个文件流。选中目录或多个文件时使用 TAR + BZip2 组合。"
+    },
+    {
+      "id": "xz",
+      "label": "XZ",
+      "extension": "xz",
+      "methods": [
+        "LZMA2"
+      ],
+      "guiMethods": [
+        "LZMA2"
+      ],
+      "advancedMethods": [],
+      "levels": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "defaultLevel": 5,
+      "encryption": [],
+      "headerEncryption": false,
+      "solid": true,
+      "singleStream": true,
+      "multithread": true,
+      "filters": true,
+      "note": "仅一个文件流；固实块控件在 XZ 中表示流内块大小。多个文件使用 TAR + XZ 组合。"
+    },
+    {
+      "id": "tar",
+      "label": "TAR",
+      "extension": "tar",
+      "methods": [
+        "GNU",
+        "POSIX"
+      ],
+      "guiMethods": [
+        "GNU",
+        "POSIX"
+      ],
+      "advancedMethods": [],
+      "levels": [
+        0
+      ],
+      "defaultLevel": 0,
+      "encryption": [],
+      "headerEncryption": false,
+      "solid": false,
+      "singleStream": false,
+      "multithread": false,
+      "filters": false,
+      "note": "GNU/POSIX 选择 TAR 头格式；TAR 本身仅存储，不压缩。"
+    },
+    {
+      "id": "wim",
+      "label": "WIM",
+      "extension": "wim",
+      "methods": [
+        "Copy"
+      ],
+      "guiMethods": [
+        "Copy"
+      ],
+      "advancedMethods": [],
+      "levels": [
+        0
+      ],
+      "defaultLevel": 0,
+      "encryption": [],
+      "headerEncryption": false,
+      "solid": false,
+      "singleStream": false,
+      "multithread": false,
+      "filters": false,
+      "note": "官方编码端新建仅 Store；读取支持压缩镜像。固实 ESD/WIM 等实例不开放更新。"
+    }
+  ],
+  "presets": [
+    {
+      "id": "tar.gz",
+      "label": "TAR + GZip",
+      "extension": "tar.gz",
+      "pipeline": [
+        "tar",
+        "gzip"
+      ],
+      "kind": "preset",
+      "singleStream": false,
+      "note": "先创建 TAR，再将整个 TAR 编码为 GZip；对应 .tgz 别名。"
+    },
+    {
+      "id": "tar.bz2",
+      "label": "TAR + BZip2",
+      "extension": "tar.bz2",
+      "pipeline": [
+        "tar",
+        "bzip2"
+      ],
+      "kind": "preset",
+      "singleStream": false,
+      "note": "先创建 TAR，再将整个 TAR 编码为 BZip2；对应 .tbz/.tbz2 别名。"
+    },
+    {
+      "id": "tar.xz",
+      "label": "TAR + XZ",
+      "extension": "tar.xz",
+      "pipeline": [
+        "tar",
+        "xz"
+      ],
+      "kind": "preset",
+      "singleStream": false,
+      "note": "先创建 TAR，再将整个 TAR 编码为 XZ；对应 .txz 别名。"
+    }
+  ],
+  "hashers": [
+    {
+      "id": "CRC32",
+      "name": "CRC32",
+      "bytes": 4,
+      "bits": 32,
+      "methodId": "1"
+    },
+    {
+      "id": "MD5",
+      "name": "MD5",
+      "bytes": 16,
+      "bits": 128,
+      "methodId": "208"
+    },
+    {
+      "id": "SHA1",
+      "name": "SHA1",
+      "bytes": 20,
+      "bits": 160,
+      "methodId": "201"
+    },
+    {
+      "id": "SHA256",
+      "name": "SHA256",
+      "bytes": 32,
+      "bits": 256,
+      "methodId": "A"
+    },
+    {
+      "id": "SHA3-256",
+      "name": "SHA3-256",
+      "bytes": 32,
+      "bits": 256,
+      "methodId": "231"
+    },
+    {
+      "id": "SHA384",
+      "name": "SHA384",
+      "bytes": 48,
+      "bits": 384,
+      "methodId": "222"
+    },
+    {
+      "id": "SHA512",
+      "name": "SHA512",
+      "bytes": 64,
+      "bits": 512,
+      "methodId": "223"
+    },
+    {
+      "id": "XXH64",
+      "name": "XXH64",
+      "bytes": 8,
+      "bits": 64,
+      "methodId": "211"
+    },
+    {
+      "id": "CRC64",
+      "name": "CRC64",
+      "bytes": 8,
+      "bits": 64,
+      "methodId": "4"
+    },
+    {
+      "id": "BLAKE2sp",
+      "name": "BLAKE2sp",
+      "bytes": 32,
+      "bits": 256,
+      "methodId": "202"
+    }
+  ],
+  "codecs": [
+    {
+      "id": "303011B",
+      "name": "BCJ2",
+      "kind": "filter",
+      "encode": true,
+      "decode": true
+    },
+    {
+      "id": "3030103",
+      "name": "BCJ",
+      "kind": "filter",
+      "encode": true,
+      "decode": true
+    },
+    {
+      "id": "3030205",
+      "name": "PPC",
+      "kind": "filter",
+      "encode": true,
+      "decode": true
+    },
+    {
+      "id": "3030401",
+      "name": "IA64",
+      "kind": "filter",
+      "encode": true,
+      "decode": true
+    },
+    {
+      "id": "3030501",
+      "name": "ARM",
+      "kind": "filter",
+      "encode": true,
+      "decode": true
+    },
+    {
+      "id": "3030701",
+      "name": "ARMT",
+      "kind": "filter",
+      "encode": true,
+      "decode": true
+    },
+    {
+      "id": "3030805",
+      "name": "SPARC",
+      "kind": "filter",
+      "encode": true,
+      "decode": true
+    },
+    {
+      "id": "A",
+      "name": "ARM64",
+      "kind": "filter",
+      "encode": true,
+      "decode": true
+    },
+    {
+      "id": "B",
+      "name": "RISCV",
+      "kind": "filter",
+      "encode": true,
+      "decode": true
+    },
+    {
+      "id": "20302",
+      "name": "Swap2",
+      "kind": "filter",
+      "encode": true,
+      "decode": true
+    },
+    {
+      "id": "20304",
+      "name": "Swap4",
+      "kind": "filter",
+      "encode": true,
+      "decode": true
+    },
+    {
+      "id": "40202",
+      "name": "BZip2",
+      "kind": "compression",
+      "encode": true,
+      "decode": true
+    },
+    {
+      "id": "0",
+      "name": "Copy",
+      "kind": "store",
+      "encode": true,
+      "decode": true
+    },
+    {
+      "id": "40109",
+      "name": "Deflate64",
+      "kind": "compression",
+      "encode": true,
+      "decode": true
+    },
+    {
+      "id": "40108",
+      "name": "Deflate",
+      "kind": "compression",
+      "encode": true,
+      "decode": true
+    },
+    {
+      "id": "3",
+      "name": "Delta",
+      "kind": "filter",
+      "encode": true,
+      "decode": true
+    },
+    {
+      "id": "21",
+      "name": "LZMA2",
+      "kind": "compression",
+      "encode": true,
+      "decode": true
+    },
+    {
+      "id": "30101",
+      "name": "LZMA",
+      "kind": "compression",
+      "encode": true,
+      "decode": true
+    },
+    {
+      "id": "30401",
+      "name": "PPMD",
+      "kind": "compression",
+      "encode": true,
+      "decode": true
+    },
+    {
+      "id": "40301",
+      "name": "Rar1",
+      "kind": "compression",
+      "encode": false,
+      "decode": true
+    },
+    {
+      "id": "40302",
+      "name": "Rar2",
+      "kind": "compression",
+      "encode": false,
+      "decode": true
+    },
+    {
+      "id": "40303",
+      "name": "Rar3",
+      "kind": "compression",
+      "encode": false,
+      "decode": true
+    },
+    {
+      "id": "40305",
+      "name": "Rar5",
+      "kind": "compression",
+      "encode": false,
+      "decode": true
+    },
+    {
+      "id": "6F10701",
+      "name": "7zAES",
+      "kind": "encryption",
+      "encode": true,
+      "decode": true
+    },
+    {
+      "id": "6F00181",
+      "name": "AES256CBC",
+      "kind": "encryption",
+      "encode": true,
+      "decode": true
+    }
+  ],
+  "methodDetails": {
+    "LZMA2": {
+      "kind": "compression",
+      "dictionaryLabel": "字典大小",
+      "dictionaries": [
+        "自动",
+        "64 KiB",
+        "256 KiB",
+        "1 MiB",
+        "2 MiB",
+        "3 MiB",
+        "4 MiB",
+        "6 MiB",
+        "8 MiB",
+        "12 MiB",
+        "16 MiB",
+        "24 MiB",
+        "32 MiB",
+        "48 MiB",
+        "64 MiB",
+        "96 MiB",
+        "128 MiB",
+        "192 MiB",
+        "256 MiB",
+        "384 MiB",
+        "512 MiB",
+        "768 MiB",
+        "1 GiB",
+        "1.5 GiB",
+        "2 GiB",
+        "3 GiB",
+        "3.75 GiB"
+      ],
+      "wordSizeLabel": "单词大小",
+      "wordSizes": [
+        8,
+        12,
+        16,
+        24,
+        32,
+        48,
+        64,
+        96,
+        128,
+        192,
+        256,
+        273
+      ],
+      "parameters": [
+        "d",
+        "fb",
+        "mf",
+        "mc",
+        "lc",
+        "lp",
+        "pb",
+        "a",
+        "mt",
+        "c",
+        "zhb"
+      ],
+      "note": "LZMA2 支持分块和多线程。字典、线程与块大小共同影响内存需求；字典上限按当前平台处理。"
+    },
+    "LZMA": {
+      "kind": "compression",
+      "dictionaryLabel": "字典大小",
+      "dictionaries": [
+        "自动",
+        "64 KiB",
+        "256 KiB",
+        "1 MiB",
+        "2 MiB",
+        "3 MiB",
+        "4 MiB",
+        "6 MiB",
+        "8 MiB",
+        "12 MiB",
+        "16 MiB",
+        "24 MiB",
+        "32 MiB",
+        "48 MiB",
+        "64 MiB",
+        "96 MiB",
+        "128 MiB",
+        "192 MiB",
+        "256 MiB",
+        "384 MiB",
+        "512 MiB",
+        "768 MiB",
+        "1 GiB",
+        "1.5 GiB",
+        "2 GiB",
+        "3 GiB",
+        "3.75 GiB"
+      ],
+      "wordSizeLabel": "单词大小",
+      "wordSizes": [
+        8,
+        12,
+        16,
+        24,
+        32,
+        48,
+        64,
+        96,
+        128,
+        192,
+        256,
+        273
+      ],
+      "parameters": [
+        "d",
+        "fb",
+        "mf",
+        "mc",
+        "lc",
+        "lp",
+        "pb",
+        "a",
+        "mt",
+        "eos",
+        "zhb"
+      ],
+      "note": "归档使用的 LZMA 编码器；独立 .lzma handler 的写入能力另行判定。"
+    },
+    "PPMd": {
+      "kind": "compression",
+      "dictionaryLabel": "内存大小",
+      "dictionaries": [
+        "自动",
+        "1 MiB",
+        "2 MiB",
+        "3 MiB",
+        "4 MiB",
+        "6 MiB",
+        "8 MiB",
+        "12 MiB",
+        "16 MiB",
+        "24 MiB",
+        "32 MiB",
+        "48 MiB",
+        "64 MiB",
+        "96 MiB",
+        "128 MiB",
+        "192 MiB",
+        "256 MiB",
+        "384 MiB",
+        "512 MiB",
+        "768 MiB",
+        "1 GiB"
+      ],
+      "wordSizeLabel": "模型阶数",
+      "wordSizes": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        10,
+        12,
+        14,
+        16,
+        20,
+        24,
+        28,
+        32
+      ],
+      "zipWordSizes": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16
+      ],
+      "parameters": [
+        "mem",
+        "o"
+      ],
+      "note": "7z 使用 PPMd7，ZIP 使用 PPMd8；64 位 Windows GUI 中 7z 内存选项至 1 GiB，ZIP 至 256 MiB；模型阶数分别为 2–32 和 2–16。",
+      "zipDictionaries": [
+        "自动",
+        "1 MiB",
+        "2 MiB",
+        "4 MiB",
+        "8 MiB",
+        "16 MiB",
+        "32 MiB",
+        "64 MiB",
+        "128 MiB",
+        "256 MiB"
+      ]
+    },
+    "BZip2": {
+      "kind": "compression",
+      "dictionaryLabel": "块大小",
+      "dictionaries": [
+        "自动",
+        "100 KiB",
+        "200 KiB",
+        "300 KiB",
+        "400 KiB",
+        "500 KiB",
+        "600 KiB",
+        "700 KiB",
+        "800 KiB",
+        "900 KiB"
+      ],
+      "wordSizeLabel": "",
+      "wordSizes": [],
+      "parameters": [
+        "d",
+        "pass",
+        "mt"
+      ],
+      "note": "Windows 控件以 KiB 显示，编码器按 100000 字节块单位归一化。"
+    },
+    "Deflate": {
+      "kind": "compression",
+      "dictionaryLabel": "字典大小",
+      "dictionaries": [
+        "32 KiB"
+      ],
+      "wordSizeLabel": "单词大小",
+      "wordSizes": [
+        8,
+        12,
+        16,
+        24,
+        32,
+        48,
+        64,
+        96,
+        128,
+        192,
+        256,
+        258
+      ],
+      "parameters": [
+        "fb",
+        "pass",
+        "mc",
+        "a"
+      ],
+      "note": "字典固定为 32 KiB。"
+    },
+    "Deflate64": {
+      "kind": "compression",
+      "dictionaryLabel": "字典大小",
+      "dictionaries": [
+        "64 KiB"
+      ],
+      "wordSizeLabel": "单词大小",
+      "wordSizes": [
+        8,
+        12,
+        16,
+        24,
+        32,
+        48,
+        64,
+        96,
+        128,
+        192,
+        256,
+        257
+      ],
+      "parameters": [
+        "fb",
+        "pass",
+        "mc",
+        "a"
+      ],
+      "note": "字典固定为 64 KiB。"
+    },
+    "Copy": {
+      "kind": "store",
+      "dictionaryLabel": "",
+      "dictionaries": [],
+      "wordSizeLabel": "",
+      "wordSizes": [],
+      "parameters": [],
+      "note": "Store：不执行数据压缩。"
+    },
+    "GNU": {
+      "kind": "header",
+      "dictionaryLabel": "",
+      "dictionaries": [],
+      "wordSizeLabel": "",
+      "wordSizes": [],
+      "parameters": [],
+      "note": "TAR GNU 头格式。"
+    },
+    "POSIX": {
+      "kind": "header",
+      "dictionaryLabel": "",
+      "dictionaries": [],
+      "wordSizeLabel": "",
+      "wordSizes": [],
+      "parameters": [],
+      "note": "TAR POSIX/PAX 头格式。"
+    }
+  },
+  "filters": {
+    "7z": [
+      "自动",
+      "关闭",
+      "BCJ",
+      "BCJ2",
+      "PPC",
+      "IA64",
+      "ARM",
+      "ARMT",
+      "SPARC",
+      "ARM64",
+      "RISCV",
+      "Delta",
+      "Swap2",
+      "Swap4"
+    ],
+    "xz": [
+      "关闭",
+      "Delta",
+      "BCJ",
+      "PPC",
+      "IA64",
+      "ARM",
+      "ARMT",
+      "SPARC",
+      "ARM64",
+      "RISCV"
+    ]
+  },
+  "hashFileMethods": [
+    "SHA256",
+    "SHA1"
+  ],
+  "extensionMappings": {
+    "bzip2": {
+      "tbz2": "tar",
+      "tbz": "tar"
+    },
+    "gzip": {
+      "tgz": "tar",
+      "tpz": "tar",
+      "apk": "tar"
+    },
+    "xz": {
+      "txz": "tar"
+    },
+    "zstd": {
+      "tzst": "tar"
+    },
+    "z": {
+      "taz": "tar"
+    }
+  },
+  "sources": [
+    "docs/evidence/7zz-info.txt",
+    "third_party/7zip/CPP/7zip/Bundles/Format7zF/Arc_gcc.mak",
+    "third_party/7zip/CPP/7zip/UI/Common/LoadCodecs.cpp",
+    "third_party/7zip/CPP/7zip/UI/GUI/CompressDialog.cpp",
+    "third_party/7zip/CPP/7zip/UI/GUI/UpdateGUI.cpp"
+  ]
+};

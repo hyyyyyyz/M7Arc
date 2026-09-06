@@ -1,0 +1,2626 @@
+<style>
+#m7arc-fm{--p-bg:light-dark(#ffffff,#222326);--p-surface:light-dark(#f5f5f7,#2b2c2f);--p-top:light-dark(#f0f0f2,#303135);--p-control:light-dark(#ffffff,#414247);--p-inset:light-dark(#eaeaec,#242528);--p-text:light-dark(#252528,#eeeeef);--p-muted:light-dark(#6d6d74,#b3b3bb);--p-line:light-dark(#d6d6db,#494a50);--p-lightline:light-dark(#e8e8ec,#393a3f);--p-hover:light-dark(#e5e5e9,#3a3b40);--p-selected:light-dark(#087af5,#2764c4);--p-selection-text:light-dark(#ffffff,#ffffff);--p-stripe:light-dark(#f5f5f7,#292a2e);--p-blue:light-dark(#0068d9,#6ca9ff);--p-action:light-dark(#087af5,#297bf3);--p-green:light-dark(#287644,#8bd3a4);--p-red:light-dark(#c42b34,#ff8e94);--p-overlay:light-dark(#e7e8ec,#202124);--p-onblue:light-dark(#ffffff,#ffffff);--p-shadow:light-dark(#20203218,#00000055);--p-control-shadow:light-dark(#00000012,#00000035);--p-folder:light-dark(#399edc,#70bff3);--p-folder-fill:light-dark(#b7e2fa,#244d67);--p-row:5px;font:13px/1.4 -apple-system,BlinkMacSystemFont,"Helvetica Neue",sans-serif;color:var(--p-text);color-scheme:light dark;width:100%;-webkit-font-smoothing:antialiased}
+#m7arc-fm *{box-sizing:border-box}
+#m7arc-fm [hidden]{display:none!important}
+#m7arc-fm button,#m7arc-fm input,#m7arc-fm select,#m7arc-fm textarea{font:inherit;color:inherit}
+#m7arc-fm button{cursor:pointer}
+#m7arc-fm button:disabled{cursor:default;opacity:.5}
+#m7arc-fm button:focus-visible,#m7arc-fm input:focus-visible,#m7arc-fm select:focus-visible{outline-offset:2px}
+#m7arc-fm .p-window{background:var(--p-bg);border:1px solid var(--p-line);border-radius:14px;overflow:clip;box-shadow:0 12px 36px var(--p-shadow)}
+#m7arc-fm .p-titlebar{background:var(--p-top);min-height:49px;padding:12px 17px;display:flex;align-items:center;gap:18px}
+#m7arc-fm .p-traffic{display:flex;gap:8px;flex:none}
+#m7arc-fm .p-traffic span{width:12px;height:12px;border-radius:50%;background:light-dark(#e95c54,#c8524d)}
+#m7arc-fm .p-traffic span:nth-child(2){background:light-dark(#eab23c,#c39841)}
+#m7arc-fm .p-traffic span:nth-child(3){background:light-dark(#58b451,#559c50)}
+#m7arc-fm .p-window-title{font-weight:500;flex:1;text-align:center}
+#m7arc-fm .p-window-title span{font-weight:400;color:var(--p-muted);margin-left:5px}
+#m7arc-fm .p-platform{color:var(--p-muted);font-size:11px}
+#m7arc-fm .p-menubar{display:flex;flex-wrap:wrap;gap:2px;background:var(--p-top);padding:0 10px 6px;position:relative;z-index:20}
+#m7arc-fm .p-menu{position:relative}
+#m7arc-fm .p-menu>button{border:0;background:transparent;padding:5px 11px;border-radius:8px}
+#m7arc-fm .p-menu>button[aria-expanded=true],#m7arc-fm .p-menu>button:hover{background:var(--p-hover)}
+#m7arc-fm .p-menu-popup{position:absolute;top:100%;left:0;min-width:245px;padding:5px;background:var(--p-bg);border:1px solid var(--p-line);box-shadow:0 7px 18px light-dark(#0002,#0007);border-radius:9px;z-index:25}
+#m7arc-fm .p-menu:nth-last-child(-n+2) .p-menu-popup{left:auto;right:0}
+#m7arc-fm .p-menu-popup button{display:flex;gap:10px;align-items:center;width:100%;padding:5px 8px;text-align:left;background:none;border:0;border-radius:8px}
+#m7arc-fm .p-menu-popup button:hover{background:var(--p-selected)}
+#m7arc-fm .p-menu-popup .p-shortcut{margin-left:auto;color:var(--p-muted);font-size:11px;white-space:nowrap}
+#m7arc-fm .p-menu-popup .p-checkmark{display:inline-block;width:13px;flex:none}
+#m7arc-fm .p-menu-divider{height:1px;background:var(--p-line);margin:4px}
+#m7arc-fm .p-subitems{margin:0 3px 4px 18px;border-left:1px solid var(--p-line);padding-left:4px}
+@media(min-width:601px){#m7arc-fm .p-menu-popup div:has(>button[data-submenu]){position:relative}#m7arc-fm .p-subitems{position:absolute;left:100%;top:0;margin:0;min-width:238px;border:1px solid var(--p-line);padding:5px;background:var(--p-bg);box-shadow:0 7px 18px light-dark(#0002,#0007);border-radius:9px}}
+#m7arc-fm .p-menu-popup.p-context{top:24px;left:20px}
+#m7arc-fm .p-toolbar{display:flex;align-items:stretch;justify-content:space-between;padding:7px 13px 10px;gap:10px;border-bottom:1px solid var(--p-line);background:var(--p-top)}
+#m7arc-fm .p-toolbar-main{display:flex;align-items:stretch;flex-wrap:wrap;gap:3px}
+#m7arc-fm .p-tool{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;min-width:58px;border:1px solid transparent;border-radius:8px;background:transparent;padding:4px 7px;color:var(--p-muted);font-size:12px}
+#m7arc-fm .p-tool:hover{background:var(--p-hover);color:var(--p-text)}
+#m7arc-fm .p-tool-separator{width:1px;background:var(--p-line);margin:7px 9px 20px}
+#m7arc-fm .p-toolbar-extra{display:flex;flex-direction:column;align-items:flex-end;gap:7px;justify-content:center}
+#m7arc-fm .p-format-entry{display:grid;grid-template-columns:20px auto;gap:0 8px;align-items:center;border:0;background:transparent;text-align:left;padding:2px 6px;color:var(--p-text);border-radius:8px}
+#m7arc-fm .p-format-entry strong{font-weight:500;display:block}
+#m7arc-fm .p-format-entry span{font-size:11px;color:var(--p-muted)}
+#m7arc-fm .p-small-button{display:flex;gap:7px;align-items:center;background:var(--p-control);border:1px solid var(--p-line);border-radius:8px;padding:4px 9px;box-shadow:0 1px 2px var(--p-control-shadow);font-size:11px}
+#m7arc-fm .p-small-button[aria-pressed=true]{background:var(--p-selected);color:var(--p-selection-text);border-color:var(--p-selected)}
+#m7arc-fm .p-panels{display:grid;grid-template-columns:minmax(0,1fr);min-height:445px}
+#m7arc-fm .p-panels.p-dual{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:1px;background:var(--p-line)}
+#m7arc-fm .p-panel{min-width:0;background:var(--p-bg);display:flex;flex-direction:column;position:relative}
+#m7arc-fm .p-address{display:flex;gap:7px;padding:10px 12px;background:var(--p-surface);border-bottom:1px solid var(--p-lightline);align-items:center}
+#m7arc-fm .p-panel.p-active .p-address{box-shadow:none}
+#m7arc-fm .p-address button{display:flex;align-items:center;justify-content:center;background:var(--p-control);border:1px solid var(--p-line);border-radius:8px;padding:6px;box-shadow:0 1px 2px var(--p-control-shadow)}
+#m7arc-fm .p-address form{display:flex;align-items:center;flex:1;min-width:0;padding-left:9px;border:1px solid var(--p-line);border-radius:8px;background:var(--p-control);box-shadow:0 1px 2px var(--p-control-shadow)}
+#m7arc-fm .p-address input{width:100%;min-width:0;padding:5px 7px;border:0;background:transparent}
+#m7arc-fm .p-address .p-history{padding:5px 7px;border:0;border-radius:0 8px 8px 0;box-shadow:none;background:transparent}
+#m7arc-fm .p-list-host{flex:1;min-width:0;padding:0 8px 7px}
+#m7arc-fm .p-files{width:100%;table-layout:fixed;border-collapse:separate;border-spacing:0;font-size:12px}
+#m7arc-fm .p-files th{font-weight:500;color:var(--p-muted);background:var(--p-bg);border-bottom:1px solid var(--p-lightline);text-align:left;padding:0;white-space:nowrap}
+#m7arc-fm .p-files th button{border:0;background:none;width:100%;padding:7px 8px;text-align:inherit;font-size:11px}
+#m7arc-fm .p-files th:last-child{border-right:0}
+#m7arc-fm .p-files td{padding:var(--p-row) 8px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;border:0}
+#m7arc-fm .p-files tr.p-selected{background:var(--p-selected);color:var(--p-selection-text)}
+#m7arc-fm .p-files tbody tr:hover{background:var(--p-hover)}
+#m7arc-fm .p-files tr.p-selected:hover{background:var(--p-selected)}
+#m7arc-fm .p-files .p-number{text-align:right;font-variant-numeric:tabular-nums}
+#m7arc-fm .p-files .p-name-col{width:31%}
+#m7arc-fm .p-files .p-size-col{width:11%}
+#m7arc-fm .p-files .p-type-col{width:12%}
+#m7arc-fm .p-files .p-date-col{width:18%}
+#m7arc-fm .p-files .p-extra-col{width:10%}
+#m7arc-fm .p-filename{display:flex;align-items:center;gap:7px;border:0;background:none;padding:0;max-width:100%;text-align:left}
+#m7arc-fm .p-filename span:last-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#m7arc-fm .p-file-icon{width:18px;height:18px;flex:none;color:var(--p-muted);stroke-width:1.5}
+#m7arc-fm .p-file-icon.p-folder{color:var(--p-folder);fill:var(--p-folder-fill);stroke-width:1.2}
+#m7arc-fm .p-panel-status{display:grid;grid-template-columns:auto auto minmax(0,1fr) auto;gap:0;border-top:1px solid var(--p-line);background:var(--p-surface);font-size:11px;color:var(--p-muted);margin-top:auto}
+#m7arc-fm .p-panel-status>span{padding:5px 9px;border-right:1px solid var(--p-line);overflow-wrap:anywhere}
+#m7arc-fm .p-panel-status>span:last-child{border:0}
+#m7arc-fm .p-bottom{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:7px 13px;font-size:11px;color:var(--p-muted);border-top:1px solid var(--p-lightline);background:var(--p-top)}
+#m7arc-fm .p-icons{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:6px;padding:12px}
+#m7arc-fm .p-icons .p-file-tile{border:1px solid transparent;background:none;padding:8px;display:flex;flex-direction:column;gap:7px;align-items:center;border-radius:8px;overflow-wrap:anywhere}
+#m7arc-fm .p-icons .p-file-tile.p-selected{background:var(--p-selected);color:var(--p-selection-text)}
+#m7arc-fm .p-icons .p-file-icon{width:36px;height:36px}
+#m7arc-fm .p-icons.p-small-icons{grid-template-columns:repeat(auto-fill,minmax(165px,1fr))}
+#m7arc-fm .p-icons.p-small-icons .p-file-tile{flex-direction:row;text-align:left;padding:5px}
+#m7arc-fm .p-icons.p-small-icons .p-file-icon{width:20px;height:20px}
+#m7arc-fm .p-dual .p-files .p-date-col,#m7arc-fm .p-dual .p-files .p-extra-col{display:none}
+#m7arc-fm .p-dual .p-files .p-name-col{width:46%}
+#m7arc-fm .p-dialog-region{background:var(--p-overlay);padding:22px 24px;border-bottom:1px solid var(--p-line)}
+#m7arc-fm .p-dialog{max-width:860px;margin:0 auto;background:var(--p-surface);border:1px solid var(--p-line);border-radius:14px;box-shadow:0 12px 30px var(--p-shadow)}
+#m7arc-fm .p-dialog-header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px 12px;gap:10px}
+#m7arc-fm .p-dialog-header h2{font-size:14px;font-weight:500;margin:0}
+#m7arc-fm .p-dialog-header>button{display:flex;align-items:center;justify-content:center;background:var(--p-inset);color:var(--p-muted);border:0;border-radius:50%;padding:4px;width:25px;height:25px;flex:none}
+#m7arc-fm #p-dialog-body{padding:6px 20px 20px}
+#m7arc-fm .p-form{margin:0}
+#m7arc-fm .p-grid{display:grid;gap:12px}
+#m7arc-fm .p-grid-2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px 22px}
+#m7arc-fm .p-field{display:flex;flex-direction:column;gap:4px;margin-bottom:10px;min-width:0}
+#m7arc-fm .p-field label{font-size:12px}
+#m7arc-fm .p-field input,#m7arc-fm .p-field select,#m7arc-fm .p-field textarea,#m7arc-fm .p-input,#m7arc-fm .p-select{width:100%;min-width:0;border:1px solid var(--p-line);border-radius:8px;padding:5px 7px;background:var(--p-bg)}
+#m7arc-fm textarea{resize:vertical;min-height:65px}
+#m7arc-fm .p-group{border:1px solid var(--p-lightline);border-radius:10px;background:var(--p-bg);padding:11px 12px;margin:0 0 12px;min-width:0}
+#m7arc-fm .p-group legend{padding:0 5px;font-size:12px}
+#m7arc-fm .p-check{display:flex;gap:7px;align-items:center;font-size:12px;min-height:25px}
+#m7arc-fm input[type=checkbox],#m7arc-fm input[type=radio]{accent-color:var(--p-action);width:auto;min-height:0}
+#m7arc-fm .p-check input{margin:0;flex:none}
+#m7arc-fm .p-actions{display:flex;align-items:center;justify-content:flex-end;flex-wrap:wrap;gap:8px;padding-top:12px;margin-top:12px;border-top:1px solid var(--p-line)}
+#m7arc-fm .p-actions button,#m7arc-fm .p-action-button,#m7arc-fm .p-form button,#m7arc-fm .p-result button{border:1px solid var(--p-line);background:var(--p-bg);border-radius:8px;padding:5px 16px}
+#m7arc-fm .p-actions .p-primary,#m7arc-fm .p-primary{background:var(--p-action)!important;color:var(--p-onblue)!important;border-color:var(--p-action)!important}
+#m7arc-fm .p-note{font-size:11px;color:var(--p-muted);margin:8px 0;overflow-wrap:anywhere}
+#m7arc-fm .p-note.p-error{color:var(--p-red)}
+#m7arc-fm .p-actions .p-note{margin-right:auto}
+#m7arc-fm .p-tabs{display:flex;width:fit-content;max-width:100%;gap:3px;flex-wrap:wrap;background:var(--p-inset);padding:3px;border-radius:9px;margin-bottom:16px}
+#m7arc-fm .p-tab{border:1px solid transparent;border-radius:6px;background:none;padding:5px 11px;font-size:12px;color:var(--p-muted)}
+#m7arc-fm .p-tab[aria-selected=true],#m7arc-fm .p-tab.active{background:var(--p-bg);border-color:var(--p-line);color:var(--p-blue);font-weight:500}
+#m7arc-fm .p-table{width:100%;border-collapse:separate;border-spacing:0;font-size:12px;background:var(--p-bg);border:1px solid var(--p-lightline);border-radius:9px;overflow:hidden}
+#m7arc-fm .p-table th{background:var(--p-top);font-weight:500;text-align:left}
+#m7arc-fm .p-table td,#m7arc-fm .p-table th{padding:6px 9px;border-bottom:1px solid var(--p-lightline);overflow-wrap:anywhere}
+#m7arc-fm .p-table td button{background:none;border:0;padding:0;color:var(--p-blue);text-align:left}
+#m7arc-fm .p-result{padding:12px;background:var(--p-bg);border:1px solid var(--p-lightline);border-radius:9px;margin-top:12px;overflow-wrap:anywhere}
+#m7arc-fm .p-result:empty{display:none}
+#m7arc-fm .p-result dl{display:grid;grid-template-columns:135px 1fr;gap:6px;margin:0}
+#m7arc-fm .p-result dd{margin:0}
+#m7arc-fm .p-catalog-controls{display:grid;grid-template-columns:minmax(0,1fr) 140px 150px;gap:10px;margin-bottom:9px}
+#m7arc-fm .p-catalog-summary{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;margin:8px 0;font-size:12px}
+#m7arc-fm .p-mode-read{color:var(--p-muted)}
+#m7arc-fm .p-mode-write{color:var(--p-green);font-weight:500}
+#m7arc-fm .p-catalog-name{width:18%}
+#m7arc-fm .p-catalog-ext{width:38%}
+#m7arc-fm .p-catalog-cap{width:16%}
+#m7arc-fm .p-catalog-pages{display:flex;align-items:center;gap:8px;justify-content:flex-end;margin-top:10px;font-size:12px}
+#m7arc-fm .p-catalog-pages button{border:1px solid var(--p-line);background:var(--p-bg);border-radius:8px;padding:4px 10px}
+#m7arc-fm .p-progress-region{padding:12px 16px;background:var(--p-surface);border-top:1px solid var(--p-line)}
+#m7arc-fm .p-progress-head{display:flex;align-items:center;gap:10px;justify-content:space-between;margin-bottom:8px}
+#m7arc-fm .p-progress-head strong{font-weight:500}
+#m7arc-fm progress{width:100%;height:9px;accent-color:var(--p-action);display:block}
+#m7arc-fm .p-progress-stats{display:flex;gap:12px;flex-wrap:wrap;margin-top:8px;color:var(--p-muted);font-size:11px}
+#m7arc-fm .p-progress-controls{margin-left:auto;display:flex;gap:6px}
+#m7arc-fm .p-progress-controls button{background:var(--p-bg);border:1px solid var(--p-line);border-radius:8px;padding:3px 9px}
+#m7arc-fm .p-help-list{margin:0;padding-left:20px}
+#m7arc-fm .p-help-list li{margin:7px 0}
+#m7arc-fm[data-density=compact]{--p-row:3px}
+#m7arc-fm[data-large=false] .p-tool-symbol{width:36px;height:28px}
+#m7arc-fm[data-large=false] .p-tool-icon{width:18px;height:18px}
+#m7arc-fm[data-labels=false] .p-tool-label{display:none}
+#m7arc-fm .p-tool-symbol{width:42px;height:32px;display:flex;align-items:center;justify-content:center;border:1px solid var(--p-line);border-radius:8px;background:var(--p-control);box-shadow:0 1px 2px var(--p-control-shadow);color:var(--p-text)}
+#m7arc-fm .p-tool-icon{width:21px;height:21px;stroke-width:1.7;flex:none}
+#m7arc-fm .p-tool[data-command=add] .p-tool-symbol,#m7arc-fm .p-tool[data-command=extract] .p-tool-symbol{color:var(--p-blue)}
+#m7arc-fm .p-tool[data-command=delete]:hover .p-tool-symbol{color:var(--p-red)}
+#m7arc-fm .p-format-entry:hover{background:var(--p-hover)}
+#m7arc-fm .p-chrome-icon{width:17px;height:17px;stroke-width:1.7;flex:none}
+#m7arc-fm .p-format-entry .p-chrome-icon{grid-row:1/3;color:var(--p-blue)}
+#m7arc-fm .p-address .p-location-icon{width:15px;height:15px;flex:none;color:var(--p-muted);stroke-width:1.7}
+#m7arc-fm .p-panel.p-active .p-address form{border-color:light-dark(#b4cde9,#537192)}
+#m7arc-fm .p-files tbody tr:nth-child(even):not(.p-selected):not(:hover){background:var(--p-stripe)}
+#m7arc-fm .p-files tbody td:first-child{border-radius:5px 0 0 5px}
+#m7arc-fm .p-files tbody td:last-child{border-radius:0 5px 5px 0}
+#m7arc-fm .p-selected .p-file-icon{color:inherit}
+#m7arc-fm .p-selected .p-file-icon.p-folder{fill:none}
+#m7arc-fm .p-filename{gap:8px;min-height:19px}
+#m7arc-fm .p-field label,#m7arc-fm .p-group legend{color:var(--p-muted)}
+#m7arc-fm .p-field input,#m7arc-fm .p-field select,#m7arc-fm .p-field textarea,#m7arc-fm .p-input,#m7arc-fm .p-select{background:var(--p-control);box-shadow:0 1px 2px var(--p-control-shadow)}
+#m7arc-fm .p-actions button,#m7arc-fm .p-action-button,#m7arc-fm .p-form button,#m7arc-fm .p-result button,#m7arc-fm .p-catalog-pages button,#m7arc-fm .p-progress-controls button{background:var(--p-control);box-shadow:0 1px 2px var(--p-control-shadow)}
+#m7arc-fm .p-table td button{background:transparent;box-shadow:none}
+#m7arc-fm .p-tab[aria-selected=true],#m7arc-fm .p-tab.active{background:var(--p-control);box-shadow:0 1px 4px var(--p-control-shadow);border-color:transparent;color:var(--p-text)}
+#m7arc-fm .p-menu-popup button:hover,#m7arc-fm .p-menu-popup button[aria-expanded=true]{background:var(--p-selected);color:var(--p-selection-text)}
+#m7arc-fm .p-menu-popup button:hover .p-shortcut,#m7arc-fm .p-menu-popup button[aria-expanded=true] .p-shortcut{color:inherit}
+#m7arc-fm details.p-group{background:transparent;border-color:var(--p-line)}
+#m7arc-fm details.p-group summary{cursor:pointer;font-size:12px}
+#m7arc-fm details[open].p-group summary{margin-bottom:14px}
+#m7arc-fm .p-table th{background:var(--p-surface);color:var(--p-muted)}
+#m7arc-fm .p-panel-status>span{border-color:var(--p-lightline)}
+@media(max-width:850px){#m7arc-fm .p-tool{min-width:53px;padding:3px 5px}#m7arc-fm .p-toolbar{gap:4px;padding:6px}#m7arc-fm .p-files .p-extra-col{display:none}#m7arc-fm .p-files .p-name-col{width:34%}#m7arc-fm .p-dialog-region{padding:12px}}
+@media(max-width:600px){#m7arc-fm .p-titlebar{padding:8px;gap:8px}#m7arc-fm .p-window-title span,#m7arc-fm .p-platform{display:none}#m7arc-fm .p-window-title{text-align:left}#m7arc-fm .p-menubar{padding:2px}#m7arc-fm .p-menu>button{padding:5px 8px}#m7arc-fm .p-menu-popup{position:relative;min-width:0;width:100%;box-shadow:none}#m7arc-fm .p-menu:has(button[aria-expanded=true]){width:100%;order:8}#m7arc-fm .p-toolbar{flex-wrap:wrap}#m7arc-fm .p-toolbar-main{width:100%;justify-content:space-between}#m7arc-fm .p-tool{min-width:36px;padding:2px 4px}#m7arc-fm .p-tool-symbol{width:33px;height:30px}#m7arc-fm .p-tool-icon{width:19px;height:19px}#m7arc-fm .p-tool-separator{display:none}#m7arc-fm .p-tool-label{font-size:11px}#m7arc-fm .p-toolbar-extra{flex-direction:row;justify-content:space-between;align-items:center;width:100%;padding:3px}#m7arc-fm .p-format-entry{text-align:left}#m7arc-fm .p-format-entry{grid-template-columns:17px auto;gap:0 6px}#m7arc-fm .p-format-entry strong{font-size:11px}#m7arc-fm .p-panels.p-dual{grid-template-columns:1fr}#m7arc-fm .p-panels{min-height:0}#m7arc-fm .p-list-host{min-height:340px}#m7arc-fm .p-files .p-date-col,#m7arc-fm .p-files .p-extra-col,#m7arc-fm .p-files .p-type-col{display:none}#m7arc-fm .p-files .p-name-col{width:58%}#m7arc-fm .p-files .p-size-col{width:21%}#m7arc-fm .p-files td{padding:6px 5px}#m7arc-fm .p-panel-status{grid-template-columns:1fr 1fr}#m7arc-fm .p-grid-2,#m7arc-fm .p-catalog-controls{grid-template-columns:1fr}#m7arc-fm .p-dialog-region{padding:8px 4px}#m7arc-fm #p-dialog-body{padding:11px}#m7arc-fm .p-catalog-category{display:none}#m7arc-fm .p-catalog-name{width:25%}#m7arc-fm .p-catalog-ext{width:48%}#m7arc-fm .p-catalog-cap{width:27%}#m7arc-fm .p-field input,#m7arc-fm .p-field select,#m7arc-fm .p-address input{font-size:16px}#m7arc-fm .p-table td,#m7arc-fm .p-table th{padding:5px}#m7arc-fm .p-tab{padding:6px 9px}#m7arc-fm .p-result dl{grid-template-columns:95px minmax(0,1fr)}#m7arc-fm .p-progress-stats{gap:7px}}
+@media(pointer:coarse){#m7arc-fm .p-menu>button,#m7arc-fm .p-menu-popup button,#m7arc-fm .p-actions button,#m7arc-fm .p-tab,#m7arc-fm .p-filename,#m7arc-fm .p-check{min-height:44px}#m7arc-fm .p-filename{width:100%}}
+
+</style>
+<div id="m7arc-fm" aria-label="M7Arc 文件管理器交互原型">
+  <div class="p-window">
+    <header class="p-titlebar">
+      <div class="p-traffic" aria-hidden="true"><span></span><span></span><span></span></div>
+      <div class="p-window-title">M7Arc <span>— 7-Zip File Manager</span></div>
+      <span class="p-platform">macOS</span>
+    </header>
+    <nav class="p-menubar" id="p-menubar" aria-label="主菜单"></nav>
+    <div class="p-toolbar" aria-label="文件与归档操作">
+      <div id="p-toolbar-main" class="p-toolbar-main"></div>
+      <div class="p-toolbar-extra">
+        <button type="button" data-command="formats" class="p-format-entry"><i data-lucide="archive" class="p-chrome-icon" aria-hidden="true"></i><strong>格式与方法</strong><span id="p-format-summary">完整格式目录</span></button>
+        <button type="button" data-command="two-panels" id="p-dual-button" class="p-small-button" aria-pressed="false"><i data-lucide="columns-2" class="p-chrome-icon" aria-hidden="true"></i><span>双面板 · F9</span></button>
+      </div>
+    </div>
+    <div class="p-dialog-region" id="p-dialog-region" hidden>
+      <section class="p-dialog" role="dialog" aria-labelledby="p-dialog-title">
+        <header class="p-dialog-header"><h2 id="p-dialog-title"></h2><button type="button" id="p-dialog-close" aria-label="关闭对话框"><i data-lucide="x" class="p-chrome-icon" aria-hidden="true"></i></button></header>
+        <div id="p-dialog-body"></div>
+      </section>
+    </div>
+    <main class="p-panels" id="p-panels"></main>
+    <section class="p-progress-region" id="p-progress-region" hidden aria-label="模拟任务进度"></section>
+    <footer class="p-bottom"><span>交互原型 · 内置示例文件</span><span id="p-message" aria-live="polite">F9 双面板 · 空格预览 · F2 重命名</span></footer>
+  </div>
+</div>
+<script>
+window.M7ArcFormats = {
+  "version": "26.03",
+  "baseline": "Apple Silicon / Format7zF / 7zz",
+  "counts": {
+    "handlers": 61,
+    "archiveWrite": 7,
+    "hashWrite": 1,
+    "codecs": 25,
+    "hashers": 10
+  },
+  "formats": [
+    {
+      "id": "7z",
+      "name": "7z",
+      "extensions": [
+        "7z"
+      ],
+      "category": "归档与软件包",
+      "read": true,
+      "write": true,
+      "kind": "archive",
+      "note": "可创建、浏览、提取和更新；支持固实压缩与 AES-256 文件名加密。",
+      "source": "third_party/7zip/CPP/7zip/Archive/7z/7zRegister.cpp"
+    },
+    {
+      "id": "apfs",
+      "name": "APFS",
+      "extensions": [
+        "apfs",
+        "img"
+      ],
+      "category": "文件系统",
+      "read": true,
+      "write": false,
+      "kind": "filesystem",
+      "note": "读取 APFS 文件系统镜像；不能将本机 APFS 卷当作归档直接写入。",
+      "source": "third_party/7zip/CPP/7zip/Archive/ApfsHandler.cpp"
+    },
+    {
+      "id": "apm",
+      "name": "APM",
+      "extensions": [
+        "apm"
+      ],
+      "category": "磁盘与分区",
+      "read": true,
+      "write": false,
+      "kind": "partition",
+      "note": "读取 Apple Partition Map 分区表及分区内容。",
+      "source": "third_party/7zip/CPP/7zip/Archive/ApmHandler.cpp"
+    },
+    {
+      "id": "ar",
+      "name": "Ar",
+      "extensions": [
+        "ar",
+        "a",
+        "deb",
+        "udeb",
+        "lib"
+      ],
+      "category": "归档与软件包",
+      "read": true,
+      "write": false,
+      "kind": "archive",
+      "note": "读取 ar 静态库与 Debian 软件包容器。",
+      "source": "third_party/7zip/CPP/7zip/Archive/ArHandler.cpp"
+    },
+    {
+      "id": "arj",
+      "name": "Arj",
+      "extensions": [
+        "arj"
+      ],
+      "category": "归档与软件包",
+      "read": true,
+      "write": false,
+      "kind": "archive",
+      "note": "读取 ARJ 归档。",
+      "source": "third_party/7zip/CPP/7zip/Archive/ArjHandler.cpp"
+    },
+    {
+      "id": "base64",
+      "name": "Base64",
+      "extensions": [
+        "b64"
+      ],
+      "category": "压缩与编码流",
+      "read": true,
+      "write": false,
+      "kind": "stream",
+      "note": "解码 Base64 文本流；按扩展名或指定格式打开。",
+      "source": "third_party/7zip/CPP/7zip/Archive/Base64Handler.cpp"
+    },
+    {
+      "id": "coff",
+      "name": "COFF",
+      "extensions": [
+        "obj"
+      ],
+      "category": "可执行文件与固件",
+      "read": true,
+      "write": false,
+      "kind": "executable",
+      "note": "浏览、提取 COFF 目标文件内部内容。",
+      "source": "third_party/7zip/CPP/7zip/Archive/PeHandler.cpp"
+    },
+    {
+      "id": "cab",
+      "name": "Cab",
+      "extensions": [
+        "cab"
+      ],
+      "category": "归档与软件包",
+      "read": true,
+      "write": false,
+      "kind": "archive",
+      "note": "读取 Microsoft Cabinet，含分卷与多种内置解码方法。",
+      "source": "third_party/7zip/CPP/7zip/Archive/Cab/CabRegister.cpp"
+    },
+    {
+      "id": "chm",
+      "name": "Chm",
+      "extensions": [
+        "chm",
+        "chi",
+        "chq",
+        "chw"
+      ],
+      "category": "文档与媒体",
+      "read": true,
+      "write": false,
+      "kind": "document",
+      "note": "读取编译 HTML 帮助及关联容器。",
+      "source": "third_party/7zip/CPP/7zip/Archive/Chm/ChmHandler.cpp"
+    },
+    {
+      "id": "compound",
+      "name": "Compound",
+      "extensions": [
+        "msi",
+        "msp",
+        "msm",
+        "doc",
+        "xls",
+        "ppt",
+        "aaf"
+      ],
+      "category": "文档与媒体",
+      "read": true,
+      "write": false,
+      "kind": "document",
+      "note": "读取 OLE Compound 容器；文档后缀对应容器结构浏览。",
+      "source": "third_party/7zip/CPP/7zip/Archive/ComHandler.cpp"
+    },
+    {
+      "id": "cpio",
+      "name": "Cpio",
+      "extensions": [
+        "cpio"
+      ],
+      "category": "归档与软件包",
+      "read": true,
+      "write": false,
+      "kind": "archive",
+      "note": "读取 CPIO 多种头格式。",
+      "source": "third_party/7zip/CPP/7zip/Archive/CpioHandler.cpp"
+    },
+    {
+      "id": "cramfs",
+      "name": "CramFS",
+      "extensions": [
+        "cramfs"
+      ],
+      "category": "文件系统",
+      "read": true,
+      "write": false,
+      "kind": "filesystem",
+      "note": "读取 CramFS 只读文件系统镜像。",
+      "source": "third_party/7zip/CPP/7zip/Archive/CramfsHandler.cpp"
+    },
+    {
+      "id": "dmg",
+      "name": "Dmg",
+      "extensions": [
+        "dmg"
+      ],
+      "category": "磁盘与分区",
+      "read": true,
+      "write": false,
+      "kind": "image",
+      "note": "读取 Apple DMG 容器及内层镜像，支持情况由容器实际压缩方法决定。",
+      "source": "third_party/7zip/CPP/7zip/Archive/DmgHandler.cpp"
+    },
+    {
+      "id": "elf",
+      "name": "ELF",
+      "extensions": [
+        "elf"
+      ],
+      "category": "可执行文件与固件",
+      "read": true,
+      "write": false,
+      "kind": "executable",
+      "note": "浏览、提取 ELF 内部内容。",
+      "source": "third_party/7zip/CPP/7zip/Archive/ElfHandler.cpp"
+    },
+    {
+      "id": "ext",
+      "name": "Ext",
+      "extensions": [
+        "ext",
+        "ext2",
+        "ext3",
+        "ext4",
+        "img"
+      ],
+      "category": "文件系统",
+      "read": true,
+      "write": false,
+      "kind": "filesystem",
+      "note": "读取 Ext 系列文件系统镜像。",
+      "source": "third_party/7zip/CPP/7zip/Archive/ExtHandler.cpp"
+    },
+    {
+      "id": "fat",
+      "name": "FAT",
+      "extensions": [
+        "fat",
+        "img"
+      ],
+      "category": "文件系统",
+      "read": true,
+      "write": false,
+      "kind": "filesystem",
+      "note": "读取 FAT 文件系统镜像。",
+      "source": "third_party/7zip/CPP/7zip/Archive/FatHandler.cpp"
+    },
+    {
+      "id": "flv",
+      "name": "FLV",
+      "extensions": [
+        "flv"
+      ],
+      "category": "文档与媒体",
+      "read": true,
+      "write": false,
+      "kind": "media",
+      "note": "浏览、提取 Flash Video 内部流。",
+      "source": "third_party/7zip/CPP/7zip/Archive/FlvHandler.cpp"
+    },
+    {
+      "id": "gpt",
+      "name": "GPT",
+      "extensions": [
+        "gpt",
+        "mbr"
+      ],
+      "category": "磁盘与分区",
+      "read": true,
+      "write": false,
+      "kind": "partition",
+      "note": "读取 GUID Partition Table 及分区内容。",
+      "source": "third_party/7zip/CPP/7zip/Archive/GptHandler.cpp"
+    },
+    {
+      "id": "hfs",
+      "name": "HFS",
+      "extensions": [
+        "hfs",
+        "hfsx"
+      ],
+      "category": "文件系统",
+      "read": true,
+      "write": false,
+      "kind": "filesystem",
+      "note": "读取 HFS/HFS+ 系列文件系统镜像。",
+      "source": "third_party/7zip/CPP/7zip/Archive/HfsHandler.cpp"
+    },
+    {
+      "id": "hxs",
+      "name": "Hxs",
+      "extensions": [
+        "hxs",
+        "hxi",
+        "hxr",
+        "hxq",
+        "hxw",
+        "lit"
+      ],
+      "category": "文档与媒体",
+      "read": true,
+      "write": false,
+      "kind": "document",
+      "note": "读取 Microsoft Help 2 与相关容器。",
+      "source": "third_party/7zip/CPP/7zip/Archive/Chm/ChmHandler.cpp"
+    },
+    {
+      "id": "ihex",
+      "name": "IHex",
+      "extensions": [
+        "ihex"
+      ],
+      "category": "压缩与编码流",
+      "read": true,
+      "write": false,
+      "kind": "stream",
+      "note": "读取 Intel HEX 编码流。",
+      "source": "third_party/7zip/CPP/7zip/Archive/IhexHandler.cpp"
+    },
+    {
+      "id": "iso",
+      "name": "Iso",
+      "extensions": [
+        "iso",
+        "img"
+      ],
+      "category": "磁盘与分区",
+      "read": true,
+      "write": false,
+      "kind": "image",
+      "note": "读取 ISO 光盘镜像；同一扩展名也可能由 UDF 处理。",
+      "source": "third_party/7zip/CPP/7zip/Archive/Iso/IsoRegister.cpp"
+    },
+    {
+      "id": "lp",
+      "name": "LP",
+      "extensions": [
+        "lpimg",
+        "img"
+      ],
+      "category": "磁盘与分区",
+      "read": true,
+      "write": false,
+      "kind": "partition",
+      "note": "读取 Android Logical Partition 镜像。",
+      "source": "third_party/7zip/CPP/7zip/Archive/LpHandler.cpp"
+    },
+    {
+      "id": "lzh",
+      "name": "Lzh",
+      "extensions": [
+        "lzh",
+        "lha"
+      ],
+      "category": "归档与软件包",
+      "read": true,
+      "write": false,
+      "kind": "archive",
+      "note": "读取 LZH/LHA 归档。",
+      "source": "third_party/7zip/CPP/7zip/Archive/LzhHandler.cpp"
+    },
+    {
+      "id": "mbr",
+      "name": "MBR",
+      "extensions": [
+        "mbr"
+      ],
+      "category": "磁盘与分区",
+      "read": true,
+      "write": false,
+      "kind": "partition",
+      "note": "读取 Master Boot Record 分区表及分区内容。",
+      "source": "third_party/7zip/CPP/7zip/Archive/MbrHandler.cpp"
+    },
+    {
+      "id": "macho",
+      "name": "MachO",
+      "extensions": [
+        "macho"
+      ],
+      "category": "可执行文件与固件",
+      "read": true,
+      "write": false,
+      "kind": "executable",
+      "note": "浏览、提取 Mach-O 内部内容。",
+      "source": "third_party/7zip/CPP/7zip/Archive/MachoHandler.cpp"
+    },
+    {
+      "id": "mslz",
+      "name": "MsLZ",
+      "extensions": [
+        "mslz"
+      ],
+      "category": "压缩与编码流",
+      "read": true,
+      "write": false,
+      "kind": "stream",
+      "note": "读取 Microsoft SZDD 压缩流。",
+      "source": "third_party/7zip/CPP/7zip/Archive/MslzHandler.cpp"
+    },
+    {
+      "id": "mub",
+      "name": "Mub",
+      "extensions": [
+        "mub"
+      ],
+      "category": "可执行文件与固件",
+      "read": true,
+      "write": false,
+      "kind": "executable",
+      "note": "读取 Mach-O Universal Binary 容器与架构切片。",
+      "source": "third_party/7zip/CPP/7zip/Archive/MubHandler.cpp"
+    },
+    {
+      "id": "ntfs",
+      "name": "NTFS",
+      "extensions": [
+        "ntfs",
+        "img"
+      ],
+      "category": "文件系统",
+      "read": true,
+      "write": false,
+      "kind": "filesystem",
+      "note": "读取 NTFS 文件系统镜像及其元数据。",
+      "source": "third_party/7zip/CPP/7zip/Archive/NtfsHandler.cpp"
+    },
+    {
+      "id": "nsis",
+      "name": "Nsis",
+      "extensions": [
+        "nsis"
+      ],
+      "category": "可执行文件与固件",
+      "read": true,
+      "write": false,
+      "kind": "executable",
+      "note": "读取 NSIS 安装包；可在 EXE 中定位嵌入容器。",
+      "source": "third_party/7zip/CPP/7zip/Archive/Nsis/NsisRegister.cpp"
+    },
+    {
+      "id": "pe",
+      "name": "PE",
+      "extensions": [
+        "exe",
+        "dll",
+        "sys"
+      ],
+      "category": "可执行文件与固件",
+      "read": true,
+      "write": false,
+      "kind": "executable",
+      "note": "浏览、提取 PE 内部内容；可进一步打开嵌入归档。",
+      "source": "third_party/7zip/CPP/7zip/Archive/PeHandler.cpp"
+    },
+    {
+      "id": "ppmd",
+      "name": "Ppmd",
+      "extensions": [
+        "pmd"
+      ],
+      "category": "压缩与编码流",
+      "read": true,
+      "write": false,
+      "kind": "stream",
+      "note": "读取独立 PPMd 流；7z 内 PPMd 编码能力不意味着可创建 .pmd 文件。",
+      "source": "third_party/7zip/CPP/7zip/Archive/PpmdHandler.cpp"
+    },
+    {
+      "id": "qcow",
+      "name": "QCOW",
+      "extensions": [
+        "qcow",
+        "qcow2",
+        "qcow2c"
+      ],
+      "category": "磁盘与分区",
+      "read": true,
+      "write": false,
+      "kind": "image",
+      "note": "读取 QCOW 系列虚拟磁盘镜像。",
+      "source": "third_party/7zip/CPP/7zip/Archive/QcowHandler.cpp"
+    },
+    {
+      "id": "rar",
+      "name": "Rar",
+      "extensions": [
+        "rar",
+        "r00"
+      ],
+      "category": "归档与软件包",
+      "read": true,
+      "write": false,
+      "kind": "archive",
+      "note": "读取旧版 RAR 与分卷；不提供 RAR 编码器。",
+      "source": "third_party/7zip/CPP/7zip/Archive/Rar/RarHandler.cpp"
+    },
+    {
+      "id": "rar5",
+      "name": "Rar5",
+      "extensions": [
+        "rar",
+        "r00"
+      ],
+      "category": "归档与软件包",
+      "read": true,
+      "write": false,
+      "kind": "archive",
+      "note": "读取 RAR5 与分卷；按签名和内容区分 Rar/Rar5。",
+      "source": "third_party/7zip/CPP/7zip/Archive/Rar/Rar5Handler.cpp"
+    },
+    {
+      "id": "rpm",
+      "name": "Rpm",
+      "extensions": [
+        "rpm"
+      ],
+      "category": "归档与软件包",
+      "read": true,
+      "write": false,
+      "kind": "archive",
+      "note": "读取 RPM 软件包外层并进入内层压缩流和 CPIO。",
+      "source": "third_party/7zip/CPP/7zip/Archive/RpmHandler.cpp"
+    },
+    {
+      "id": "swf",
+      "name": "SWF",
+      "extensions": [
+        "swf"
+      ],
+      "category": "文档与媒体",
+      "read": true,
+      "write": false,
+      "kind": "media",
+      "note": "读取未压缩 Flash SWF 内容。",
+      "source": "third_party/7zip/CPP/7zip/Archive/SwfHandler.cpp"
+    },
+    {
+      "id": "swfc",
+      "name": "SWFc",
+      "extensions": [
+        "swf"
+      ],
+      "category": "文档与媒体",
+      "read": true,
+      "write": false,
+      "kind": "media",
+      "note": "读取压缩 Flash SWF；与 SWF 共享后缀而使用不同 handler。",
+      "source": "third_party/7zip/CPP/7zip/Archive/SwfHandler.cpp"
+    },
+    {
+      "id": "sparse",
+      "name": "Sparse",
+      "extensions": [
+        "simg",
+        "img"
+      ],
+      "category": "磁盘与分区",
+      "read": true,
+      "write": false,
+      "kind": "image",
+      "note": "读取 Android sparse 镜像并提供展开后的虚拟流。",
+      "source": "third_party/7zip/CPP/7zip/Archive/SparseHandler.cpp"
+    },
+    {
+      "id": "split",
+      "name": "Split",
+      "extensions": [
+        "001"
+      ],
+      "category": "分卷",
+      "read": true,
+      "write": false,
+      "kind": "split",
+      "note": "读取 .001 起始的原始分割文件组；分割/合并是文件操作。",
+      "source": "third_party/7zip/CPP/7zip/Archive/SplitHandler.cpp"
+    },
+    {
+      "id": "squashfs",
+      "name": "SquashFS",
+      "extensions": [
+        "squashfs"
+      ],
+      "category": "文件系统",
+      "read": true,
+      "write": false,
+      "kind": "filesystem",
+      "note": "读取 SquashFS 文件系统镜像。",
+      "source": "third_party/7zip/CPP/7zip/Archive/SquashfsHandler.cpp"
+    },
+    {
+      "id": "te",
+      "name": "TE",
+      "extensions": [
+        "te"
+      ],
+      "category": "可执行文件与固件",
+      "read": true,
+      "write": false,
+      "kind": "executable",
+      "note": "浏览、提取 Terse Executable 内部内容。",
+      "source": "third_party/7zip/CPP/7zip/Archive/PeHandler.cpp"
+    },
+    {
+      "id": "uefic",
+      "name": "UEFIc",
+      "extensions": [
+        "scap"
+      ],
+      "category": "可执行文件与固件",
+      "read": true,
+      "write": false,
+      "kind": "firmware",
+      "note": "读取 UEFI Capsule 容器。",
+      "source": "third_party/7zip/CPP/7zip/Archive/UefiHandler.cpp"
+    },
+    {
+      "id": "uefif",
+      "name": "UEFIf",
+      "extensions": [
+        "uefif"
+      ],
+      "category": "可执行文件与固件",
+      "read": true,
+      "write": false,
+      "kind": "firmware",
+      "note": "读取 UEFI Firmware Volume。",
+      "source": "third_party/7zip/CPP/7zip/Archive/UefiHandler.cpp"
+    },
+    {
+      "id": "udf",
+      "name": "Udf",
+      "extensions": [
+        "udf",
+        "iso",
+        "img"
+      ],
+      "category": "磁盘与分区",
+      "read": true,
+      "write": false,
+      "kind": "image",
+      "note": "读取 UDF 光盘文件系统镜像。",
+      "source": "third_party/7zip/CPP/7zip/Archive/Udf/UdfHandler.cpp"
+    },
+    {
+      "id": "vdi",
+      "name": "VDI",
+      "extensions": [
+        "vdi"
+      ],
+      "category": "磁盘与分区",
+      "read": true,
+      "write": false,
+      "kind": "image",
+      "note": "读取 VirtualBox 虚拟磁盘容器。",
+      "source": "third_party/7zip/CPP/7zip/Archive/VdiHandler.cpp"
+    },
+    {
+      "id": "vhd",
+      "name": "VHD",
+      "extensions": [
+        "vhd"
+      ],
+      "category": "磁盘与分区",
+      "read": true,
+      "write": false,
+      "kind": "image",
+      "note": "读取 VHD 虚拟磁盘容器。",
+      "source": "third_party/7zip/CPP/7zip/Archive/VhdHandler.cpp"
+    },
+    {
+      "id": "vhdx",
+      "name": "VHDX",
+      "extensions": [
+        "vhdx",
+        "avhdx"
+      ],
+      "category": "磁盘与分区",
+      "read": true,
+      "write": false,
+      "kind": "image",
+      "note": "读取 VHDX 系列虚拟磁盘容器。",
+      "source": "third_party/7zip/CPP/7zip/Archive/VhdxHandler.cpp"
+    },
+    {
+      "id": "vmdk",
+      "name": "VMDK",
+      "extensions": [
+        "vmdk"
+      ],
+      "category": "磁盘与分区",
+      "read": true,
+      "write": false,
+      "kind": "image",
+      "note": "读取 VMDK 虚拟磁盘容器。",
+      "source": "third_party/7zip/CPP/7zip/Archive/VmdkHandler.cpp"
+    },
+    {
+      "id": "xar",
+      "name": "Xar",
+      "extensions": [
+        "xar",
+        "pkg",
+        "xip"
+      ],
+      "category": "归档与软件包",
+      "read": true,
+      "write": false,
+      "kind": "archive",
+      "note": "读取 XAR 容器；PKG/XIP 为扩展别名，内部条目另按实际编码解析。",
+      "source": "third_party/7zip/CPP/7zip/Archive/XarHandler.cpp"
+    },
+    {
+      "id": "z",
+      "name": "Z",
+      "extensions": [
+        "z",
+        "taz"
+      ],
+      "category": "压缩与编码流",
+      "read": true,
+      "write": false,
+      "kind": "stream",
+      "note": "读取 Unix compress 流；.taz 解码后的建议后缀为 .tar。",
+      "source": "third_party/7zip/CPP/7zip/Archive/ZHandler.cpp"
+    },
+    {
+      "id": "bzip2",
+      "name": "bzip2",
+      "extensions": [
+        "bz2",
+        "bzip2",
+        "tbz2",
+        "tbz"
+      ],
+      "category": "压缩与编码流",
+      "read": true,
+      "write": true,
+      "kind": "stream",
+      "note": "可创建单一 BZip2 流；多个文件先组成 TAR。",
+      "source": "third_party/7zip/CPP/7zip/Archive/Bz2Handler.cpp"
+    },
+    {
+      "id": "gzip",
+      "name": "gzip",
+      "extensions": [
+        "gz",
+        "gzip",
+        "tgz",
+        "tpz",
+        "apk"
+      ],
+      "category": "压缩与编码流",
+      "read": true,
+      "write": true,
+      "kind": "stream",
+      "note": "可创建单一 GZip 流；.tgz/.tpz 等别名含内层 .tar 提示；.apk 后缀也被 ZIP 使用。",
+      "source": "third_party/7zip/CPP/7zip/Archive/GzHandler.cpp"
+    },
+    {
+      "id": "lzma",
+      "name": "lzma",
+      "extensions": [
+        "lzma"
+      ],
+      "category": "压缩与编码流",
+      "read": true,
+      "write": false,
+      "kind": "stream",
+      "note": "读取独立 .lzma 流；默认完整 7zz 无此格式写入 handler。",
+      "source": "third_party/7zip/CPP/7zip/Archive/LzmaHandler.cpp"
+    },
+    {
+      "id": "lzma86",
+      "name": "lzma86",
+      "extensions": [
+        "lzma86"
+      ],
+      "category": "压缩与编码流",
+      "read": true,
+      "write": false,
+      "kind": "stream",
+      "note": "读取带 x86 分支转换信息的 LZMA86 流。",
+      "source": "third_party/7zip/CPP/7zip/Archive/LzmaHandler.cpp"
+    },
+    {
+      "id": "tar",
+      "name": "tar",
+      "extensions": [
+        "tar",
+        "ova"
+      ],
+      "category": "归档与软件包",
+      "read": true,
+      "write": true,
+      "kind": "archive",
+      "note": "可创建和更新 TAR，GNU/POSIX 是头格式选择；自身不压缩。",
+      "source": "third_party/7zip/CPP/7zip/Archive/Tar/TarRegister.cpp"
+    },
+    {
+      "id": "wim",
+      "name": "wim",
+      "extensions": [
+        "wim",
+        "swm",
+        "esd",
+        "ppkg"
+      ],
+      "category": "磁盘与分区",
+      "read": true,
+      "write": true,
+      "kind": "image",
+      "note": "新建仅 Store；可读取压缩 WIM/ESD，更新须符合具体镜像条件。",
+      "source": "third_party/7zip/CPP/7zip/Archive/Wim/WimRegister.cpp"
+    },
+    {
+      "id": "xz",
+      "name": "xz",
+      "extensions": [
+        "xz",
+        "txz"
+      ],
+      "category": "压缩与编码流",
+      "read": true,
+      "write": true,
+      "kind": "stream",
+      "note": "可创建单一 XZ 流，使用 LZMA2；多个文件先组成 TAR。",
+      "source": "third_party/7zip/CPP/7zip/Archive/XzHandler.cpp"
+    },
+    {
+      "id": "zip",
+      "name": "zip",
+      "extensions": [
+        "zip",
+        "z01",
+        "zipx",
+        "jar",
+        "xpi",
+        "odt",
+        "ods",
+        "docx",
+        "xlsx",
+        "epub",
+        "ipa",
+        "apk",
+        "appx"
+      ],
+      "category": "归档与软件包",
+      "read": true,
+      "write": true,
+      "kind": "archive",
+      "note": "可创建与更新 ZIP；别名并非独立创建格式，签名 APK、分卷及带嵌入 stub 等实例可能只读。",
+      "source": "third_party/7zip/CPP/7zip/Archive/Zip/ZipRegister.cpp"
+    },
+    {
+      "id": "zstd",
+      "name": "zstd",
+      "extensions": [
+        "zst",
+        "tzst"
+      ],
+      "category": "压缩与编码流",
+      "read": true,
+      "write": false,
+      "kind": "stream",
+      "note": "默认 26.03 基线只读；.tzst 的内层建议后缀为 .tar。",
+      "source": "third_party/7zip/CPP/7zip/Archive/ZstdHandler.cpp"
+    },
+    {
+      "id": "hash",
+      "name": "Hash",
+      "extensions": [
+        "sha256",
+        "sha512",
+        "sha384",
+        "sha224",
+        "sha512-224",
+        "sha512-256",
+        "sha3-224",
+        "sha3-256",
+        "sha3-384",
+        "sha3-512",
+        "sha1",
+        "sha2",
+        "sha3",
+        "sha",
+        "md5",
+        "blake2s",
+        "blake2b",
+        "blake2sp",
+        "xxh64",
+        "crc32",
+        "crc64",
+        "cksum",
+        "asc"
+      ],
+      "category": "校验摘要",
+      "read": true,
+      "write": true,
+      "kind": "hash",
+      "note": "读取、生成和验证摘要清单；可计算算法取当前 10 个 hasher，后缀识别范围更广；不是承载文件内容的归档。",
+      "source": "third_party/7zip/CPP/7zip/UI/Common/HashCalc.cpp"
+    }
+  ],
+  "createFormats": [
+    {
+      "id": "7z",
+      "label": "7z",
+      "extension": "7z",
+      "methods": [
+        "LZMA2",
+        "LZMA",
+        "PPMd",
+        "BZip2",
+        "Deflate",
+        "Deflate64",
+        "Copy"
+      ],
+      "guiMethods": [
+        "LZMA2",
+        "LZMA",
+        "PPMd",
+        "BZip2"
+      ],
+      "advancedMethods": [
+        "Deflate",
+        "Deflate64"
+      ],
+      "levels": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "defaultLevel": 5,
+      "encryption": [
+        "AES-256"
+      ],
+      "headerEncryption": true,
+      "solid": true,
+      "singleStream": false,
+      "multithread": true,
+      "filters": true,
+      "note": "0 级为 Store；普通算法列表保留 Windows 原项，高级方法开放引擎支持的 Deflate/Deflate64。"
+    },
+    {
+      "id": "zip",
+      "label": "ZIP",
+      "extension": "zip",
+      "methods": [
+        "Deflate",
+        "Deflate64",
+        "BZip2",
+        "LZMA",
+        "PPMd",
+        "Copy"
+      ],
+      "guiMethods": [
+        "Deflate",
+        "Deflate64",
+        "BZip2",
+        "LZMA",
+        "PPMd"
+      ],
+      "advancedMethods": [],
+      "levels": [
+        0,
+        1,
+        3,
+        5,
+        7,
+        9
+      ],
+      "defaultLevel": 5,
+      "encryption": [
+        "ZipCrypto",
+        "AES-256"
+      ],
+      "headerEncryption": false,
+      "solid": false,
+      "singleStream": false,
+      "multithread": true,
+      "filters": false,
+      "note": "0 级为 Store；ZIP 文件名不加密；归档已有内容能否修改由实际打开状态决定。"
+    },
+    {
+      "id": "gzip",
+      "label": "GZip",
+      "extension": "gz",
+      "methods": [
+        "Deflate"
+      ],
+      "guiMethods": [
+        "Deflate"
+      ],
+      "advancedMethods": [],
+      "levels": [
+        1,
+        5,
+        7,
+        9
+      ],
+      "defaultLevel": 5,
+      "encryption": [],
+      "headerEncryption": false,
+      "solid": false,
+      "singleStream": true,
+      "multithread": false,
+      "filters": false,
+      "note": "仅压缩一个文件流。选中目录或多个文件时使用 TAR + GZip 组合。"
+    },
+    {
+      "id": "bzip2",
+      "label": "BZip2",
+      "extension": "bz2",
+      "methods": [
+        "BZip2"
+      ],
+      "guiMethods": [
+        "BZip2"
+      ],
+      "advancedMethods": [],
+      "levels": [
+        1,
+        3,
+        5,
+        7,
+        9
+      ],
+      "defaultLevel": 5,
+      "encryption": [],
+      "headerEncryption": false,
+      "solid": false,
+      "singleStream": true,
+      "multithread": true,
+      "filters": false,
+      "note": "仅压缩一个文件流。选中目录或多个文件时使用 TAR + BZip2 组合。"
+    },
+    {
+      "id": "xz",
+      "label": "XZ",
+      "extension": "xz",
+      "methods": [
+        "LZMA2"
+      ],
+      "guiMethods": [
+        "LZMA2"
+      ],
+      "advancedMethods": [],
+      "levels": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "defaultLevel": 5,
+      "encryption": [],
+      "headerEncryption": false,
+      "solid": true,
+      "singleStream": true,
+      "multithread": true,
+      "filters": true,
+      "note": "仅一个文件流；固实块控件在 XZ 中表示流内块大小。多个文件使用 TAR + XZ 组合。"
+    },
+    {
+      "id": "tar",
+      "label": "TAR",
+      "extension": "tar",
+      "methods": [
+        "GNU",
+        "POSIX"
+      ],
+      "guiMethods": [
+        "GNU",
+        "POSIX"
+      ],
+      "advancedMethods": [],
+      "levels": [
+        0
+      ],
+      "defaultLevel": 0,
+      "encryption": [],
+      "headerEncryption": false,
+      "solid": false,
+      "singleStream": false,
+      "multithread": false,
+      "filters": false,
+      "note": "GNU/POSIX 选择 TAR 头格式；TAR 本身仅存储，不压缩。"
+    },
+    {
+      "id": "wim",
+      "label": "WIM",
+      "extension": "wim",
+      "methods": [
+        "Copy"
+      ],
+      "guiMethods": [
+        "Copy"
+      ],
+      "advancedMethods": [],
+      "levels": [
+        0
+      ],
+      "defaultLevel": 0,
+      "encryption": [],
+      "headerEncryption": false,
+      "solid": false,
+      "singleStream": false,
+      "multithread": false,
+      "filters": false,
+      "note": "官方编码端新建仅 Store；读取支持压缩镜像。固实 ESD/WIM 等实例不开放更新。"
+    }
+  ],
+  "presets": [
+    {
+      "id": "tar.gz",
+      "label": "TAR + GZip",
+      "extension": "tar.gz",
+      "pipeline": [
+        "tar",
+        "gzip"
+      ],
+      "kind": "preset",
+      "singleStream": false,
+      "note": "先创建 TAR，再将整个 TAR 编码为 GZip；对应 .tgz 别名。"
+    },
+    {
+      "id": "tar.bz2",
+      "label": "TAR + BZip2",
+      "extension": "tar.bz2",
+      "pipeline": [
+        "tar",
+        "bzip2"
+      ],
+      "kind": "preset",
+      "singleStream": false,
+      "note": "先创建 TAR，再将整个 TAR 编码为 BZip2；对应 .tbz/.tbz2 别名。"
+    },
+    {
+      "id": "tar.xz",
+      "label": "TAR + XZ",
+      "extension": "tar.xz",
+      "pipeline": [
+        "tar",
+        "xz"
+      ],
+      "kind": "preset",
+      "singleStream": false,
+      "note": "先创建 TAR，再将整个 TAR 编码为 XZ；对应 .txz 别名。"
+    }
+  ],
+  "hashers": [
+    {
+      "id": "CRC32",
+      "name": "CRC32",
+      "bytes": 4,
+      "bits": 32,
+      "methodId": "1"
+    },
+    {
+      "id": "MD5",
+      "name": "MD5",
+      "bytes": 16,
+      "bits": 128,
+      "methodId": "208"
+    },
+    {
+      "id": "SHA1",
+      "name": "SHA1",
+      "bytes": 20,
+      "bits": 160,
+      "methodId": "201"
+    },
+    {
+      "id": "SHA256",
+      "name": "SHA256",
+      "bytes": 32,
+      "bits": 256,
+      "methodId": "A"
+    },
+    {
+      "id": "SHA3-256",
+      "name": "SHA3-256",
+      "bytes": 32,
+      "bits": 256,
+      "methodId": "231"
+    },
+    {
+      "id": "SHA384",
+      "name": "SHA384",
+      "bytes": 48,
+      "bits": 384,
+      "methodId": "222"
+    },
+    {
+      "id": "SHA512",
+      "name": "SHA512",
+      "bytes": 64,
+      "bits": 512,
+      "methodId": "223"
+    },
+    {
+      "id": "XXH64",
+      "name": "XXH64",
+      "bytes": 8,
+      "bits": 64,
+      "methodId": "211"
+    },
+    {
+      "id": "CRC64",
+      "name": "CRC64",
+      "bytes": 8,
+      "bits": 64,
+      "methodId": "4"
+    },
+    {
+      "id": "BLAKE2sp",
+      "name": "BLAKE2sp",
+      "bytes": 32,
+      "bits": 256,
+      "methodId": "202"
+    }
+  ],
+  "codecs": [
+    {
+      "id": "303011B",
+      "name": "BCJ2",
+      "kind": "filter",
+      "encode": true,
+      "decode": true
+    },
+    {
+      "id": "3030103",
+      "name": "BCJ",
+      "kind": "filter",
+      "encode": true,
+      "decode": true
+    },
+    {
+      "id": "3030205",
+      "name": "PPC",
+      "kind": "filter",
+      "encode": true,
+      "decode": true
+    },
+    {
+      "id": "3030401",
+      "name": "IA64",
+      "kind": "filter",
+      "encode": true,
+      "decode": true
+    },
+    {
+      "id": "3030501",
+      "name": "ARM",
+      "kind": "filter",
+      "encode": true,
+      "decode": true
+    },
+    {
+      "id": "3030701",
+      "name": "ARMT",
+      "kind": "filter",
+      "encode": true,
+      "decode": true
+    },
+    {
+      "id": "3030805",
+      "name": "SPARC",
+      "kind": "filter",
+      "encode": true,
+      "decode": true
+    },
+    {
+      "id": "A",
+      "name": "ARM64",
+      "kind": "filter",
+      "encode": true,
+      "decode": true
+    },
+    {
+      "id": "B",
+      "name": "RISCV",
+      "kind": "filter",
+      "encode": true,
+      "decode": true
+    },
+    {
+      "id": "20302",
+      "name": "Swap2",
+      "kind": "filter",
+      "encode": true,
+      "decode": true
+    },
+    {
+      "id": "20304",
+      "name": "Swap4",
+      "kind": "filter",
+      "encode": true,
+      "decode": true
+    },
+    {
+      "id": "40202",
+      "name": "BZip2",
+      "kind": "compression",
+      "encode": true,
+      "decode": true
+    },
+    {
+      "id": "0",
+      "name": "Copy",
+      "kind": "store",
+      "encode": true,
+      "decode": true
+    },
+    {
+      "id": "40109",
+      "name": "Deflate64",
+      "kind": "compression",
+      "encode": true,
+      "decode": true
+    },
+    {
+      "id": "40108",
+      "name": "Deflate",
+      "kind": "compression",
+      "encode": true,
+      "decode": true
+    },
+    {
+      "id": "3",
+      "name": "Delta",
+      "kind": "filter",
+      "encode": true,
+      "decode": true
+    },
+    {
+      "id": "21",
+      "name": "LZMA2",
+      "kind": "compression",
+      "encode": true,
+      "decode": true
+    },
+    {
+      "id": "30101",
+      "name": "LZMA",
+      "kind": "compression",
+      "encode": true,
+      "decode": true
+    },
+    {
+      "id": "30401",
+      "name": "PPMD",
+      "kind": "compression",
+      "encode": true,
+      "decode": true
+    },
+    {
+      "id": "40301",
+      "name": "Rar1",
+      "kind": "compression",
+      "encode": false,
+      "decode": true
+    },
+    {
+      "id": "40302",
+      "name": "Rar2",
+      "kind": "compression",
+      "encode": false,
+      "decode": true
+    },
+    {
+      "id": "40303",
+      "name": "Rar3",
+      "kind": "compression",
+      "encode": false,
+      "decode": true
+    },
+    {
+      "id": "40305",
+      "name": "Rar5",
+      "kind": "compression",
+      "encode": false,
+      "decode": true
+    },
+    {
+      "id": "6F10701",
+      "name": "7zAES",
+      "kind": "encryption",
+      "encode": true,
+      "decode": true
+    },
+    {
+      "id": "6F00181",
+      "name": "AES256CBC",
+      "kind": "encryption",
+      "encode": true,
+      "decode": true
+    }
+  ],
+  "methodDetails": {
+    "LZMA2": {
+      "kind": "compression",
+      "dictionaryLabel": "字典大小",
+      "dictionaries": [
+        "自动",
+        "64 KiB",
+        "256 KiB",
+        "1 MiB",
+        "2 MiB",
+        "3 MiB",
+        "4 MiB",
+        "6 MiB",
+        "8 MiB",
+        "12 MiB",
+        "16 MiB",
+        "24 MiB",
+        "32 MiB",
+        "48 MiB",
+        "64 MiB",
+        "96 MiB",
+        "128 MiB",
+        "192 MiB",
+        "256 MiB",
+        "384 MiB",
+        "512 MiB",
+        "768 MiB",
+        "1 GiB",
+        "1.5 GiB",
+        "2 GiB",
+        "3 GiB",
+        "3.75 GiB"
+      ],
+      "wordSizeLabel": "单词大小",
+      "wordSizes": [
+        8,
+        12,
+        16,
+        24,
+        32,
+        48,
+        64,
+        96,
+        128,
+        192,
+        256,
+        273
+      ],
+      "parameters": [
+        "d",
+        "fb",
+        "mf",
+        "mc",
+        "lc",
+        "lp",
+        "pb",
+        "a",
+        "mt",
+        "c",
+        "zhb"
+      ],
+      "note": "LZMA2 支持分块和多线程。字典、线程与块大小共同影响内存需求；字典上限按当前平台处理。"
+    },
+    "LZMA": {
+      "kind": "compression",
+      "dictionaryLabel": "字典大小",
+      "dictionaries": [
+        "自动",
+        "64 KiB",
+        "256 KiB",
+        "1 MiB",
+        "2 MiB",
+        "3 MiB",
+        "4 MiB",
+        "6 MiB",
+        "8 MiB",
+        "12 MiB",
+        "16 MiB",
+        "24 MiB",
+        "32 MiB",
+        "48 MiB",
+        "64 MiB",
+        "96 MiB",
+        "128 MiB",
+        "192 MiB",
+        "256 MiB",
+        "384 MiB",
+        "512 MiB",
+        "768 MiB",
+        "1 GiB",
+        "1.5 GiB",
+        "2 GiB",
+        "3 GiB",
+        "3.75 GiB"
+      ],
+      "wordSizeLabel": "单词大小",
+      "wordSizes": [
+        8,
+        12,
+        16,
+        24,
+        32,
+        48,
+        64,
+        96,
+        128,
+        192,
+        256,
+        273
+      ],
+      "parameters": [
+        "d",
+        "fb",
+        "mf",
+        "mc",
+        "lc",
+        "lp",
+        "pb",
+        "a",
+        "mt",
+        "eos",
+        "zhb"
+      ],
+      "note": "归档使用的 LZMA 编码器；独立 .lzma handler 的写入能力另行判定。"
+    },
+    "PPMd": {
+      "kind": "compression",
+      "dictionaryLabel": "内存大小",
+      "dictionaries": [
+        "自动",
+        "1 MiB",
+        "2 MiB",
+        "3 MiB",
+        "4 MiB",
+        "6 MiB",
+        "8 MiB",
+        "12 MiB",
+        "16 MiB",
+        "24 MiB",
+        "32 MiB",
+        "48 MiB",
+        "64 MiB",
+        "96 MiB",
+        "128 MiB",
+        "192 MiB",
+        "256 MiB",
+        "384 MiB",
+        "512 MiB",
+        "768 MiB",
+        "1 GiB"
+      ],
+      "wordSizeLabel": "模型阶数",
+      "wordSizes": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        10,
+        12,
+        14,
+        16,
+        20,
+        24,
+        28,
+        32
+      ],
+      "zipWordSizes": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16
+      ],
+      "parameters": [
+        "mem",
+        "o"
+      ],
+      "note": "7z 使用 PPMd7，ZIP 使用 PPMd8；64 位 Windows GUI 中 7z 内存选项至 1 GiB，ZIP 至 256 MiB；模型阶数分别为 2–32 和 2–16。",
+      "zipDictionaries": [
+        "自动",
+        "1 MiB",
+        "2 MiB",
+        "4 MiB",
+        "8 MiB",
+        "16 MiB",
+        "32 MiB",
+        "64 MiB",
+        "128 MiB",
+        "256 MiB"
+      ]
+    },
+    "BZip2": {
+      "kind": "compression",
+      "dictionaryLabel": "块大小",
+      "dictionaries": [
+        "自动",
+        "100 KiB",
+        "200 KiB",
+        "300 KiB",
+        "400 KiB",
+        "500 KiB",
+        "600 KiB",
+        "700 KiB",
+        "800 KiB",
+        "900 KiB"
+      ],
+      "wordSizeLabel": "",
+      "wordSizes": [],
+      "parameters": [
+        "d",
+        "pass",
+        "mt"
+      ],
+      "note": "Windows 控件以 KiB 显示，编码器按 100000 字节块单位归一化。"
+    },
+    "Deflate": {
+      "kind": "compression",
+      "dictionaryLabel": "字典大小",
+      "dictionaries": [
+        "32 KiB"
+      ],
+      "wordSizeLabel": "单词大小",
+      "wordSizes": [
+        8,
+        12,
+        16,
+        24,
+        32,
+        48,
+        64,
+        96,
+        128,
+        192,
+        256,
+        258
+      ],
+      "parameters": [
+        "fb",
+        "pass",
+        "mc",
+        "a"
+      ],
+      "note": "字典固定为 32 KiB。"
+    },
+    "Deflate64": {
+      "kind": "compression",
+      "dictionaryLabel": "字典大小",
+      "dictionaries": [
+        "64 KiB"
+      ],
+      "wordSizeLabel": "单词大小",
+      "wordSizes": [
+        8,
+        12,
+        16,
+        24,
+        32,
+        48,
+        64,
+        96,
+        128,
+        192,
+        256,
+        257
+      ],
+      "parameters": [
+        "fb",
+        "pass",
+        "mc",
+        "a"
+      ],
+      "note": "字典固定为 64 KiB。"
+    },
+    "Copy": {
+      "kind": "store",
+      "dictionaryLabel": "",
+      "dictionaries": [],
+      "wordSizeLabel": "",
+      "wordSizes": [],
+      "parameters": [],
+      "note": "Store：不执行数据压缩。"
+    },
+    "GNU": {
+      "kind": "header",
+      "dictionaryLabel": "",
+      "dictionaries": [],
+      "wordSizeLabel": "",
+      "wordSizes": [],
+      "parameters": [],
+      "note": "TAR GNU 头格式。"
+    },
+    "POSIX": {
+      "kind": "header",
+      "dictionaryLabel": "",
+      "dictionaries": [],
+      "wordSizeLabel": "",
+      "wordSizes": [],
+      "parameters": [],
+      "note": "TAR POSIX/PAX 头格式。"
+    }
+  },
+  "filters": {
+    "7z": [
+      "自动",
+      "关闭",
+      "BCJ",
+      "BCJ2",
+      "PPC",
+      "IA64",
+      "ARM",
+      "ARMT",
+      "SPARC",
+      "ARM64",
+      "RISCV",
+      "Delta",
+      "Swap2",
+      "Swap4"
+    ],
+    "xz": [
+      "关闭",
+      "Delta",
+      "BCJ",
+      "PPC",
+      "IA64",
+      "ARM",
+      "ARMT",
+      "SPARC",
+      "ARM64",
+      "RISCV"
+    ]
+  },
+  "hashFileMethods": [
+    "SHA256",
+    "SHA1"
+  ],
+  "extensionMappings": {
+    "bzip2": {
+      "tbz2": "tar",
+      "tbz": "tar"
+    },
+    "gzip": {
+      "tgz": "tar",
+      "tpz": "tar",
+      "apk": "tar"
+    },
+    "xz": {
+      "txz": "tar"
+    },
+    "zstd": {
+      "tzst": "tar"
+    },
+    "z": {
+      "taz": "tar"
+    }
+  },
+  "sources": [
+    "docs/evidence/7zz-info.txt",
+    "third_party/7zip/CPP/7zip/Bundles/Format7zF/Arc_gcc.mak",
+    "third_party/7zip/CPP/7zip/UI/Common/LoadCodecs.cpp",
+    "third_party/7zip/CPP/7zip/UI/GUI/CompressDialog.cpp",
+    "third_party/7zip/CPP/7zip/UI/GUI/UpdateGUI.cpp"
+  ]
+};
+
+</script>
+<script>
+(function () {
+  const separator = () => ({ separator: true });
+  const item = (id, label, shortcut, extra = {}) => ({ id, label, ...(shortcut ? { shortcut } : {}), ...extra });
+  const hashes = [
+    item('crc32', 'CRC-32'), item('crc64', 'CRC-64'), item('xxh64', 'XXH64'),
+    item('md5', 'MD5'), item('sha1', 'SHA-1'), item('sha256', 'SHA-256'),
+    item('sha384', 'SHA-384'), item('sha512', 'SHA-512'), item('sha3-256', 'SHA3-256'),
+    item('blake2sp', 'BLAKE2sp'), item('hash-all', '* — 全部算法')
+  ];
+  const shellItems = [
+    item('open', '打开压缩包'),
+    item('open-as', '按格式打开', null, { items: [
+      item('open-inside-one', '* — 单层归档'), item('open-inside-parser', '# — 解析容器'),
+      item('open-inside-parser-exact', '#:e — 精确解析'),
+      item('open-as-7z', '7z'), item('open-as-zip', 'zip'), item('open-as-cab', 'cab'), item('open-as-rar', 'rar')
+    ] }),
+    separator(), item('extract', '提取文件…'), item('extract-here', '提取到当前位置'),
+    item('extract-folder', '提取到“归档名称/”'), item('test', '测试压缩包'),
+    separator(), item('add', '添加到压缩包…'), item('compress-email', '压缩并通过电子邮件发送…'),
+    item('compress-7z', '添加到“归档名称.7z”'), item('compress-7z-email', '压缩到 .7z 并通过电子邮件发送'),
+    item('compress-zip', '添加到“归档名称.zip”'), item('compress-zip-email', '压缩到 .zip 并通过电子邮件发送')
+  ];
+  const bookmarks = Array.from({ length: 10 }, (_, i) => item('favorite-' + i, '书签 ' + i, '⌥' + i));
+  const setBookmarks = Array.from({ length: 10 }, (_, i) => item('favorite-set-' + i, '书签 ' + i, '⌥⇧' + i));
+  window.M7ArcCommands = {
+    menus: [
+      { label: '文件', items: [
+        item('sevenzip-menu', '7-Zip', null, { dynamic: 'filesystem', items: shellItems }),
+        item('shell-hash-menu', 'CRC SHA', null, { dynamic: 'filesystem', items: [
+          ...hashes, separator(), item('hash-save', 'SHA-256 → file.sha256'), item('hash-verify', '校验和：测试')
+        ] }),
+        separator(), item('open', '打开', '↵'), item('open-inside', '内部打开', '⌃PageDown'),
+        item('open-inside-one', '内部打开 *'), item('open-inside-parser', '内部打开 #'),
+        item('open-outside', '外部打开', '⇧↵'), item('view-file', '查看', 'F3'), item('edit-file', '编辑', 'F4'),
+        separator(), item('rename', '重命名', 'F2'), item('copy', '复制到…', 'F5'),
+        item('move', '移动到…', 'F6'), item('delete', '删除', '⌦'),
+        separator(), item('split', '分割文件…'), item('combine', '合并文件…'),
+        separator(), item('info', '属性', '⌥↵'), item('comment', '注释…', '⌃Z'),
+        item('crc-menu', 'CRC', null, { items: hashes }), item('diff', '比较差异', null, { requires: 'diff-tool' }),
+        separator(), item('create-folder', '新建文件夹', 'F7'), item('create-file', '新建文件', '⌃N'),
+        separator(), item('link', '链接…'), item('streams', '备用数据流', null, { requires: 'streams-provider' }),
+        separator(), item('exit', '退出 M7Arc', '⌘Q')
+      ] },
+      { label: '编辑', items: [
+        item('select-all', '全选', '⌘A'), item('deselect-all', '取消全选', '⇧小键盘 −'),
+        item('invert-selection', '反向选择', '小键盘 *'), item('select-mask', '选择…', '小键盘 +'),
+        item('deselect-mask', '取消选择…', '小键盘 −'), separator(),
+        item('select-type', '按类型选择', '⌥小键盘 +'), item('deselect-type', '按类型取消选择', '⌥小键盘 −')
+      ] },
+      { label: '查看', items: [
+        item('view-large', '大图标', '⌃1'), item('view-small', '小图标', '⌃2'),
+        item('view-list', '列表', '⌃3'), item('view-details', '详细信息', '⌃4', { checked: true }),
+        separator(), item('sort-name', '名称', '⌃F3', { checked: true }), item('sort-type', '类型', '⌃F4'),
+        item('sort-date', '日期', '⌃F5'), item('sort-size', '大小', '⌃F6'), item('sort-none', '不排序', '⌃F7'),
+        separator(), item('flat-view', '平面视图', null, { checked: false }),
+        item('two-panels', '双面板', 'F9', { checked: false }),
+        item('time-menu', '时间显示', null, { items: [
+          item('time-day', '2026-09-06'), item('time-minute', '2026-09-06 14:32'),
+          item('time-second', '2026-09-06 14:32:08', null, { checked: true }),
+          item('time-ntfs', '2026-09-06 14:32:08.1234567'), item('time-ns', '2026-09-06 14:32:08.123456789'),
+          separator(), item('time-utc', 'UTC', null, { checked: false })
+        ] }),
+        item('toolbars-menu', '工具栏', null, { items: [
+          item('toolbar-archive', '压缩工具栏', null, { checked: true }),
+          item('toolbar-standard', '标准工具栏', null, { checked: true }), separator(),
+          item('toolbar-large', '大按钮', null, { checked: true }),
+          item('toolbar-text', '显示按钮文字', null, { checked: true })
+        ] }),
+        item('root', '打开根文件夹', '\\'), item('up', '向上一级', '⌫'), item('history', '文件夹历史…', '⌥F12'),
+        item('refresh', '刷新', '⌘R'), item('auto-refresh', '自动刷新', null, { checked: true })
+      ] },
+      { label: '收藏夹', items: [item('favorite-add-menu', '添加当前文件夹为', null, { items: setBookmarks }), separator(), ...bookmarks] },
+      { label: '工具', items: [item('options', '选项…', '⌘,'), separator(), item('benchmark', '基准测试'), separator(), item('temp-cleanup', '删除临时文件…')] },
+      { label: '帮助', items: [item('help', '帮助内容…', 'F1'), separator(), item('about', '关于 M7Arc…')] }
+    ],
+    toolbar: [
+      item('add', '添加', null, { icon: 'add', group: 'archive', description: '添加到压缩包' }),
+      item('extract', '提取', null, { icon: 'extract', group: 'archive', description: '提取文件' }),
+      item('test', '测试', null, { icon: 'test', group: 'archive', description: '测试压缩包完整性' }),
+      item('copy', '复制', 'F5', { icon: 'copy', group: 'standard', description: '复制到…' }),
+      item('move', '移动', 'F6', { icon: 'move', group: 'standard', description: '移动到…' }),
+      item('delete', '删除', '⌦', { icon: 'delete', group: 'standard', description: '删除选中项目' }),
+      item('info', '信息', '⌥↵', { icon: 'info', group: 'standard', description: '查看文件与归档属性' })
+    ]
+  };
+}());
+
+</script>
+<script>
+(function () {
+  'use strict';
+  const esc = v => String(v ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const opt = (v, label, selected) => `<option value="${esc(v)}"${String(v) === String(selected) ? ' selected' : ''}>${esc(label ?? v)}</option>`;
+  const input = (id, value = '', type = 'text', extra = '') => `<input class="p-input" id="dlg-${id}" name="${id}" type="${type}" value="${esc(value)}" ${extra}>`;
+  const select = (id, values, selected) => `<select class="p-select" id="dlg-${id}" name="${id}">${values.map(v => Array.isArray(v) ? opt(v[0], v[1], selected) : opt(v,v,selected)).join('')}</select>`;
+  const field = (label, html) => `<div class="p-field"><label${html.match(/id="([^"]+)"/) ? ` for="${html.match(/id="([^"]+)"/)[1]}"` : ''}>${label}</label>${html}</div>`;
+  const check = (id, label, checked = false, extra = '') => `<label class="p-check"><input id="dlg-${id}" name="${id}" type="checkbox" ${checked ? 'checked' : ''} ${extra}> ${label}</label>`;
+  const group = (label, html) => `<fieldset class="p-group"><legend>${label}</legend>${html}</fieldset>`;
+  const note = (str, id = '') => `<p class="p-note"${id ? ` id="dlg-${id}"` : ''}>${str}</p>`;
+  const table = (headers, rows, id = '') => `<table class="p-table"${id ? ` id="dlg-${id}"` : ''}><thead><tr>${headers.map(x=>`<th>${x}</th>`).join('')}</tr></thead><tbody>${rows.map(r=>`<tr>${r.map(v=>`<td>${v}</td>`).join('')}</tr>`).join('')}</tbody></table>`;
+  const footer = (primary = '模拟执行', extra = '') => `<div id="dlg-result" class="p-result" role="status" hidden></div><div class="p-actions">${extra}<button type="button" data-dlg="cancel">取消</button>${primary ? `<button type="button" class="p-primary" data-dlg="submit">${primary}</button>` : ''}</div>`;
+  const selection = ctx => (ctx.selection || []).map(s=>s.name).join('、') || '示例文件';
+  const config = ctx => ctx.formats || window.M7ArcFormats;
+  const choices = (ctx) => {
+    const cfg = config(ctx);
+    return `<optgroup label="直接创建 · ${cfg.createFormats.length} 种格式">${cfg.createFormats.map(f=>opt(f.id,f.label,ctx.formatId || '7z')).join('')}</optgroup><optgroup label="组合归档 · 两步管线">${cfg.presets.map(f=>opt(f.id,f.label,ctx.formatId)).join('')}</optgroup>`;
+  };
+  function add(ctx) {
+    return `<div class="p-form">${field('压缩包名称 / Archive',input('archive','Archive.7z'))}<div class="p-grid p-grid-2"><div>${field('归档格式',`<select class="p-select" id="dlg-format" name="format">${choices(ctx)}</select>`)}${field('压缩等级',select('level',[],5))}${field('压缩方法',select('method',[]))}${field('字典大小',select('dictionary',['自动','64 KB','256 KB','1 MB','4 MB','16 MB','32 MB','64 MB','128 MB','256 MB','512 MB','1 GB'],'自动'))}${field('词大小 / 模型阶数',select('word',['自动','8','12','16','24','32','48','64','96','128','192','256','273'],'自动'))}${field('固实数据块大小',select('solid',['自动','非固实','16 MB','64 MB','256 MB','1 GB','4 GB','固实'],'自动'))}${field('CPU 线程数',select('threads',['自动','1','2','4','8','12','16','32','64'],'自动'))}${field('压缩内存上限',select('memory',['自动','25% RAM','50% RAM','75% RAM','90% RAM'],'自动'))}${field('压缩所需内存',`<output id="dlg-memory-compress">等待引擎估算</output>`)}${field('解压所需内存',`<output id="dlg-memory-extract">等待引擎估算</output>`)}${field('分卷大小，字节',input('volume','','text','placeholder="不分卷；或 100M、700M、2G" list="dlg-volume-presets"'))}<datalist id="dlg-volume-presets"><option value="100M"><option value="700M"><option value="4092M"><option value="25G"></datalist>${field('参数',input('parameters','','text','placeholder="例如：mtc=on mta=on"'))}</div><div>${field('更新模式',select('update',[['add','添加并替换文件'],['update','更新并添加文件'],['fresh','只更新已有文件'],['sync','同步文件']],'add'))}${field('路径模式',select('pathMode',[['relative','相对路径'],['full','完整路径'],['absolute','绝对路径']],'relative'))}${group('选项',check('sfx','创建 SFX 自解压程序（Windows .exe）')+check('shared','压缩共享文件')+check('delete','压缩成功后删除源文件'))}${group('加密',field('输入密码',input('password','','password'))+field('再次输入密码',input('password2','','password'))+check('showPassword','显示密码')+field('加密方法',select('encryption',[]))+check('encryptNames','加密文件名'))}${note('', 'format-note')}${note(`已选：${esc(selection(ctx))}`)}${note('内存估计将来自官方引擎；本原型不报告本机性能。')}</div></div><details class="p-group" id="dlg-more"><summary>更多选项 · 链接、元数据、时间精度与高级方法</summary><div class="p-grid p-grid-2"><div>${group('文件元数据',check('symlinks','存储符号链接',true)+check('hardlinks','存储硬链接')+check('streams','存储 NTFS 备用数据流',false,'disabled')+check('security','存储 NTFS 文件安全信息',false,'disabled'))}${check('advancedMethods','显示引擎高级压缩方法')}${field('预处理滤镜',select('filter',[]))}</div><div>${field('时间精度',select('timePrecision',['格式默认','秒','毫秒','微秒','100 纳秒','纳秒'],'格式默认'))}${field('修改时间',select('mtime',['格式默认','存储','不存储'],'格式默认'))}${field('创建时间',select('ctime',['格式默认','存储','不存储'],'格式默认'))}${field('访问时间',select('atime',['格式默认','存储','不存储'],'格式默认'))}${field('归档时间取最新文件',select('archiveTime',['格式默认','是','否'],'格式默认'))}${check('preserveAtime','不更改源文件访问时间',true)}</div></div>${note('NTFS 数据流与安全描述符保留为跨平台元数据能力；macOS 文件系统适配后按输入及格式能力启用。')}</details></div>${footer('模拟添加')}`;
+  }
+  function extract(ctx) {
+    return `<div class="p-form">${field('解压到',input('destination','~/Downloads/Extracted/'))}<div class="p-grid p-grid-2"><div>${check('subfolder','创建归档同名子文件夹',true)}${field('子文件夹名称',input('subfolderName','Archive'))}${field('路径模式',select('pathMode',[['full','完整路径 · 保留归档目录'],['current','当前路径 · 相对当前归档目录'],['flat','不含路径 · 全部平铺']],'full'))}${note('', 'path-note')}${check('eliminateRoot','消除重复的根文件夹',true)}${field('覆盖模式',select('overwrite',[['ask','覆盖前询问'],['replace','直接覆盖'],['skip','跳过已有文件'],['renameNew','自动重命名新文件'],['renameExisting','自动重命名已有文件']],'ask'))}</div><div>${group('密码',field('归档密码',input('password','','password'))+check('showPassword','显示密码'))}${group('恢复元数据',check('restoreTimes','恢复时间',true)+check('restoreMode','恢复 POSIX 权限',true)+check('restoreSecurity','恢复 NTFS 文件安全信息',false,'disabled'))}${note(`范围：${esc(selection(ctx))}`)}</div></div><details class="p-group"><summary>高级路径模式</summary>${check('absolute','按归档中的绝对路径解压')}${note('启用后使用记录的绝对路径；只对含绝对路径的归档有意义。')}</details></div>${footer('模拟解压')}`;
+  }
+  function options(ctx) {
+    const cfg = config(ctx);
+    const labels = [['system','系统关联'],['menu','菜单'],['folders','文件夹'],['edit','查看 / 编辑 / Diff'],['settings','设置'],['language','语言']];
+    const associationRows = cfg.formats.map(f=>[check('assoc-'+f.id,esc(f.name),['7z','zip','rar','gzip'].includes(f.id)),esc(f.extensions.join(', ')||'按签名识别'),f.kind==='hash'?'读取 / 生成摘要':f.write?'读取 / 创建':'读取']);
+    const associationTable = `<table class="p-table" id="dlg-association-table"><thead><tr><th>格式</th><th>扩展名</th><th>能力</th></tr></thead><tbody>${associationRows.map((row,i)=>`<tr${i>=12?' hidden':''}>${row.map(value=>`<td>${value}</td>`).join('')}</tr>`).join('')}</tbody></table>`;
+    const panels = {
+      system:note('选择关联格式；正式版通过 macOS Launch Services 注册，遵循系统默认应用设置。')+`<div class="p-actions"><button type="button" data-dlg="associate-all">全选</button><button type="button" data-dlg="associate-none">清空</button></div>`+associationTable+`<div class="p-actions"><button type="button" data-dlg="association-prev" disabled>上一页</button><output id="dlg-association-page">1 / ${Math.ceil(associationRows.length/12)} 页 · ${associationRows.length} 种格式</output><button type="button" data-dlg="association-next">下一页</button></div>`,
+      menu:check('finderMenu','在 Finder 服务菜单中显示 M7Arc',true)+check('cascadeMenu','使用 M7Arc 子菜单',true)+check('menuIcons','显示菜单图标',true)+check('menuElimRoot','解压时消除重复根目录',true)+group('上下文菜单命令',['打开归档','提取文件…','提取到当前目录','提取到同名文件夹','测试归档','添加到压缩包…','添加为 7z','添加为 ZIP','CRC / SHA'].map((x,i)=>check('menu-'+i,x,true)).join(''))+note('Windows 32 位 Shell 扩展入口与 Zone.Identifier 流没有同名 macOS 设置；Finder 集成与 macOS 下载来源信息由平台模块处理。'),
+      folders:field('归档临时工作文件夹',select('workFolder',[['system','系统临时文件夹'],['current','当前文件夹'],['specified','指定文件夹']],'system'))+field('指定位置',input('workPath','~/Library/Caches/M7Arc/'))+check('removableOnly','仅对可移动磁盘使用',false),
+      edit:field('查看器',input('viewer','系统默认查看器'))+field('编辑器',input('editor','TextEdit'))+field('Diff 程序',input('diff','FileMerge'))+note('从归档编辑文件时，关闭外部编辑器后提示保存回归档；嵌套归档按层回写。'),
+      settings:['显示“..”条目','显示真实文件图标','整行选择','显示网格线','单击打开项目','替代选择模式','显示系统菜单'].map((x,i)=>check('setting-'+i,x,[0,1,2].includes(i))).join('')+check('largePages','使用大内存页（平台不支持）',false,'disabled')+field('解压允许的最大内存',input('extractMemory',4,'number','min="1" max="256"'))+note('单位 GB；超过限制时进入内存对话框，可降低线程或修改本次上限。'),
+      language:field('界面语言',select('language',['跟随系统','简体中文','繁體中文','English','日本語','한국어','Deutsch','Français','Español'],'简体中文'))+note('正式版从随附的语言资源枚举完整语言列表，翻译采用稳定字符串 ID。')
+    };
+    return `<div class="p-tabs" role="tablist">${labels.map(([id,label],i)=>`<button type="button" class="p-tab${i===0?' active':''}" data-tab="${id}" role="tab" aria-selected="${i===0}">${label}</button>`).join('')}</div><div class="p-form">${labels.map(([id])=>`<section data-panel="${id}"${id==='system'?'':' hidden'}>${panels[id]}</section>`).join('')}</div>${footer('保存原型设置')}`;
+  }
+  function benchmark() {
+    const blank = ['压缩 · 当前','压缩 · 平均','解压 · 当前','解压 · 平均'].map(n=>[n,'—','—','—','—','—']);
+    return `<div class="p-form">${note('性能测试演示 · 表格中的演示结果不代表本机测量。')}<div class="p-grid p-grid-2">${field('字典大小',select('dictionary',['1 MB','2 MB','4 MB','8 MB','16 MB','32 MB','64 MB','128 MB'],'32 MB'))}${field('CPU 线程数',select('threads',['1','2','4','8','12','16','32'],'8'))}${field('运行轮数',select('passes',['1','3','5','10'],'3'))}${field('内存需求','<output id="dlg-bench-memory">由引擎计算</output>')}</div>${table(['项目','数据量','速度','CPU 使用率','评分 / 使用率','评分'],blank,'bench-table')}${field('总体评分','<output id="dlg-bench-score">—</output>')}${field('运行状态','<output id="dlg-bench-status">等待开始</output>')}${field('日志','<pre class="p-note" id="dlg-bench-log">LZMA Benchmark · 演示会话</pre>')}</div>${footer('开始模拟测试','<button type="button" data-dlg="bench-stop" disabled>停止</button><button type="button" data-dlg="bench-restart">重新开始</button>')}`;
+  }
+  function hash(ctx) {
+    if(ctx.extra?.action==='hash-verify')return `<div class="p-form">${field('校验清单',input('manifest',(ctx.selection||[])[0]?.name?.match(/\.(sha256|sha1|md5|crc32|crc64)$/i)?ctx.selection[0].name:'checksums.sha256'))}${field('待校验文件根目录',input('destination',ctx.location||'~/Downloads/'))}${field('演示场景',select('verifyScenario',[['mixed','展示通过、缺失与不匹配'],['pass','全部通过'],['missing','文件缺失'],['mismatch','摘要不匹配']],'mixed'))}${note('校验清单记录文件名和期望摘要；正式版通过 Hash handler 与已注册算法读取文件并比对。')}<div id="dlg-hash-results"></div></div>${footer('模拟验证清单')}`;
+    return `<div class="p-form">${note(`所选项目：${esc(selection(ctx))}`)}<div class="p-actions"><button type="button" data-dlg="hash-all">选择全部</button><button type="button" data-dlg="hash-none">清空</button></div>${group('摘要算法',`<div class="p-grid p-grid-2">${config(ctx).hashers.map(h=>check('hash-'+h.id,esc(h.name),ctx.extra?.hashAlgorithm ? ['*','hash-all'].includes(ctx.extra.hashAlgorithm)||ctx.extra.hashAlgorithm.toUpperCase()===h.id.toUpperCase() : ['CRC32','SHA256'].includes(h.id))).join('')}</div>`)}${field('保存摘要文件',select('hashFile',[['none','不保存'],['SHA256','SHA256 · .sha256'],['SHA1','SHA1 · .sha1']],ctx.extra?.action==='hash-save'?'SHA256':'none'))}${note('结果按单文件摘要、文件数据总和、数据与文件名总和分组。')}<div id="dlg-hash-results"></div></div>${footer('模拟计算')}`;
+  }
+  function split(ctx) {
+    return `<div class="p-form">${note(`源文件：${esc(selection(ctx))}`)}${field('分割到',input('destination','~/Downloads/Parts/'))}${field('每卷大小，字节',input('volume','100M','text','list="dlg-split-presets"'))}<datalist id="dlg-split-presets"><option value="100M"><option value="700M"><option value="4092M"><option value="25G"></datalist>${note('支持 B / K / M / G / T，整数按二进制倍数解释。支持空格分隔多种分卷大小，后续分卷沿用最后一个大小。')}${field('输出示例','<output id="dlg-split-preview"></output>')}</div>${footer('模拟分割')}`;
+  }
+  function combine(ctx) {
+    const name = (ctx.selection||[])[0]?.name || 'Archive.7z.001';
+    const base = name.replace(/\.\d+$/,'');
+    const isFirstPart = /\.0*1$/.test(name);
+    return `<div class="p-form">${note('选择第一个分卷，按连续编号顺序合并。压缩分卷通常可直接打开首卷并提取。')}${field('合并到',input('destination','~/Downloads/Combined/'))}${field('输出文件名',input('name',base))}${table(['序号','示例分卷','状态'],[1,2,3].map(n=>[n,esc(base+'.'+String(n).padStart(3,'0')),'示例']))}${note(isFirstPart?'已选择首卷；上述分卷列表为演示数据。':'请选择 .001 首卷；可在文件面板中选择示例分卷。','combine-note')}</div>${footer('模拟合并')}`;
+  }
+  function info(ctx) {
+    const tabs = [['item','文件'],['folder','文件夹'],['archive','当前归档'],['outer','外层归档']];
+    const item = (ctx.selection||[])[0] || {name:'README.md',size:'4 KB'};
+    const panels = {
+      item:table(['属性','值'],[['名称',esc(item.name)],['大小',esc(item.size||'4 KB')],['压缩后大小','2 KB（示例）'],['修改时间','2026-09-05 14:32:18（示例）'],['属性','-rw-r--r--'],['加密','否'],['方法','LZMA2:24'],['CRC','—'],['固实块','0']]),
+      folder:table(['属性','值'],[['路径',esc(ctx.location||'/')],['文件数','18（示例）'],['文件夹数','3（示例）'],['大小','2.4 MB（示例）']]),
+      archive:table(['属性','值'],[['类型',esc(ctx.formatId||'7z')],['物理大小','846 KB（示例）'],['头部大小','642 B（示例）'],['方法','LZMA2:24'],['固实','是'],['块数','2'],['偏移','0'],['尾部大小','0'],['警告','无（示例）']]),
+      outer:table(['层级','类型','路径'],[['当前','TAR','Demo.7z / package.tar'],['父层','7z','Demo.7z']])+note('嵌套归档逐层枚举 IFolderArcProps，包括签名偏移、警告与未成功打开层的属性。')
+    };
+    return `<div class="p-tabs" role="tablist">${tabs.map(([id,l],i)=>`<button type="button" class="p-tab${i===0?' active':''}" data-tab="${id}" role="tab" aria-selected="${i===0}">${l}</button>`).join('')}</div>${tabs.map(([id])=>`<section data-panel="${id}"${id==='item'?'':' hidden'}>${panels[id]}</section>`).join('')}${footer('复制属性摘要')}`;
+  }
+  function editSession(ctx) {
+    return `<div class="p-form">${note('归档内的文件已在外部编辑器中修改。')}${table(['项目','位置'],[['文件',esc(selection(ctx))],['当前归档',esc(ctx.location||'Demo.7z / docs/')],['回写过程','临时文件 → 当前归档 → 外层归档（如存在）']])}${note('保存将把修改写回归档；放弃保留原归档；取消保留编辑会话。')}</div>${footer('模拟保存回归档','<button type="button" data-dlg="edit-discard">放弃修改</button>')}`;
+  }
+  function overwrite(ctx) {
+    return `<div class="p-form">${note(`目标位置已存在 ${esc(selection(ctx))}。`)}${table(['属性','已有文件','传入文件'],[['大小','4 KB（示例）','6 KB（示例）'],['修改时间','2026-09-01 09:00','2026-09-05 14:32']])}</div><div id="dlg-result" class="p-result" role="status" hidden></div><div class="p-actions">${[['yes','替换'],['yesAll','全部替换'],['rename','自动重命名'],['no','跳过'],['noAll','全部跳过']].map(([id,l])=>`<button type="button" data-overwrite="${id}">${l}</button>`).join('')}<button type="button" data-dlg="cancel">取消</button></div>`;
+  }
+  function password(ctx) {
+    return `<div class="p-form">${note(`归档：${esc(ctx.location || selection(ctx))}`)}${field('输入密码',input('password','','password'))}${check('showPassword','显示密码')}${note('密码仅用于当前原型会话。')}</div>${footer('模拟解锁')}`;
+  }
+  function sfx() {
+    return `<div class="p-form">${field('目标平台',select('sfxTarget',[['windows','Windows · .exe'],['macos','macOS · 尚未实现']],'windows'))}${field('模块',select('sfxModule',['7z.sfx · 完整界面','7zCon.sfx · 控制台'],'7z.sfx · 完整界面'))}${field('输出文件',input('name','Archive.exe'))}${note('官方 SFX 模块是 Windows 可执行程序。macOS 自解压应用需要单独实现启动器、签名与解压界面；不能把 .exe 改名为 .app。')}</div>${footer('模拟生成 Windows SFX')}`;
+  }
+  function simple(type,ctx) {
+    if(type==='delete')return `<div class="p-form">${note('从当前示例位置删除所选项目。')}${table(['名称','位置'],(ctx.selection||[]).map(s=>[esc(s.name),esc(ctx.location)]))}</div>${footer('模拟删除')}`;
+    if(type==='link')return `<div class="p-form">${field('链接位置',input('name',((ctx.selection||[])[0]?.name||'file')+'.link'))}${field('链接目标',input('target',(ctx.location||'~/Downloads/')+((ctx.selection||[])[0]?.name||'file')))}${field('链接类型',select('linkType',[['hard','硬链接'],['symlinkFile','文件符号链接'],['symlinkDirectory','目录符号链接']],'symlinkFile'))}${note('硬链接与符号链接使用 macOS 原生文件系统接口。Windows Directory Junction 与 WSL reparse point 在 macOS 不作为创建类型。')}</div>${footer('模拟创建链接')}`;
+    if(type==='comment')return `<div class="p-form">${note(esc(selection(ctx)))}${field('注释',`<textarea class="p-input" id="dlg-comment" name="comment" rows="4">${esc((ctx.selection||[])[0]?.comment||'')}</textarea>`)}</div>${footer('模拟保存注释')}`;
+    const descriptions = {copy:'复制到',move:'移动到',rename:'新名称',createFolder:'文件夹名称',createFile:'文件名称'};
+    const destination = ['copy','move'].includes(type);
+    return `<div class="p-form">${note(`所选：${esc(selection(ctx))}`)}${field(descriptions[type]||'名称',input(destination?'destination':'name',destination?(ctx.extra?.otherLocation||'~/Downloads/'):type==='createFolder'?'新建文件夹':type==='createFile'?'新建文件.txt':(ctx.selection||[])[0]?.name||'文件'))}${destination?check('oppositePanel','使用另一面板的目录',Boolean(ctx.extra?.otherLocation),ctx.extra?.otherLocation?'':'disabled'):''}</div>${footer('模拟'+({copy:'复制',move:'移动',rename:'重命名',createFolder:'创建文件夹',createFile:'创建文件'}[type]||'执行'))}`;
+  }
+  function render(type, ctx = {}) {
+    const renders = {add,extract,options,benchmark,hash,split,combine,info,editSession,overwrite,password,sfx};
+    return (renders[type] || ((ctx)=>simple(type,ctx)))(ctx);
+  }
+  function bind(host, type, ctx = {}) {
+    const q = id => host.querySelector('#dlg-'+id);
+    const val = id => q(id)?.value || '';
+    const checked = id => Boolean(q(id)?.checked);
+    const on = (selector,event,fn) => host.querySelectorAll(selector).forEach(el=>el.addEventListener(event,fn));
+    const report = text => {const out=q('result'); if(out){out.hidden=false;out.textContent=text;}};
+    const payload = () => Object.fromEntries(Array.from(host.querySelectorAll('input[name],select[name],textarea[name]')).filter(el=>!el.disabled).map(el=>[el.name,el.type==='checkbox'?el.checked:el.value]));
+    const action = (name,data={}) => {if(ctx.onAction)ctx.onAction(name,{...data,simulated:true});};
+    on('[data-dlg="cancel"]','click',()=>ctx.close?.());
+    on('[data-tab]','click',e=>{const key=e.currentTarget.dataset.tab;host.querySelectorAll('[data-tab]').forEach(b=>{b.classList.toggle('active',b.dataset.tab===key);b.setAttribute('aria-selected',String(b.dataset.tab===key));});host.querySelectorAll('[data-panel]').forEach(p=>p.hidden=p.dataset.panel!==key);});
+    if(q('showPassword')) q('showPassword').addEventListener('change',()=>{['password','password2'].forEach(id=>{if(q(id))q(id).type=checked('showPassword')?'text':'password';});});
+    const fill = (id,vals,keep) => {const el=q(id);if(!el)return;const v=keep??el.value;el.innerHTML=vals.map(x=>Array.isArray(x)?opt(x[0],x[1],v):opt(x,x,v)).join('');};
+    const enable = (id,yes) => {if(q(id)){q(id).disabled=!yes;if(!yes&&q(id).type==='checkbox')q(id).checked=false;}};
+    let addFormat;
+    if(type==='add') {
+      let previousExtension='7z';
+      const cfg=config(ctx);
+      const levelNames={0:'0 · 仅存储',1:'1 · 极速',3:'3 · 快速',5:'5 · 标准',7:'7 · 最大',9:'9 · 极限'};
+      const refreshMethod=()=>{
+        const f=addFormat;
+        const method=val('method');
+        const store=val('level')==='0'&&!['tar'].includes(f.id);
+        fill('method',store?['Copy']:checked('advancedMethods')?f.methods:f.guiMethods,method);
+        enable('method',!store&&q('method').options.length>0);
+        const m=val('method');
+        const detail=cfg.methodDetails[m]||{dictionaries:[],wordSizes:[]};
+        const wordSizes=m==='PPMd'&&f.id==='zip'?detail.zipWordSizes:detail.wordSizes;
+        const dictionaries=m==='PPMd'&&f.id==='zip'?detail.zipDictionaries:detail.dictionaries;
+        enable('dictionary',!store&&dictionaries.length>1);
+        enable('word',!store&&wordSizes.length>0);
+        fill('dictionary',dictionaries.length?dictionaries:['不适用']);
+        fill('word',wordSizes.length?['自动',...wordSizes]:['不适用']);
+        q('dictionary').previousElementSibling.textContent=detail.dictionaryLabel||'字典大小';
+        q('word').previousElementSibling.textContent=detail.wordSizeLabel||'词大小 / 模型阶数';
+        const filterList=cfg.filters[f.id]||[];
+        fill('filter',filterList.length?filterList:['不适用']);
+        enable('filter',!store&&filterList.length>0);
+        enable('solid',f.solid&&!store);
+        enable('threads',f.multithread&&!store);
+        enable('memory',!['tar','wim'].includes(f.id)&&!store);
+        enable('sfx',f.id==='7z'&&(store||['LZMA','LZMA2','PPMd'].includes(m)));
+        enable('volume',!checked('sfx'));
+        q('memory-compress').textContent=store?'仅缓冲区 · 由引擎报告':'等待引擎估算';
+        q('memory-extract').textContent=store?'仅缓冲区 · 由引擎报告':'等待引擎估算';
+      };
+      const refresh=()=>{
+        const id=val('format');const preset=cfg.presets.find(p=>p.id===id);
+        addFormat=cfg.createFormats.find(f=>f.id===(preset?preset.pipeline.at(-1):id));
+        const f=addFormat;
+        fill('level',f.levels.map(n=>[n,levelNames[n]||String(n)]),f.defaultLevel);
+        const extension=preset?preset.extension:f.extension;
+        const name=val('archive');
+        if(name.endsWith('.'+previousExtension))q('archive').value=name.slice(0,-previousExtension.length)+extension;else if(name.endsWith('.exe')&&f.id!=='7z')q('archive').value=name.slice(0,-3)+extension;
+        previousExtension=extension;
+        ['password','password2','showPassword','encryption'].forEach(id=>enable(id,f.encryption.length>0));
+        fill('encryption',f.encryption.length?f.encryption:['不支持加密']);
+        enable('encryptNames',f.headerEncryption);
+        enable('symlinks',['tar','wim'].includes(f.id)||Boolean(preset));
+        enable('hardlinks',['tar','wim'].includes(f.id)||Boolean(preset));
+        enable('advancedMethods',f.advancedMethods.length>0);
+        q('format-note').textContent=(preset?'组合处理：先创建 TAR，再用 '+f.label+' 压缩。':f.singleStream?'单流格式：直接创建只接受一个文件；多个文件请选择 TAR 组合。':f.note||'')+' '+(f.encryption.length?'支持 '+f.encryption.join(' / ')+(f.headerEncryption?' 和文件名加密。':'。'):'此格式没有密码加密。');
+        refreshMethod();
+      };
+      q('format').addEventListener('change',refresh);
+      ['level','advancedMethods'].forEach(id=>q(id).addEventListener('change',refreshMethod));
+      q('method').addEventListener('change',refreshMethod);
+      q('sfx').addEventListener('change',()=>{enable('volume',!checked('sfx'));const name=val('archive');if(checked('sfx'))q('archive').value=name.replace(/\.[^.]+$/,'.exe');else if(name.endsWith('.exe'))q('archive').value=name.slice(0,-4)+'.'+previousExtension;});
+      refresh();
+    }
+    if(type==='extract') {
+      const refresh=()=>{enable('pathMode',!checked('absolute'));enable('subfolderName',checked('subfolder'));q('path-note').textContent=checked('absolute')?'使用归档中记录的绝对路径。':({full:'a/b/readme.txt → 目标/a/b/readme.txt',current:'当前目录 a/ 中的 b/readme.txt → 目标/b/readme.txt',flat:'a/b/readme.txt → 目标/readme.txt'}[val('pathMode')]);};
+      ['absolute','pathMode','subfolder'].forEach(id=>q(id).addEventListener('change',refresh));refresh();
+    }
+    if(['copy','move'].includes(type)&&q('oppositePanel'))q('oppositePanel').addEventListener('change',()=>{if(checked('oppositePanel')&&ctx.extra?.otherLocation)q('destination').value=ctx.extra.otherLocation;});
+    if(type==='options') {
+      host.querySelectorAll('[name]').forEach(el=>{const value=ctx.extra?.settings?.[el.name];if(value!==undefined){if(el.type==='checkbox')el.checked=Boolean(value);else el.value=value;}});
+      on('[data-dlg="associate-all"]','click',()=>host.querySelectorAll('[id^="dlg-assoc-"]').forEach(x=>x.checked=true));
+      on('[data-dlg="associate-none"]','click',()=>host.querySelectorAll('[id^="dlg-assoc-"]').forEach(x=>x.checked=false));
+      let associationPage=0;
+      const associationRows=Array.from(q('association-table').querySelectorAll('tbody tr'));
+      const associationPages=Math.ceil(associationRows.length/12);
+      const showAssociationPage=()=>{
+        associationRows.forEach((row,i)=>row.hidden=Math.floor(i/12)!==associationPage);
+        q('association-page').textContent=(associationPage+1)+' / '+associationPages+' 页 · '+associationRows.length+' 种格式';
+        host.querySelector('[data-dlg="association-prev"]').disabled=associationPage===0;
+        host.querySelector('[data-dlg="association-next"]').disabled=associationPage===associationPages-1;
+      };
+      on('[data-dlg="association-prev"]','click',()=>{associationPage=Math.max(0,associationPage-1);showAssociationPage();});
+      on('[data-dlg="association-next"]','click',()=>{associationPage=Math.min(associationPages-1,associationPage+1);showAssociationPage();});
+      showAssociationPage();
+      q('workFolder').addEventListener('change',()=>enable('workPath',val('workFolder')==='specified'));enable('workPath',val('workFolder')==='specified');
+    }
+    if(type==='hash') {
+      on('[data-dlg="hash-all"]','click',()=>host.querySelectorAll('[id^="dlg-hash-"]').forEach(x=>x.checked=true));
+      on('[data-dlg="hash-none"]','click',()=>host.querySelectorAll('[id^="dlg-hash-"]').forEach(x=>x.checked=false));
+    }
+    const parseVolumes=str=>str.replace(/\s+-.*$/, '').replace(/(\d)\s+([BKMGT])/gi,'$1$2').trim().split(/\s+/).map(v=>{const match=v.match(/^(\d+)([BKMGT]?)(?:i?B)?$/i);return match?Number(match[1])*Math.pow(1024,'BKMGT'.indexOf((match[2]||'B').toUpperCase())):NaN;});
+    if(type==='split') {const update=()=>{q('split-preview').textContent=((ctx.selection||[])[0]?.name||'Archive.7z')+'.001, .002, .003…';};q('volume').addEventListener('input',update);update();}
+    if(type==='sfx') q('sfxTarget').addEventListener('change',()=>{host.querySelector('[data-dlg="submit"]').disabled=val('sfxTarget')==='macos';});
+    let benchTimer=null;
+    if(type==='benchmark') {
+      let pass=0;let running=false;const statusNode=q('bench-status');
+      const stop=(status)=>{if(benchTimer)clearInterval(benchTimer);benchTimer=null;running=false;q('bench-status').textContent=status;host.querySelector('[data-dlg="bench-stop"]').disabled=true;host.querySelector('[data-dlg="submit"]').disabled=false;};
+      const start=()=>{
+        if(benchTimer)clearInterval(benchTimer);pass=0;running=true;
+        const max=Number(val('passes')),threads=Number(val('threads')),dict=val('dictionary');
+        host.querySelector('[data-dlg="bench-stop"]').disabled=false;host.querySelector('[data-dlg="submit"]').disabled=true;
+        q('bench-status').textContent='模拟运行中 · 0 / '+max+' 轮';q('bench-log').textContent='LZMA · '+dict+' · '+threads+' 线程（模拟输入）';
+        benchTimer=setInterval(()=>{
+          if(!statusNode.isConnected||!host.contains(statusNode)||statusNode.closest('[hidden]')){clearInterval(benchTimer);return;}
+          pass++;q('bench-status').textContent='模拟运行中 · '+pass+' / '+max+' 轮';
+          const rows=['压缩 · 当前','压缩 · 平均','解压 · 当前','解压 · 平均'].map((n,i)=>[n,dict,'示例 · '+(i<2?'32,480':'295,120')+' KB/s','示例 · '+(threads*94)+'%','示例 · 5,720 MIPS','示例 · '+(threads*5720)+' MIPS']);
+          q('bench-table').outerHTML=table(['项目','数据量','速度','CPU 使用率','评分 / 使用率','评分'],rows,'bench-table');
+          q('bench-score').textContent='示例 · '+(threads*5720)+' MIPS';q('bench-log').textContent+='\n完成模拟第 '+pass+' 轮';
+          if(pass>=max)stop('模拟测试完成 · '+max+' 轮');
+        },600);
+      };
+      on('[data-dlg="bench-stop"]','click',()=>stop('模拟测试已停止 · '+pass+' 轮'));
+      on('[data-dlg="bench-restart"]','click',start);
+      on('[data-dlg="submit"]','click',start);
+      ['dictionary','threads','passes'].forEach(id=>q(id).addEventListener('change',()=>{if(running)stop('参数已改变，重新开始以应用。');}));
+      return;
+    }
+    on('[data-dlg="edit-discard"]','click',()=>{action('edit-discard',{names:selection(ctx)});ctx.close?.();});
+    on('[data-overwrite]','click',e=>{action('overwrite',{decision:e.currentTarget.dataset.overwrite});ctx.close?.();});
+    on('[data-dlg="submit"]','click',()=>{
+      const data=payload();
+      if(type==='add') {
+        const cfg=config(ctx);const preset=cfg.presets.find(p=>p.id===val('format'));
+        if(!val('archive').trim())return report('请输入归档名称。');
+        if(addFormat.singleStream&&!preset&&((ctx.selection||[]).length>1||(ctx.selection||[]).some(s=>s.type==='folder'||s.kind==='folder'||s.isDir)))return report('该格式只支持一个文件。请选择 TAR + '+addFormat.label+' 组合归档。');
+        if(!q('password').disabled&&val('password')!==val('password2'))return report('两次密码不一致。');
+        if(val('volume')&&!q('volume').disabled&&parseVolumes(val('volume')).some(n=>!Number.isFinite(n)||n<=0))return report('请输入有效分卷大小，例如 100M 或 100M 700M。');
+        data.pipeline=preset?preset.pipeline:[addFormat.id];data.name=val('archive');data.formatId=val('format');delete data.password;delete data.password2;data.hasPassword=Boolean(val('password'));
+        action('add',data);report('模拟添加已提交：'+val('archive')+' · '+data.pipeline.join(' → ')+' · 更新模式：'+q('update').selectedOptions[0].textContent+'。');
+      } else if(type==='extract') {
+        if(!val('destination').trim())return report('请输入解压目标位置。');
+        delete data.password;data.hasPassword=Boolean(val('password'));data.pathMode=checked('absolute')?'absolute':val('pathMode');
+        action(type,data);report('模拟解压已提交：'+val('destination')+' · '+(checked('absolute')?'绝对路径':q('pathMode').selectedOptions[0].textContent)+'。');
+      } else if(type==='hash') {
+        if(ctx.extra?.action==='hash-verify') {
+          if(!val('manifest').trim())return report('请选择校验清单。');
+          const scenario=val('verifyScenario');
+          const samples=[['README.md','通过'],['src/main.cpp','文件缺失'],['assets/icon.png','摘要不匹配']];
+          const rows=samples.map((r,i)=>[esc(r[0]),'清单中的期望摘要',scenario==='mixed'?r[1]+'（示例）':({pass:'通过',missing:i===1?'文件缺失':'通过',mismatch:i===2?'摘要不匹配':'通过'}[scenario])+'（示例）']);
+          q('hash-results').innerHTML=table(['文件','依据','验证结果'],rows);
+          action('hash-verify',{manifest:val('manifest'),destination:val('destination'),scenario});
+          return report('已展示清单验证结果 · 3 个示例文件。');
+        }
+        const hashers=config(ctx).hashers.filter(h=>checked('hash-'+h.id));
+        if(!hashers.length)return report('请选择至少一种摘要算法。');
+        q('hash-results').innerHTML=table(['算法','位数','单文件 / 文件数据摘要'],hashers.map(h=>[esc(h.name),h.bits,'演示 · 等待实际引擎摘要']))+note('多文件结果还包含数据与文件名总和。');
+        action(type,{algorithms:hashers.map(h=>h.id),save:val('hashFile')});report('已展示 '+hashers.length+' 种摘要算法'+(val('hashFile')!=='none'?'；模拟输出 '+val('hashFile')+' 摘要文件。':'。'));
+      } else if(type==='split') {
+        const sizes=parseVolumes(val('volume'));if(sizes.some(n=>!Number.isFinite(n)||n<=0))return report('请输入有效分卷大小，例如 100M。');
+        if((ctx.selection||[]).length!==1||(ctx.selection||[])[0]?.isDir||(ctx.selection||[])[0]?.type==='folder'||(ctx.selection||[])[0]?.kind==='folder')return report('分割需要选择一个普通文件。');
+        action(type,{...data,volumeBytes:sizes});report('模拟分割：每卷 '+sizes.join(' / ')+' 字节，输出 '+val('destination')+'。');
+      } else if(type==='combine') {
+        if(!/\.0*1$/.test((ctx.selection||[])[0]?.name||''))return report('请选择首个 .001 分卷。');
+        action(type,data);report('模拟合并：输出 '+val('destination')+val('name')+'。');
+      } else if(type==='password') {
+        if(!val('password'))return report('请输入密码以演示解锁。');action(type,{hasPassword:true});report('模拟解锁完成。');
+      } else if(type==='info') {
+        const text=host.querySelector('[data-panel]:not([hidden])').innerText;
+        if(navigator.clipboard&&window.isSecureContext)navigator.clipboard.writeText(text).then(()=>report('属性摘要已复制。'),()=>report(text));else report(text);
+      } else if(type==='options') {action(type,data);report('原型设置已保存到本次会话。');}
+      else {if(q('name')&&!val('name').trim())return report('请输入名称。');action(type==='editSession'?'edit-save':type,data);report(type==='editSession'?'修改已在演示会话中保存回归档。':'模拟操作已提交。');}
+    });
+  }
+  window.M7ArcDialogs={render,bind};
+}());
+
+</script>
+<script>
+(function () {
+  const root = document.getElementById('m7arc-fm');
+  const get = id => root.querySelector('#' + id);
+  const esc = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const formats = window.M7ArcFormats;
+  const commands = window.M7ArcCommands;
+  const MiB = 1024 * 1024;
+  let nextId = 100;
+  const file = (name, size, formatId = '', kind = 'file') => ({id:nextId++,name,size,formatId,kind,modified:'2026-09-06 14:32:08',attributes:kind === 'folder'?'D':'A',packed:formatId?Math.round(size*.63):size});
+  const samples = [
+    file('项目源代码',0,'','folder'),file('照片与素材',0,'','folder'),
+    file('project.7z',18.4*MiB,'7z'),file('照片备份.zip',96.8*MiB,'zip'),
+    file('资料归档.rar',32.7*MiB,'rar5'),file('linux-source.tar.xz',26.1*MiB,'xz'),
+    file('服务器日志.tar.gz',8.2*MiB,'gzip'),file('手册.tar.bz2',5.6*MiB,'bzip2'),
+    file('系统备份.wim',268*MiB,'wim'),file('Install.dmg',126*MiB,'dmg'),
+    file('Release.iso',640*MiB,'iso'),file('Data.apfs',84*MiB,'apfs'),
+    file('VirtualDisk.vhdx',512*MiB,'vhdx'),file('stream.zst',6.1*MiB,'zstd'),
+    file('split.7z.001',10*MiB,'split'),file('说明.txt',2368),file('checksums.sha256',384,'hash')
+  ];
+  const localFolders = {'~/Downloads/':samples,'~/Documents/':[file('已解压文件',0,'','folder'),file('归档说明.md',4380)],'/Volumes/':[file('Macintosh HD',0,'','folder'),file('Work SSD',0,'','folder')]};
+  const archiveContents = [file('文档',0,'','folder'),file('src',0,'','folder'),file('assets',0,'','folder'),file('nested.zip',3.2*MiB,'zip'),file('README.md',6804),file('LICENSE',26530),file('CMakeLists.txt',3912),file('说明.txt',2148)];
+  const state = {dual:false,active:0,density:'standard',large:true,labels:true,archiveToolbar:true,standardToolbar:true,autoRefresh:true,time:'second',utc:false,menu:null,dialog:null,selectionAnchor:0,clipboard:null,job:null,settings:{},bookmarks:['~/Downloads/','~/Documents/','/Volumes/'],panels:[]};
+  function panel(path) {return {path,mode:'local',formatId:'',stack:[],entries:localFolders[path]||[],selected:new Set(),view:'details',sort:'name',descending:false,flat:false,history:[path],columns:['size','packed','type','modified','attributes']};}
+  state.panels = [panel('~/Downloads/'),panel('~/Documents/')];
+  state.panels[0].selected.add(samples.find(f=>f.name==='project.7z').id);
+  let jobTimer = null;
+  let priorFocus = null;
+  const current = () => state.panels[state.active];
+  const chosen = () => current().entries.filter(f=>current().selected.has(f.id));
+  const fmt = id => formats.formats.find(f=>f.id===id);
+  function size(v) {if (!v) return '';if(v>=MiB)return (v/MiB).toLocaleString('en-US',{maximumFractionDigits:1})+' MiB';if(v>=1024)return (v/1024).toLocaleString('en-US',{maximumFractionDigits:1})+' KiB';return String(v)+' B';}
+  function say(text) {get('p-message').textContent=text;}
+  function fileType(f) {return f.kind==='folder'?'文件夹':f.formatId?(fmt(f.formatId)?.name||f.formatId)+' 归档':f.name.split('.').pop().toUpperCase()+' 文件';}
+  const glyph = (name, css='p-chrome-icon') => '<i data-lucide="'+name+'" class="'+css+'" aria-hidden="true"></i>';
+  function refreshIcons(){if(globalThis.lucide)lucide.createIcons({attrs:{width:16,height:16,'stroke-width':1.7}});}
+  function icon(f) {
+    const name=f.kind==='folder'?'folder':f.formatId==='iso'?'disc':['dmg','apfs','vhdx','wim'].includes(f.formatId)?'hard-drive':f.formatId?'file-archive':/\.(cpp|h|cmake)$/i.test(f.name)?'file-code':'file-text';
+    return glyph(name,'p-file-icon'+(f.kind==='folder'?' p-folder':''));
+  }
+  function timeText(t) {const n = {day:10,minute:16,second:19,ntfs:27,ns:29}[state.time]||19;return (t+'.123456789').slice(0,n)+(state.utc?' UTC':'');}
+  function writeCap(p=current()) {return p.mode==='local'||!!fmt(p.formatId)?.write;}
+  function menuCheck(id,fallback) {
+    if(id==='two-panels')return state.dual;
+    if(id==='flat-view')return current().flat;
+    if(id.startsWith('view-'))return current().view===id.slice(5);
+    if(id.startsWith('sort-'))return current().sort===id.slice(5);
+    if(id==='toolbar-archive')return state.archiveToolbar;
+    if(id==='toolbar-standard')return state.standardToolbar;
+    if(id==='toolbar-large')return state.large;
+    if(id==='toolbar-text')return state.labels;
+    if(id==='auto-refresh')return state.autoRefresh;
+    if(id==='time-utc')return state.utc;
+    if(id.startsWith('time-'))return state.time===id.slice(5);
+    return fallback;
+  }
+  function menuItems(items) {
+    return items.map(item=> {
+      if(item.separator)return '<div class="p-menu-divider"></div>';
+      const checked=menuCheck(item.id,item.checked);
+      let label=item.label;
+      if(/^favorite-\d+$/.test(item.id)){const b=state.bookmarks[Number(item.id.split('-')[1])];label=b||label+'（未设置）';}
+      const labelHTML='<span class="p-checkmark">'+(checked?'✓':'')+'</span><span>'+esc(label)+'</span><span class="p-shortcut">'+esc(item.shortcut||(item.items?'›':''))+'</span>';
+      if(item.items)return '<div><button type="button" data-submenu aria-expanded="false">'+labelHTML+'</button><div class="p-subitems" hidden>'+menuItems(item.items)+'</div></div>';
+      return '<button type="button" data-command="'+esc(item.id)+'">'+labelHTML+'</button>';
+    }).join('');
+  }
+  function menus() {
+    get('p-menubar').innerHTML=commands.menus.map((m,i)=>'<div class="p-menu"><button type="button" data-menu="'+i+'" aria-haspopup="true" aria-expanded="'+(state.menu===i)+'">'+esc(m.label)+'</button><div class="p-menu-popup" '+(state.menu===i?'':'hidden')+'>'+menuItems(m.items)+'</div></div>').join('');
+    fitMenus();
+  }
+  function fitMenus(){requestAnimationFrame(()=>{
+    const win=root.querySelector('.p-window');win.style.minHeight='';
+    const bounds=root.getBoundingClientRect();
+    root.querySelectorAll('.p-subitems:not([hidden])').forEach(menu=>{menu.style.left='';menu.style.right='';if(innerWidth>600&&menu.getBoundingClientRect().right>bounds.right){menu.style.left='auto';menu.style.right='100%';}});
+    const bottom=Math.max(win.getBoundingClientRect().bottom,...[...root.querySelectorAll('.p-menu-popup:not([hidden]),.p-subitems:not([hidden])')].map(x=>x.getBoundingClientRect().bottom));
+    if(bottom>win.getBoundingClientRect().bottom)win.style.minHeight=(bottom-bounds.top+8)+'px';
+  });}
+  function toolbar() {
+    const glyphs={add:'plus',extract:'arrow-down-to-line',test:'shield-check',copy:'copy',move:'folder-input',delete:'trash-2',info:'info'};
+    get('p-toolbar-main').innerHTML=commands.toolbar.filter(c=>c.group==='archive'?state.archiveToolbar:state.standardToolbar).map(c=>'<button type="button" class="p-tool" data-command="'+c.id+'" aria-label="'+esc(c.description)+'"><span class="p-tool-symbol">'+glyph(glyphs[c.icon],'p-tool-icon')+'</span><span class="p-tool-label">'+esc(c.label)+'</span></button>'+((c.id==='test'&&state.standardToolbar)?'<span class="p-tool-separator"></span>':'')).join('');
+    refreshIcons();
+    get('p-format-summary').textContent=formats.formats.length+' 项注册 · '+formats.createFormats.length+' 类可创建';
+    get('p-dual-button').setAttribute('aria-pressed',String(state.dual));
+    root.dataset.density=state.density;root.dataset.large=String(state.large);root.dataset.labels=String(state.labels);
+  }
+  const columns={size:['大小','size-col'],packed:['压缩后','size-col'],type:['类型','type-col'],modified:['修改时间','date-col'],attributes:['属性','extra-col'],method:['方法','extra-col'],encrypted:['加密','extra-col'],crc:['CRC','extra-col'],block:['块','extra-col'],host:['主机系统','extra-col']};
+  function entries(p) {
+    let list=[...p.entries];
+    if(p.flat){list=list.flatMap(f=>f.kind==='folder'?[{...f,name:f.name+'/内容.txt',kind:'file',size:2910}]:[f]);}
+    if(p.sort!=='none')list.sort((a,b)=>{
+      if(a.kind!==b.kind)return a.kind==='folder'?-1:1;
+      let d=p.sort==='size'?a.size-b.size:p.sort==='type'?fileType(a).localeCompare(fileType(b)):p.sort==='date'?a.modified.localeCompare(b.modified):a.name.localeCompare(b.name,'zh-Hans',{numeric:true});return p.descending?-d:d;
+    });return list;
+  }
+  function cell(f,key,p) {
+    if(key==='size')return size(f.size);
+    if(key==='packed')return p.mode==='archive'?size(f.kind==='folder'?0:Math.round(f.size*.43)):'';
+    if(key==='type')return fileType(f);
+    if(key==='modified')return timeText(f.modified);
+    if(key==='method')return p.mode==='archive'?(p.formatId==='zip'?'Deflate':'LZMA2'):'';
+    if(key==='encrypted')return p.mode==='archive'?'−':'';
+    if(key==='crc')return f.kind==='folder'?'':'示例属性';
+    if(key==='block')return p.mode==='archive'&&f.kind!=='folder'?'0':'';
+    if(key==='host')return 'Unix';
+    return f[key]||'';
+  }
+  function renderPanel(p,index) {
+    const list=entries(p);const total=p.entries.reduce((a,f)=>a+f.size,0);const selected=p.entries.filter(f=>p.selected.has(f.id));
+    let body='';
+    if(p.view==='large'||p.view==='small'||p.view==='list'){
+      body='<div class="p-icons '+(p.view!=='large'?'p-small-icons':'')+'">'+list.map(f=>'<button type="button" class="p-file-tile '+(p.selected.has(f.id)?'p-selected':'')+'" data-entry="'+f.id+'">'+icon(f)+'<span>'+esc(f.name)+'</span></button>').join('')+'</div>';
+    }else{
+      body='<table class="p-files" aria-label="'+esc(p.path)+'文件列表"><thead><tr><th class="p-name-col"><button type="button" data-sort="name">名称 '+(p.sort==='name'?(p.descending?'↓':'↑'):'')+'</button></th>'+p.columns.map(k=>'<th class="p-'+columns[k][1]+'"><button type="button" data-sort="'+({size:'size',type:'type',modified:'date'}[k]||'columns')+'">'+columns[k][0]+'</button></th>').join('')+'</tr></thead><tbody><tr><td><button type="button" data-command="up" class="p-filename">'+glyph('corner-left-up','p-file-icon')+'<span>..</span></button></td>'+p.columns.map(k=>'<td class="p-'+columns[k][1]+'"></td>').join('')+'</tr>'+list.map(f=>'<tr class="'+(p.selected.has(f.id)?'p-selected':'')+'" data-row="'+f.id+'" aria-selected="'+p.selected.has(f.id)+'"><td><button type="button" data-entry="'+f.id+'" class="p-filename">'+icon(f)+'<span>'+esc(f.name)+'</span></button></td>'+p.columns.map(k=>'<td class="p-'+columns[k][1]+' '+(['size','packed'].includes(k)?'p-number':'')+'">'+esc(cell(f,k,p))+'</td>').join('')+'</tr>').join('')+'</tbody></table>';
+    }
+    return '<section class="p-panel '+(state.active===index?'p-active':'')+'" data-panel="'+index+'" aria-label="'+(index?'右':'左')+'文件面板"><div class="p-address"><button type="button" data-command="up" aria-label="向上一级">'+glyph('chevron-up')+'</button><form data-address-form>'+glyph('folder-open','p-location-icon')+'<input aria-label="'+(index?'右':'左')+'面板地址" value="'+esc(p.path)+'"><button type="button" class="p-history" data-command="history" aria-label="文件夹历史">'+glyph('chevron-down')+'</button></form><button type="button" data-command="columns" aria-label="选择详细信息列">'+glyph('sliders-horizontal')+'</button></div><div class="p-list-host">'+body+'</div><div class="p-panel-status"><span>'+selected.length+' / '+p.entries.length+' 项</span><span>'+size(selected.reduce((a,f)=>a+f.size,0))+'</span><span>'+size(total)+'</span><span>'+(p.mode==='local'?'本地目录':esc(fmt(p.formatId)?.name||p.formatId)+(writeCap(p)?' · 可更新':' · 只读'))+'</span></div></section>';
+  }
+  function panels() {get('p-panels').classList.toggle('p-dual',state.dual);get('p-panels').innerHTML=state.panels.slice(0,state.dual?2:1).map(renderPanel).join('');refreshIcons();}
+  function redraw(){menus();toolbar();panels();}
+  function snapshot(p){return {path:p.path,mode:p.mode,formatId:p.formatId,entries:p.entries};}
+  function navigate(path) {
+    const p=current();p.stack=[];p.path=path;p.mode='local';p.formatId='';
+    p.entries=localFolders[path]||(localFolders[path]=[file('README.md',4520),file('资源',0,'','folder')]);p.selected.clear();p.history.unshift(path);p.history=[...new Set(p.history)].slice(0,16);panels();say(path);
+  }
+  function openEntry(f,openMode='auto') {
+    if(!f)return;
+    const p=current();
+    if(f.kind==='folder'||f.formatId){
+      p.stack.push(snapshot(p));p.path+=f.name+'/';p.selected.clear();
+      if(f.formatId){
+        p.mode='archive';p.formatId=f.formatId;
+        const type=fmt(f.formatId);
+        if(openMode==='parser'||openMode==='parser-exact')p.entries=[file('[0] '+f.name,f.size,f.formatId),file('[1] tail',128)];
+        else if(type?.kind==='stream')p.entries=[file(f.name.replace(/\.(gz|bz2|xz|zst|zstd|lzma|b64|lzh)$/i,''),f.size*2,/\.tar\.(gz|bz2|xz)$/i.test(f.name)?'tar':'')];
+        else if(f.formatId==='hash')p.entries=[file('README.md',6804),file('说明.txt',2148)];
+        else p.entries=archiveContents.map(x=>({...x,id:nextId++}));
+      }
+      else p.entries=[file('说明.md',4632),file('guide.pdf',1.7*MiB),file('example.cpp',9201),file('nested.zip',3.8*MiB,'zip')];
+      p.history.unshift(p.path);panels();say((f.formatId?'已打开 '+fileType(f):'已进入目录')+({one:' · 单层打开 *',parser:' · 解析模式 #','parser-exact':' · 精确解析 #:e'}[openMode]||'')+' · 示例内容');
+    }else showDialog('preview',{entry:f});
+  }
+  function up(){const p=current();if(p.stack.length){Object.assign(p,p.stack.pop());p.selected.clear();panels();say('返回 '+p.path);}else navigate('/Volumes/');}
+  function select(id,event){const p=current(),list=entries(p),idx=list.findIndex(f=>f.id===id);if(event.shiftKey){const start=Math.min(idx,state.selectionAnchor),end=Math.max(idx,state.selectionAnchor);list.slice(start,end+1).forEach(f=>p.selected.add(f.id));}else if(event.metaKey||event.ctrlKey){p.selected.has(id)?p.selected.delete(id):p.selected.add(id);state.selectionAnchor=idx;}else{p.selected=new Set([id]);state.selectionAnchor=idx;}
+    const area=get('p-panels').querySelector('.p-panel[data-panel="'+state.active+'"]');
+    area.querySelectorAll('[data-row],.p-file-tile').forEach(row=>{const selected=p.selected.has(Number(row.dataset.row||row.dataset.entry));row.classList.toggle('p-selected',selected);row.setAttribute('aria-selected',String(selected));});
+    const selected=p.entries.filter(f=>p.selected.has(f.id));const status=area.querySelector('.p-panel-status');status.children[0].textContent=selected.length+' / '+p.entries.length+' 项';status.children[1].textContent=size(selected.reduce((sum,f)=>sum+f.size,0));say('已选择 '+p.selected.size+' 项');}
+  function closeMenus(){state.menu=null;menus();}
+  function closeDialog(){state.dialog=null;get('p-dialog-region').hidden=true;get('p-panels').hidden=false;if(priorFocus?.isConnected)priorFocus.focus();}
+  function customDialog(title,html,bind){priorFocus=document.activeElement;state.dialog=title;get('p-dialog-title').textContent=title;get('p-dialog-body').innerHTML=html;get('p-dialog-region').hidden=false;get('p-panels').hidden=true;bind?.(get('p-dialog-body'));get('p-dialog-close').focus();}
+  const footer='<div class="p-actions"><span class="p-note">交互原型 · 示例数据</span><button type="button" data-dialog-close>关闭</button></div>';
+  function showDialog(type,extra={}){
+    if(type==='formats')return catalog();
+    if(type==='columns')return customDialog('选择详细信息列','<div class="p-grid-2">'+Object.entries(columns).map(([k,v])=>'<label class="p-check"><input type="checkbox" data-column="'+k+'" '+(current().columns.includes(k)?'checked':'')+'>'+v[0]+'</label>').join('')+'</div>'+footer,host=>host.addEventListener('change',e=>{if(e.target.dataset.column){current().columns=[...host.querySelectorAll('[data-column]:checked')].map(x=>x.dataset.column);panels();}}));
+    if(type==='history')return customDialog('文件夹历史','<table class="p-table"><tbody>'+current().history.map(p=>'<tr><td><button type="button" data-go="'+esc(p)+'">'+esc(p)+'</button></td></tr>').join('')+'</tbody></table>'+footer,host=>host.addEventListener('click',e=>{if(e.target.dataset.go){closeDialog();navigate(e.target.dataset.go);}}));
+    if(type==='select-mask'||type==='deselect-mask')return customDialog(type==='select-mask'?'选择文件':'取消选择','<form id="p-mask-form"><label class="p-field">通配符<input class="p-input" id="p-mask" value="*.7z"></label><p class="p-note">* 匹配任意字符，? 匹配单个字符。选择作用于当前面板。</p><div class="p-actions"><button type="button" data-dialog-close>取消</button><button class="p-primary" type="submit">应用选择</button></div></form>',host=>host.querySelector('form').addEventListener('submit',e=>{e.preventDefault();const pattern=host.querySelector('input').value;const rx=new RegExp('^'+pattern.replace(/[.+^${}()|[\]\\]/g,'\\$&').replace(/\*/g,'.*').replace(/\?/g,'.')+'$','i');current().entries.filter(f=>rx.test(f.name)).forEach(f=>type==='select-mask'?current().selected.add(f.id):current().selected.delete(f.id));closeDialog();panels();}));
+    if(type==='preview'||type==='view-file'||type==='diff'){
+      const f=extra.entry||chosen()[0];return customDialog(type==='diff'?'比较差异':'查看 — '+(f?.name||'README.md'),'<div class="p-note">'+esc(f?.name||'README.md')+' · 所选归档成员的预览示例</div><div class="p-result"><pre style="white-space:pre-wrap;margin:0">'+esc(type==='diff'?'  # M7Arc\n− Version: 0.1\n+ Version: 1.0\n  7-Zip file manager for macOS':'# M7Arc\n\n归档内容可以直接浏览、查看和编辑。\n此文件为交互原型中的示例内容。\n\n7-Zip 26.03 · C++ · Qt Widgets')+'</pre></div>'+footer);
+    }
+    if(type==='streams')return customDialog('备用数据流与 Mac 扩展属性','<div class="p-tabs"><button class="p-tab" aria-selected="true">流与扩展属性</button></div><table class="p-table"><thead><tr><th>名称</th><th>数据类型</th><th>大小</th></tr></thead><tbody><tr><td>com.apple.ResourceFork</td><td>Mac 扩展属性</td><td>8.2 KiB</td></tr><tr><td>com.apple.metadata:_kMDItemUserTags</td><td>Finder 标签</td><td>64 B</td></tr><tr><td>Zone.Identifier</td><td>归档中的 NTFS 流</td><td>26 B</td></tr></tbody></table><p class="p-note">属性展示示例。归档流和 Mac 扩展属性分别保存与恢复。</p>'+footer);
+    if(type==='temp-cleanup')return customDialog('临时文件','<table class="p-table"><thead><tr><th>选择</th><th>文件夹</th><th>用途</th><th>大小</th></tr></thead><tbody><tr><td><input type="checkbox" data-temp></td><td>M7Arc-preview-01</td><td>已结束预览</td><td>1.8 MiB</td></tr><tr><td><input type="checkbox" disabled></td><td>M7Arc-edit-02</td><td>待回写编辑文件</td><td>6.4 KiB</td></tr></tbody></table><div class="p-actions"><button type="button" id="p-clean-temp">删除所选示例项</button><button type="button" data-dialog-close>关闭</button></div>',host=>host.querySelector('#p-clean-temp').onclick=()=>{host.querySelectorAll('[data-temp]:checked').forEach(x=>x.closest('tr').remove());say('已清理所选示例临时项');});
+    if(type==='help'||type==='about')return customDialog(type==='about'?'关于 M7Arc':'帮助内容',type==='about'?'<div class="p-result"><strong>M7Arc · 7-Zip File Manager for macOS</strong><p>引擎基线：7-Zip 26.03</p><p>'+formats.formats.length+' 个格式注册项 · '+formats.createFormats.length+' 类归档写入 · '+formats.hashers.length+' 个摘要算法</p><p>7-Zip Copyright © 1999–2026 Igor Pavlov</p><p class="p-note">这是可交互设计原型，文件操作使用内置示例数据。</p></div>'+footer:'<ul class="p-help-list"><li>主窗口：文件 / 编辑 / 查看 / 收藏夹 / 工具 / 帮助。</li><li>双击归档进入，向上返回。F9 切换单双面板。</li><li>添加：七类真实可写格式、全部方法、更新、加密、分卷与内存设置。</li><li>格式与方法：搜索所有 handler、扩展别名、读写边界与算法。</li><li>文件菜单：内部打开、包内编辑、分割合并、CRC、链接和备用流。</li><li>工具菜单：选项、基准测试、临时文件管理。</li><li>点击列标题排序，地址栏右侧选择动态属性列。</li><li>交互结果仅影响示例数据，原型不会读取或改写本机文件。</li></ul>'+footer);
+    const aliases={'create-folder':'createFolder','create-file':'createFile','edit-file':'editSession','hash-save':'hash','hash-verify':'hash'};
+    const actual=aliases[type]||type;
+    const titles={add:'添加到压缩包',extract:'提取文件',options:'选项',benchmark:'基准测试',hash:'CRC / SHA — 校验和',split:'分割文件',combine:'合并文件',copy:'复制到',move:'移动到',rename:'重命名',createFolder:'新建文件夹',createFile:'新建文件',info:'属性',editSession:'编辑归档中的文件',overwrite:'确认文件替换',password:'输入密码',sfx:'创建自解压文件',delete:'删除',link:'创建链接',comment:'注释'};
+    const selection=chosen().map(f=>({...f,type:f.kind,isDir:f.kind==='folder'}));const context={formats,selection,location:current().path,mode:current().mode,formatId:extra.formatId||selection[0]?.formatId||current().formatId||'7z',extra:{...extra,action:type,settings:state.settings,otherLocation:state.dual?state.panels[1-state.active].path:undefined},onAction:dialogAction,close:closeDialog};
+    customDialog(titles[actual]||type,window.M7ArcDialogs.render(actual,context),host=>window.M7ArcDialogs.bind(host,actual,context));
+  }
+  function dialogAction(action,payload={}) {
+    const chosenEntries=chosen();const p=current();
+    if(['options','save-options'].includes(action)){state.settings={...payload};say('设置已保存到本次原型会话');return;}
+    if(['hash','hash-verify','split','combine'].includes(action)){say('已更新模拟结果');return;}
+    closeDialog();
+    if(['rename','createFolder','createFile','create-folder','create-file'].includes(action)){
+      const name=payload.name||payload.newName||payload.value||'新建项目';
+      if(action==='rename'&&chosenEntries[0])chosenEntries[0].name=name;else p.entries.push(file(name,0,'',action.toLowerCase().includes('folder')?'folder':'file'));
+      panels();say('示例文件列表已更新');return;
+    }
+    if(action==='delete'){p.entries=p.entries.filter(f=>!p.selected.has(f.id));p.selected.clear();panels();say('已从示例列表删除所选项');return;}
+    if(action==='edit-discard'||action==='discard'){say('已放弃示例编辑内容');return;}
+    startJob(action,payload);
+  }
+  function startJob(action,payload={}) {
+    if(jobTimer)clearInterval(jobTimer);
+    const p=current();const src=chosen().map(f=>({...f}));const actionName={add:'创建归档',extract:'提取文件',test:'测试归档',copy:'复制文件',move:'移动文件','edit-save':'更新归档',save:'更新归档',split:'分割文件',combine:'合并文件'}[action]||action;
+    const targetPath=payload.destination||state.panels[1-state.active].path;
+    state.job={action,title:'模拟：'+actionName,value:0,paused:false,detail:payload.name||payload.archiveName||src[0]?.name||p.path};
+    const region=get('p-progress-region');region.hidden=false;
+    region.innerHTML='<div class="p-progress-head"><strong id="p-job-title">'+esc(state.job.title)+'</strong><span id="p-job-percent">0%</span></div><progress id="p-job-progress" max="100" value="0" aria-label="模拟任务"></progress><div class="p-progress-stats"><span id="p-job-detail">'+esc(state.job.detail)+'</span><span id="p-job-phase">扫描输入</span><span>示例任务</span><div class="p-progress-controls"><button type="button" id="p-job-pause">暂停</button><button type="button" id="p-job-cancel">取消</button><button type="button" id="p-job-hide">收起</button></div></div>';
+    get('p-job-pause').onclick=()=>{state.job.paused=!state.job.paused;get('p-job-pause').textContent=state.job.paused?'继续':'暂停';get('p-job-phase').textContent=state.job.paused?'已暂停':'正在处理';};
+    get('p-job-cancel').onclick=()=>{clearInterval(jobTimer);get('p-job-phase').textContent='已取消';get('p-job-pause').disabled=true;get('p-job-cancel').disabled=true;say('模拟作业已取消，示例源文件保留');};
+    get('p-job-hide').onclick=()=>{region.hidden=true;};
+    jobTimer=setInterval(()=>{
+      if(state.job.paused)return;state.job.value=Math.min(100,state.job.value+10);
+      get('p-job-progress').value=state.job.value;get('p-job-percent').textContent=state.job.value+'%';get('p-job-phase').textContent=state.job.value<20?'扫描输入':state.job.value<90?'正在处理':'正在完成写入';
+      if(state.job.value===100){clearInterval(jobTimer);get('p-job-phase').textContent='模拟完成';get('p-job-pause').disabled=true;get('p-job-cancel').disabled=true;
+        if(action==='add'){const id=payload.formatId||payload.format||'7z';const preset=formats.presets.find(x=>x.id===id);const out=file(payload.archiveName||payload.name||'新建归档.'+(formats.createFormats.find(x=>x.id===id)?.extension||id),4.6*MiB,preset?preset.pipeline.at(-1):id);(p.mode==='local'?p.entries:samples).push(out);}
+        if(action==='copy'||action==='move'){const target=state.panels.find(x=>x.path===targetPath);const destination=target?target.entries:(localFolders[targetPath]||(localFolders[targetPath]=[]));destination.push(...src.map(f=>({...f,id:nextId++})));if(action==='move'){const ids=new Set(src.map(f=>f.id));p.entries=p.entries.filter(f=>!ids.has(f.id));if(p.mode==='local')localFolders[p.path]=p.entries;p.selected.clear();}}
+        panels();say(state.job.title+'已完成 · 仅内置示例数据');
+      }
+    },320);
+  }
+  function catalog(){
+    const data={tab:'formats',query:'',mode:'all',category:'all',page:0};
+    const categories=[...new Set(formats.formats.map(f=>f.category))];
+    customDialog('格式与方法 — 7-Zip 26.03','<div class="p-tabs" role="tablist"><button type="button" class="p-tab" data-cat-tab="formats" aria-selected="true">归档与容器</button><button type="button" class="p-tab" data-cat-tab="codecs" aria-selected="false">压缩方法与过滤器</button><button type="button" class="p-tab" data-cat-tab="hashers" aria-selected="false">校验和算法</button></div><div id="p-format-catalog"><div class="p-catalog-controls"><input class="p-input" id="p-format-search" aria-label="搜索格式或扩展名" placeholder="搜索名称或扩展名，例如 rar、dmg、docx"><select class="p-select" id="p-format-mode" aria-label="筛选能力"><option value="all">全部能力</option><option value="write">可创建归档</option><option value="read">只读格式</option></select><select class="p-select" id="p-format-category" aria-label="格式分类"><option value="all">全部类别</option>'+categories.map(c=>'<option>'+esc(c)+'</option>').join('')+'</select></div><div class="p-catalog-summary"><span id="p-catalog-count"></span><span>七类归档写入；Hash 为摘要清单</span></div><div id="p-catalog-table"></div><div class="p-catalog-pages"><button type="button" id="p-catalog-prev">上一页</button><span id="p-catalog-page"></span><button type="button" id="p-catalog-next">下一页</button></div></div><div id="p-algorithm-table" hidden></div><div id="p-format-details" hidden class="p-result"></div>'+footer,host=>{
+      const render=()=>{
+        const list=formats.formats.filter(f=>(f.name+' '+f.extensions.join(' ')).toLowerCase().includes(data.query.toLowerCase())&&(data.mode==='all'||data.mode==='write'&&f.write&&f.id!=='hash'||data.mode==='read'&&!f.write)&&(data.category==='all'||f.category===data.category));
+        const pages=Math.max(1,Math.ceil(list.length/16));data.page=Math.min(data.page,pages-1);
+        host.querySelector('#p-catalog-count').textContent='显示 '+list.length+' / '+formats.formats.length+' 个注册项';
+        host.querySelector('#p-catalog-table').innerHTML='<table class="p-table"><thead><tr><th class="p-catalog-name">格式</th><th class="p-catalog-ext">扩展名 / 别名</th><th class="p-catalog-cap">能力</th><th class="p-catalog-category">类别</th></tr></thead><tbody>'+list.slice(data.page*16,data.page*16+16).map(f=>'<tr><td><button type="button" data-format-detail="'+f.id+'">'+esc(f.name)+'</button></td><td>'+esc(f.extensions.map(x=>'.'+x).join(' '))+'</td><td class="'+(f.write?'p-mode-write':'p-mode-read')+'">'+(f.id==='hash'?'摘要读写':f.write?'读取 / 创建':'读取 / 提取')+'</td><td class="p-catalog-category">'+esc(f.category)+'</td></tr>').join('')+'</tbody></table>';
+        host.querySelector('#p-catalog-page').textContent=(data.page+1)+' / '+pages;
+        host.querySelector('#p-catalog-prev').disabled=data.page===0;host.querySelector('#p-catalog-next').disabled=data.page>=pages-1;
+      };
+      host.querySelector('#p-format-search').oninput=e=>{data.query=e.target.value;data.page=0;render();};
+      host.querySelector('#p-format-mode').onchange=e=>{data.mode=e.target.value;data.page=0;render();};
+      host.querySelector('#p-format-category').onchange=e=>{data.category=e.target.value;data.page=0;render();};
+      host.querySelector('#p-catalog-prev').onclick=()=>{data.page--;render();};host.querySelector('#p-catalog-next').onclick=()=>{data.page++;render();};
+      host.addEventListener('click',e=>{
+        const button=e.target.closest('button');if(!button)return;
+        if(button.dataset.catTab){data.tab=button.dataset.catTab;host.querySelectorAll('[data-cat-tab]').forEach(b=>b.setAttribute('aria-selected',String(b===button)));host.querySelector('#p-format-catalog').hidden=data.tab!=='formats';host.querySelector('#p-algorithm-table').hidden=data.tab==='formats';host.querySelector('#p-format-details').hidden=true;
+          const arr=data.tab==='codecs'?formats.codecs:formats.hashers;
+          host.querySelector('#p-algorithm-table').innerHTML='<table class="p-table"><thead><tr><th>名称</th><th>能力 / 用途</th></tr></thead><tbody>'+arr.map(x=>'<tr><td>'+esc(typeof x==='string'?x:x.name||x.id)+'</td><td>'+esc(typeof x==='string'?'上游注册方法':x.note||x.description||x.capability||x.kind||[x.encode?'编码':'',x.decode?'解码':'',x.filter?'过滤器':''].filter(Boolean).join(' / ')||'摘要计算')+'</td></tr>').join('')+'</tbody></table>';
+        }
+        if(button.dataset.formatDetail){const f=fmt(button.dataset.formatDetail);const details=host.querySelector('#p-format-details');details.hidden=false;details.innerHTML='<dl><dt>格式</dt><dd>'+esc(f.name)+'</dd><dt>能力</dt><dd>'+esc(f.note||'遵循上游 handler 能力')+'</dd><dt>扩展名</dt><dd>'+esc(f.extensions.join(', '))+'</dd></dl><div class="p-actions"><button type="button" data-open-format="'+f.id+'">打开此类示例</button>'+(f.write&&f.id!=='hash'?'<button type="button" class="p-primary" data-create-format="'+f.id+'">创建 '+esc(f.name)+'…</button>':'')+'</div>';}
+        if(button.dataset.openFormat){const id=button.dataset.openFormat;closeDialog();openEntry(file('example.'+(fmt(id).extensions[0]||id),8.4*MiB,id));}
+        if(button.dataset.createFormat){showDialog('add',{formatId:button.dataset.createFormat});}
+      });render();
+    });
+  }
+  function command(id){
+    closeMenus();const p=current();
+    if(id==='two-panels'){state.dual=!state.dual;if(!state.dual)state.active=0;toolbar();panels();return;}
+    if(id==='up')return up();if(id==='root')return navigate('/Volumes/');
+    if(['open','open-inside','open-inside-one','open-inside-parser','open-inside-parser-exact'].includes(id)||id.startsWith('open-as-')){
+      const selected=chosen()[0];const mode={'open-inside-one':'one','open-inside-parser':'parser','open-inside-parser-exact':'parser-exact'}[id]||'auto';
+      return openEntry(id.startsWith('open-as-')&&selected?{...selected,formatId:id.slice(8)}:selected,mode);
+    }
+    if(id==='open-outside')return showDialog('preview');
+    if(id.startsWith('view-')&&['large','small','list','details'].includes(id.slice(5))){p.view=id.slice(5);panels();return;}
+    if(id.startsWith('sort-')){const s=id.slice(5);p.descending=p.sort===s?!p.descending:false;p.sort=s;panels();return;}
+    if(id==='flat-view'){p.flat=!p.flat;panels();return;}
+    if(id.startsWith('time-')){if(id==='time-utc')state.utc=!state.utc;else state.time=id.slice(5);panels();return;}
+    const toolbarOptions={'toolbar-archive':'archiveToolbar','toolbar-standard':'standardToolbar','toolbar-large':'large','toolbar-text':'labels'};
+    if(toolbarOptions[id]){state[toolbarOptions[id]]=!state[toolbarOptions[id]];toolbar();return;}
+    if(id==='auto-refresh'){state.autoRefresh=!state.autoRefresh;say(state.autoRefresh?'自动刷新已开启':'自动刷新已关闭');return;}
+    if(id==='refresh'){panels();say('已刷新当前示例目录');return;}
+    if(id==='select-all'){p.entries.forEach(f=>p.selected.add(f.id));panels();return;}
+    if(id==='deselect-all'){p.selected.clear();panels();return;}
+    if(id==='invert-selection'){p.entries.forEach(f=>p.selected.has(f.id)?p.selected.delete(f.id):p.selected.add(f.id));panels();return;}
+    if(id==='select-type'||id==='deselect-type'){const extension=(chosen()[0]?.name||'project.7z').split('.').pop();p.entries.filter(f=>f.name.endsWith('.'+extension)).forEach(f=>id==='select-type'?p.selected.add(f.id):p.selected.delete(f.id));panels();return;}
+    if(id.startsWith('favorite-set-')){state.bookmarks[Number(id.split('-').pop())]=p.path;say('已保存收藏夹：'+p.path);return;}
+    if(/^favorite-\d+$/.test(id)){const path=state.bookmarks[Number(id.split('-')[1])];if(path)navigate(path);else say('此书签尚未设置，请使用“添加当前文件夹为”');return;}
+    if(id==='test')return startJob('test');
+    if(['extract-here','extract-folder'].includes(id))return startJob('extract',{destination:id==='extract-here'?p.path:p.path+'归档名称/'});
+    if(id.startsWith('compress-'))return showDialog('add',{formatId:id.includes('zip')?'zip':'7z',share:id.includes('email')});
+    if(['crc32','crc64','xxh64','md5','sha1','sha256','sha384','sha512','sha3-256','blake2sp','hash-all'].includes(id))return showDialog('hash',{hashAlgorithm:id});
+    if(id==='exit'){closeDialog();say('交互原型保留在当前页面，可继续浏览');return;}
+    if(['rename','delete','create-folder','create-file','edit-file','comment','move'].includes(id)&&!writeCap())return customDialog('当前归档为只读','<p>'+esc(fmt(p.formatId)?.name||p.formatId)+' 支持读取与提取。修改后的文件可另存到本地目录。</p>'+footer);
+    return showDialog(id);
+  }
+  root.addEventListener('click',e=>{
+    const area=e.target.closest('.p-panel[data-panel]');if(area){const idx=Number(area.dataset.panel);if(state.active!==idx){state.active=idx;root.querySelectorAll('.p-panel[data-panel]').forEach(a=>a.classList.toggle('p-active',Number(a.dataset.panel)===idx));}}
+    const entry=e.target.closest('[data-entry],[data-row]');if(entry){select(Number(entry.dataset.entry||entry.dataset.row),e);return;}
+    const button=e.target.closest('button');if(!button)return;
+    if(button.dataset.menu!==undefined){const n=Number(button.dataset.menu);state.menu=state.menu===n?null:n;menus();return;}
+    if(button.hasAttribute('data-submenu')){const expanded=button.getAttribute('aria-expanded')==='true';[...button.parentElement.parentElement.children].forEach(sibling=>{const other=sibling.querySelector(':scope > button[data-submenu]');if(other&&other!==button){other.setAttribute('aria-expanded','false');other.nextElementSibling.hidden=true;}});button.setAttribute('aria-expanded',String(!expanded));button.nextElementSibling.hidden=expanded;fitMenus();return;}
+    if(button.dataset.command)return command(button.dataset.command);
+    if(button.hasAttribute('data-dialog-close'))return closeDialog();
+    if(button.dataset.sort)return command(button.dataset.sort==='columns'?'columns':'sort-'+button.dataset.sort);
+  });
+  root.addEventListener('dblclick',e=>{const row=e.target.closest('[data-entry],[data-row]');if(row){openEntry(current().entries.find(f=>f.id===Number(row.dataset.entry||row.dataset.row)));}});
+  root.addEventListener('submit',e=>{if(e.target.hasAttribute('data-address-form')){e.preventDefault();navigate(e.target.querySelector('input').value);}});
+  root.addEventListener('contextmenu',e=>{const row=e.target.closest('[data-row]');if(!row)return;e.preventDefault();const area=row.closest('[data-panel]');state.active=Number(area.dataset.panel);current().selected=new Set([Number(row.dataset.row)]);state.menu=0;menus();panels();});
+  root.addEventListener('keydown',e=>{
+    if(e.key==='Escape'){closeMenus();if(state.dialog)closeDialog();return;}
+    const typing=['INPUT','SELECT','TEXTAREA'].includes(e.target.tagName);if(typing)return;
+    const key=e.key.toLowerCase();const cmd=e.metaKey||e.ctrlKey;
+    if(cmd&&key==='l'){e.preventDefault();get('p-panels').querySelector('[data-panel="'+state.active+'"] input')?.focus();return;}
+    if(cmd&&key==='a'){e.preventDefault();command('select-all');return;}
+    if(cmd&&key===','){e.preventDefault();command('options');return;}
+    if(cmd&&key==='r'){e.preventDefault();command('refresh');return;}
+    if(cmd&&['1','2','3','4'].includes(key)){e.preventDefault();command('view-'+{1:'large',2:'small',3:'list',4:'details'}[key]);return;}
+    if(cmd&&['c','x'].includes(key)){state.clipboard={entries:chosen().map(f=>({...f})),move:key==='x',source:current()};say('已'+(key==='x'?'剪切':'复制')+'所选示例文件');e.preventDefault();return;}
+    if(cmd&&key==='v'&&state.clipboard){current().entries.push(...state.clipboard.entries.map(f=>({...f,id:nextId++})));if(state.clipboard.move){const ids=new Set(state.clipboard.entries.map(f=>f.id));state.clipboard.source.entries=state.clipboard.source.entries.filter(f=>!ids.has(f.id));state.clipboard=null;}panels();e.preventDefault();return;}
+    const keys={F1:'help',F2:'rename',F3:'view-file',F4:'edit-file',F5:'copy',F6:'move',F7:'create-folder',F9:'two-panels',Enter:'open',Backspace:'up',Delete:'delete',' ':'view-file'};
+    if(keys[e.key]){e.preventDefault();command(keys[e.key]);}
+  });
+  get('p-dialog-close').onclick=closeDialog;
+  redraw();
+  if(globalThis.Tweak){const tweak=new Tweak({container:root,onChange:()=>{if(!state.dual)state.active=0;redraw();}});tweak.addToggle(state,'dual',{label:'双面板'});tweak.addSelect(state,'density',{label:'列表密度',options:[{label:'标准',value:'standard'},{label:'紧凑',value:'compact'}]});tweak.addToggle(state,'large',{label:'大工具栏图标'});}
+}());
+
+</script>
