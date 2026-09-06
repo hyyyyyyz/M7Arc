@@ -19,9 +19,9 @@ M7Arc 是项目工作名，正式产品名称尚待确定。M 代表 Mac，7 代
 
 ## 分发方式
 
-首版通过 GitHub Releases 提供 DMG 下载。DMG 内包含应用及其 Qt、7-Zip 运行依赖，用户打开后将应用拖入“应用程序”文件夹。完整公开版本以 Universal 2 同时支持 Apple Silicon 与 Intel，发布流程包含 Developer ID 签名、Apple 公证及安装验证。
+首版通过 GitHub Releases 提供 DMG 下载。DMG 内包含应用及其 Qt、7-Zip 运行依赖，用户打开后将应用拖入“应用程序”文件夹。提供 Apple Silicon 和 Intel 的独立安装包，完整依赖通过构建流水线打包。当前采用 ad-hoc 签名，不使用 Developer ID，也不进行 Apple 公证；每个 Release 明确标注这一状态。取得证书后可增加签名公证发行。
 
-发布附件由项目构建流程生成。GitHub 自动提供的 Source code ZIP/TAR 为源码快照；面向用户的 DMG 作为独立 Release asset 上传。具体实现纳入 [实施路线](docs/ROADMAP.zh-CN.md) 的构建与发行阶段。[GitHub Releases](https://docs.github.com/en/repositories/releasing-projects-on-github/about-releases)、[Qt macOS 部署](https://doc.qt.io/qt-6/macos-deployment.html)、[Apple Developer ID](https://developer.apple.com/developer-id/)
+发布附件由项目构建流程生成。GitHub 自动提供的 Source code ZIP/TAR 为源码快照；面向用户的 DMG 作为独立 Release asset 上传。版本采用 SemVer，首个可执行预览为 `0.1.0-alpha.1`；修复增加 patch，功能增加 minor，完成既定迁移后发布 `1.0.0`。详见[版本规则](docs/VERSIONING.zh-CN.md)与[发行说明](docs/RELEASE.zh-CN.md)。[GitHub Releases](https://docs.github.com/en/repositories/releasing-projects-on-github/about-releases)、[Qt macOS 部署](https://doc.qt.io/qt-6/macos-deployment.html)、[Apple Developer ID](https://developer.apple.com/developer-id/)
 
 ## 原型
 

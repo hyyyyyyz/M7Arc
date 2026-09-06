@@ -1,0 +1,24 @@
+M7Arc 安装说明
+
+1. 打开 DMG，将 M7Arc.app 拖入旁边的 Applications（应用程序）文件夹。
+2. 推出磁盘映像，然后从“应用程序”启动 M7Arc。
+3. 本发行使用 ad-hoc 代码签名，没有 Developer ID 签名，也没有 Apple 公证。
+   如果 macOS 阻止首次打开，在确认下载来自本项目 GitHub Releases 后，
+   打开“系统设置 → 隐私与安全性”，找到本次 M7Arc 提示并选择“仍要打开”，
+   然后按系统提示确认。
+
+arm64 适用于 Apple Silicon；x86_64 适用于 Intel Mac。
+最低目标系统：macOS 13。
+应用包已包含运行所需的 Qt 与 7-Zip 组件，无需单独安装。
+
+升级：退出正在运行的 M7Arc，再将新版本拖入“应用程序”并替换。
+卸载：退出 M7Arc，将应用移入废纸篓。
+
+本地 ad-hoc 签名不提供发布者身份认证。请查看 Release 对应版本的实际功能
+与已知问题；预览版可能尚未覆盖完整设计。
+
+Apple 的单应用放行说明：
+https://support.apple.com/zh-cn/102445
+
+版权与许可文件保存在 DMG 的 Licenses 文件夹以及
+M7Arc.app/Contents/Resources/Licenses。

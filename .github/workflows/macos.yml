@@ -1,0 +1,95 @@
+name: macOS
+
+on:
+  push:
+    branches: ['**']
+    tags: ['v*']
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: macos-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ !startsWith(github.ref, 'refs/tags/') }}
+
+jobs:
+  build:
+    name: macOS ${{ matrix.arch }}
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: macos-15
+            arch: arm64
+          - runner: macos-15-intel
+            arch: x86_64
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.13'
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: '6.11.2'
+          host: mac
+          target: desktop
+          arch: clang_64
+          archives: qtbase qttools
+          cache: true
+      - name: Configure
+        run: >-
+          cmake -S . -B build/release -G Ninja
+          -DCMAKE_BUILD_TYPE=Release
+          -DCMAKE_PREFIX_PATH="$QT_ROOT_DIR"
+          -DCMAKE_OSX_DEPLOYMENT_TARGET=13.0
+          -DCMAKE_OSX_ARCHITECTURES=${{ matrix.arch }}
+          -DBUILD_TESTING=ON
+      - name: Build
+        run: cmake --build build/release --parallel 3
+      - name: Test
+        run: ctest --test-dir build/release --output-on-failure
+      - name: Package and verify relocated application
+        run: python3 packaging/macos/package.py --qt-prefix "$QT_ROOT_DIR"
+      - name: Upload disk image
+        uses: actions/upload-artifact@v7
+        with:
+          name: macos-${{ matrix.arch }}
+          path: build/dist/M7Arc-*-macos-${{ matrix.arch }}.dmg
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 14
+
+  publish:
+    name: Publish GitHub Release
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: build
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/download-artifact@v8
+        with:
+          pattern: macos-*
+          path: build/dist
+          merge-multiple: true
+      - name: Prepare versioned release notes
+        env:
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: python3 packaging/macos/release_notes.py --tag "$RELEASE_TAG" --output build/release-notes.md
+      - name: Publish DMG assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ github.ref_name }}
+        shell: bash
+        run: |
+          release_version=$(cat VERSION)
+          release_args=(--verify-tag --title "M7Arc $release_version" --notes-file build/release-notes.md)
+          if [[ "$release_version" == *-* ]]; then
+            release_args+=(--prerelease --latest=false)
+          fi
+          gh release create "$RELEASE_TAG" build/dist/*.dmg "${release_args[@]}"

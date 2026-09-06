@@ -1,0 +1,21 @@
+Installing M7Arc
+
+1. Open the DMG and drag M7Arc.app to the Applications shortcut.
+2. Eject the disk image, then open M7Arc from Applications.
+3. This release is ad-hoc signed. It is not Developer ID signed or notarized.
+   If macOS blocks the first launch and you trust this project's GitHub Releases
+   download, open System Settings > Privacy & Security, choose Open Anyway for
+   M7Arc, and follow the system prompts.
+
+Choose arm64 for Apple Silicon or x86_64 for Intel. The minimum target is macOS 13.
+Qt and 7-Zip runtime components are included; no separate installation is needed.
+
+To upgrade, quit M7Arc before replacing the application. To uninstall, quit it
+and move it to the Trash. See the release notes for supported features and known
+limitations of each preview.
+
+Ad-hoc signing does not authenticate a publisher's identity.
+Apple's per-application instructions: https://support.apple.com/en-us/102445
+
+Licenses are included in the disk image and in
+M7Arc.app/Contents/Resources/Licenses.

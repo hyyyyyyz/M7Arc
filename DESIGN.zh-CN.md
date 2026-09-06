@@ -348,11 +348,11 @@ M7Arc/
 
 ## 8. 开源维护与发行
 
-新增原创应用代码建议 MIT；迁移或复制的上游代码继续遵守原许可证。7-Zip 涉及 LGPL-2.1-or-later、BSD、公有领域声明和 unRAR 限制；不能把整个分发包描述成仅 MIT。Qt 使用实际选用模块的开源许可，动态链接并随发行提供许可证、对应源码获取及用户重建/替换库的说明。[本地 7-Zip 许可证](third_party/7zip/DOC/License.txt)、[Qt licensing](https://doc.qt.io/qt-6/licensing.html)、[Qt LGPL obligations](https://www.qt.io/development/open-source-lgpl-obligations)
+新增原创应用代码采用 MIT；迁移或复制的上游代码继续遵守原许可证。7-Zip 涉及 LGPL-2.1-or-later、BSD、公有领域声明和 unRAR 限制；不能把整个分发包描述成仅 MIT。Qt 使用实际选用模块的开源许可，动态链接并随发行提供许可证、对应源码获取及用户重建/替换库的说明。[本地 7-Zip 许可证](third_party/7zip/DOC/License.txt)、[Qt licensing](https://doc.qt.io/qt-6/licensing.html)、[Qt LGPL obligations](https://www.qt.io/development/open-source-lgpl-obligations)
 
-发布顺序为：分架构构建与合并 → 安装引擎、Qt、扩展、资源 → `macdeployqt` → 从内到外签名 → 制作 DMG → `notarytool` 公证 → stapler → 干净机器安装验证。自有引擎库与扩展由 CMake 显式安装；`macdeployqt -sign-for-notarization` 只完成相应签名准备。[Qt deployment](https://doc.qt.io/qt-6/macos-deployment.html)、[Apple notarization](https://developer.apple.com/documentation/security/notarizing-macos-software-before-distribution)
+当前发布顺序为：分架构构建 → 安装引擎、Qt、扩展、资源 → `macdeployqt` → 从内到外 ad-hoc 签名 → 重定位启动验证 → 制作 DMG → 安装验证。Apple Silicon 与 Intel 分别提供安装包，版本从根目录 VERSION 读取。取得 Developer ID 与公证凭据后，可增加完整签名、`notarytool` 公证及 stapler 票据；当前发布不依赖这些凭据。[Qt deployment](https://doc.qt.io/qt-6/macos-deployment.html)、[Apple notarization](https://developer.apple.com/documentation/security/notarizing-macos-software-before-distribution)
 
-正式下载渠道为 GitHub Releases。验证通过的 DMG 作为版本附件发布，版本说明列出支持系统、架构、功能范围与已知问题。源码归档与可安装 DMG 分别提供；GitHub Actions 承担构建、依赖打包与发行流程，签名凭据由仓库发布环境提供。[GitHub Releases](https://docs.github.com/en/repositories/releasing-projects-on-github/about-releases)
+正式下载渠道为 GitHub Releases。验证通过的 DMG 作为版本附件发布，版本说明列出支持系统、架构、功能范围与已知问题。源码归档与可安装 DMG 分别提供；GitHub Actions 承担构建、依赖打包与发行流程，当前包明确标注没有 Developer ID 签名和 Apple 公证。[GitHub Releases](https://docs.github.com/en/repositories/releasing-projects-on-github/about-releases)
 
 每个发布版本记录应用版本、上游提交与 Qt 版本。上游升级作为独立变更：更新源码快照和来源记录，审看 source manifest 和本地补丁差异，运行格式注册目录对比，再验证变更涉及的格式与工作流。英文作为可协作的源码与公开贡献语言，产品初期提供简体中文和英文，后续通过 Qt Linguist 扩展翻译。
 

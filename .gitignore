@@ -2,6 +2,7 @@
 /out/
 /.cache/
 /.qt/
+/aqtinstall.log
 /CMakeUserPresets.json
 .DS_Store
 *.dSYM/
