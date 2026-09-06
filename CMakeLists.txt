@@ -60,6 +60,17 @@ qt_add_translations(
     RESOURCE_PREFIX "/i18n"
     NO_GENERATE_PLURALS_TS_FILE)
 
+qt_add_lrelease(
+    LRELEASE_TARGET m7arc_qt_translations
+    TS_FILES third_party/qttranslations/qtbase_zh_CN.ts
+    QM_FILES_OUTPUT_VARIABLE M7ARC_QT_TRANSLATIONS)
+foreach(M7ARC_TRANSLATION_TARGET IN ITEMS M7Arc M7ArcExtractor)
+    qt_add_resources(${M7ARC_TRANSLATION_TARGET} qt_translations
+        PREFIX "/i18n"
+        BASE "${CMAKE_CURRENT_BINARY_DIR}"
+        FILES ${M7ARC_QT_TRANSLATIONS})
+endforeach()
+
 
 file(READ "${CMAKE_CURRENT_SOURCE_DIR}/resources/formats.json" M7ARC_FORMAT_CATALOG)
 string(JSON M7ARC_FORMAT_COUNT LENGTH "${M7ARC_FORMAT_CATALOG}" formats)

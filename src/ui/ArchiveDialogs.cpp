@@ -21,6 +21,7 @@
 #include <QPushButton>
 #include <QRegularExpression>
 #include <QScrollArea>
+#include <QScreen>
 #include <QSettings>
 #include <QSignalBlocker>
 #include <QSpinBox>
@@ -204,6 +205,8 @@ CreateDialog::CreateDialog(const QStringList& inputs, const QString& directory, 
     auto* advancedColumns = new QHBoxLayout(advancedBody);
     auto* advancedLeft = new QFormLayout;
     auto* advancedRight = new QFormLayout;
+    advancedLeft->setFieldGrowthPolicy(QFormLayout::AllNonFixedFieldsGrow);
+    advancedRight->setFieldGrowthPolicy(QFormLayout::AllNonFixedFieldsGrow);
     advancedColumns->addLayout(advancedLeft, 1);
     advancedColumns->addLayout(advancedRight, 1);
     advancedMethods_ = new QCheckBox(tr("显示高级压缩方法"), this);
@@ -233,10 +236,21 @@ CreateDialog::CreateDialog(const QStringList& inputs, const QString& directory, 
     advanced->setMaximumHeight(240);
     advanced->hide();
     layout->addWidget(advanced);
-    connect(more, &QPushButton::toggled, this, [this, advanced](bool visible) {
-        advanced->setVisible(visible);
-        adjustSize();
-    });
+    connect(more, &QPushButton::toggled, this,
+            [this, advanced, layout, collapsedHeight = 0](bool visible) mutable {
+                const int preservedWidth = qMax(width(), 820);
+                if (visible)
+                    collapsedHeight = height();
+                advanced->setVisible(visible);
+                layout->activate();
+                const int frameHeight = frameGeometry().height() - height();
+                const int availableHeight = screen()->availableGeometry().height() - frameHeight - 16;
+                const int extraHeight =
+                    qMin(240, advanced->widget()->sizeHint().height() + advanced->frameWidth() * 2) +
+                    layout->spacing();
+                const int desiredHeight = visible ? collapsedHeight + extraHeight : collapsedHeight;
+                resize(preservedWidth, qMin(desiredHeight, availableHeight));
+            });
     connect(advancedMethods_, &QCheckBox::toggled, this, [this] {
         const auto selected = method_->currentText();
         auto id = format_->currentData().toString();

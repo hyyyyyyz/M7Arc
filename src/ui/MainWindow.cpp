@@ -7,6 +7,7 @@
 #include "HashDialog.h"
 #include "OperationController.h"
 #include "SfxDialog.h"
+#include "ToolbarIcons.h"
 #include "platform/MacMetadata.h"
 #include "platform/drag/MacFilePromises.h"
 #include "tools/SfxBuilder.h"
@@ -362,21 +363,22 @@ MainWindow::MainWindow(QWidget* parent)
     toolbar_->setMovable(false);
     toolbar_->setIconSize(QSize(28, 28));
     toolbar_->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
-    const QList<QPair<QString, QStyle::StandardPixmap>> icons = {
-        {"add", QStyle::SP_FileDialogNewFolder}, {"extract", QStyle::SP_ArrowDown},
-        {"test", QStyle::SP_DialogApplyButton},  {"copy", QStyle::SP_FileDialogContentsView},
-        {"move", QStyle::SP_ArrowForward},       {"delete", QStyle::SP_TrashIcon},
-        {"info", QStyle::SP_FileDialogInfoView}};
+    const QList<QPair<QString, ToolbarGlyph>> icons = {
+        {"add", ToolbarGlyph::Add},   {"extract", ToolbarGlyph::Extract}, {"test", ToolbarGlyph::Test},
+        {"copy", ToolbarGlyph::Copy}, {"move", ToolbarGlyph::Move},       {"delete", ToolbarGlyph::Delete},
+        {"info", ToolbarGlyph::Info}};
     for (int n = 0; n < icons.size(); ++n) {
         if (n == 3)
             toolbar_->addSeparator();
         auto* a = actions_[icons[n].first];
-        a->setIcon(style()->standardIcon(icons[n].second));
+        a->setIcon(toolbarIcon(icons[n].second));
         toolbar_->addAction(a);
     }
     auto* space = new QWidget(toolbar_);
     space->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
     toolbar_->addWidget(space);
+    actions_["formats"]->setIcon(toolbarIcon(ToolbarGlyph::Formats));
+    actions_["two-panels"]->setIcon(toolbarIcon(ToolbarGlyph::Split));
     toolbar_->addAction(actions_["formats"]);
     toolbar_->addAction(actions_["two-panels"]);
     actions_["two-panels"]->setChecked(!right_->isHidden());
