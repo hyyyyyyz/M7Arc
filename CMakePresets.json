@@ -1,0 +1,48 @@
+{
+  "version": 5,
+  "cmakeMinimumRequired": { "major": 3, "minor": 24, "patch": 0 },
+  "configurePresets": [
+    {
+      "name": "release",
+      "displayName": "macOS Release",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/release",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "CMAKE_PREFIX_PATH": "${sourceDir}/.qt/6.11.2/macos",
+        "CMAKE_OSX_DEPLOYMENT_TARGET": "13.0",
+        "BUILD_TESTING": "ON"
+      }
+    },
+    {
+      "name": "arm64",
+      "inherits": "release",
+      "binaryDir": "${sourceDir}/build/arm64",
+      "cacheVariables": { "CMAKE_OSX_ARCHITECTURES": "arm64" }
+    },
+    {
+      "name": "x86_64",
+      "inherits": "release",
+      "binaryDir": "${sourceDir}/build/x86_64",
+      "cacheVariables": { "CMAKE_OSX_ARCHITECTURES": "x86_64" }
+    },
+    {
+      "name": "debug",
+      "inherits": "release",
+      "binaryDir": "${sourceDir}/build/debug",
+      "cacheVariables": { "CMAKE_BUILD_TYPE": "Debug" }
+    }
+  ],
+  "buildPresets": [
+    { "name": "release", "configurePreset": "release" },
+    { "name": "arm64", "configurePreset": "arm64" },
+    { "name": "x86_64", "configurePreset": "x86_64" },
+    { "name": "debug", "configurePreset": "debug" }
+  ],
+  "testPresets": [
+    { "name": "release", "configurePreset": "release", "output": { "outputOnFailure": true } },
+    { "name": "arm64", "configurePreset": "arm64", "output": { "outputOnFailure": true } },
+    { "name": "x86_64", "configurePreset": "x86_64", "output": { "outputOnFailure": true } },
+    { "name": "debug", "configurePreset": "debug", "output": { "outputOnFailure": true } }
+  ]
+}

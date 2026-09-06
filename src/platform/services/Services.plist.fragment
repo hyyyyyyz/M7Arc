@@ -1,0 +1,27 @@
+<key>NSServices</key>
+<array>
+  <dict>
+    <key>NSMenuItem</key><dict><key>default</key><string>Compress with M7Arc</string></dict>
+    <key>NSMessage</key><string>performArchiveService</string>
+    <key>NSPortName</key><string>M7Arc</string>
+    <key>NSUserData</key><string>add</string>
+    <key>NSSendTypes</key><array><string>public.file-url</string></array>
+    <key>NSSendFileTypes</key><array><string>public.item</string></array>
+  </dict>
+  <dict>
+    <key>NSMenuItem</key><dict><key>default</key><string>Extract with M7Arc</string></dict>
+    <key>NSMessage</key><string>performArchiveService</string>
+    <key>NSPortName</key><string>M7Arc</string>
+    <key>NSUserData</key><string>extract</string>
+    <key>NSSendTypes</key><array><string>public.file-url</string></array>
+    <key>NSSendFileTypes</key><array><string>public.item</string></array>
+  </dict>
+  <dict>
+    <key>NSMenuItem</key><dict><key>default</key><string>Test with M7Arc</string></dict>
+    <key>NSMessage</key><string>performArchiveService</string>
+    <key>NSPortName</key><string>M7Arc</string>
+    <key>NSUserData</key><string>test</string>
+    <key>NSSendTypes</key><array><string>public.file-url</string></array>
+    <key>NSSendFileTypes</key><array><string>public.item</string></array>
+  </dict>
+</array>

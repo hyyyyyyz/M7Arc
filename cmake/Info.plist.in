@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0"><dict>
+  <key>CFBundleDevelopmentRegion</key><string>en</string>
+  <key>CFBundleExecutable</key><string>M7Arc</string>
+  <key>CFBundleIdentifier</key><string>org.m7arc.M7Arc</string>
+  <key>CFBundleInfoDictionaryVersion</key><string>6.0</string>
+  <key>CFBundleName</key><string>M7Arc</string>
+  <key>CFBundleDisplayName</key><string>M7Arc</string>
+  <key>CFBundleIconFile</key><string>M7Arc.icns</string>
+  <key>CFBundlePackageType</key><string>APPL</string>
+  <key>CFBundleShortVersionString</key><string>${M7ARC_SHORT_VERSION}</string>
+  <key>CFBundleVersion</key><string>${M7ARC_BUNDLE_VERSION}</string>
+  <key>M7ArcVersion</key><string>${M7ARC_VERSION}</string>
+  <key>LSMinimumSystemVersion</key><string>${CMAKE_OSX_DEPLOYMENT_TARGET}</string>
+  <key>NSHighResolutionCapable</key><true/>
+  <key>NSPrincipalClass</key><string>NSApplication</string>
+  ${M7ARC_SERVICES_PLIST}
+  ${M7ARC_IMPORTED_ARCHIVE_TYPES_PLIST}
+  <key>NSHumanReadableCopyright</key><string>Copyright © 2026 M7Arc contributors</string>
+  <key>CFBundleDocumentTypes</key><array><dict>
+    <key>CFBundleTypeName</key><string>Archive</string>
+    <key>CFBundleTypeRole</key><string>Editor</string>
+    <key>LSHandlerRank</key><string>Alternate</string>
+    <key>CFBundleTypeExtensions</key><array>
+      ${M7ARC_DOCUMENT_EXTENSIONS}
+    </array>
+  </dict></array>
+</dict></plist>

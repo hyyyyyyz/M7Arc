@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0"><dict>
+  <key>CFBundleDevelopmentRegion</key><string>en</string>
+  <key>CFBundleExecutable</key><string>M7ArcPreview</string>
+  <key>CFBundleIdentifier</key><string>org.m7arc.M7Arc.preview</string>
+  <key>CFBundleInfoDictionaryVersion</key><string>6.0</string>
+  <key>CFBundleName</key><string>M7Arc Archive Preview</string>
+  <key>CFBundlePackageType</key><string>XPC!</string>
+  <key>CFBundleShortVersionString</key><string>${M7ARC_SHORT_VERSION}</string>
+  <key>CFBundleVersion</key><string>${M7ARC_BUNDLE_VERSION}</string>
+  <key>LSMinimumSystemVersion</key><string>${CMAKE_OSX_DEPLOYMENT_TARGET}</string>
+  <key>NSExtension</key><dict>
+    <key>NSExtensionPointIdentifier</key><string>com.apple.quicklook.preview</string>
+    <key>NSExtensionPrincipalClass</key><string>M7ArcPreviewController</string>
+    <key>NSExtensionAttributes</key><dict>
+      <key>QLIsDataBasedPreview</key><false/>
+      <key>QLSupportsSearchableItems</key><false/>
+      <key>QLSupportedContentTypes</key><array>${M7ARC_QUICKLOOK_TYPES}</array>
+    </dict>
+  </dict>
+</dict></plist>

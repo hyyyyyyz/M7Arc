@@ -1,0 +1,1778 @@
+{
+  "version": "26.03",
+  "baseline": "Apple Silicon / Format7zF / 7zz",
+  "counts": {
+    "handlers": 61,
+    "archiveWrite": 7,
+    "hashWrite": 1,
+    "codecs": 25,
+    "hashers": 10
+  },
+  "formats": [
+    {
+      "id": "7z",
+      "name": "7z",
+      "extensions": [
+        "7z"
+      ],
+      "category": "Archives and packages",
+      "read": true,
+      "write": true,
+      "kind": "archive",
+      "note": "Create, browse, extract and update; supports solid compression and AES-256 filename encryption.",
+      "source": "third_party/7zip/CPP/7zip/Archive/7z/7zRegister.cpp"
+    },
+    {
+      "id": "apfs",
+      "name": "APFS",
+      "extensions": [
+        "apfs",
+        "img"
+      ],
+      "category": "Filesystems",
+      "read": true,
+      "write": false,
+      "kind": "filesystem",
+      "note": "Read APFS filesystem images; local APFS volumes cannot be written directly as archives.",
+      "source": "third_party/7zip/CPP/7zip/Archive/ApfsHandler.cpp"
+    },
+    {
+      "id": "apm",
+      "name": "APM",
+      "extensions": [
+        "apm"
+      ],
+      "category": "Disks and partitions",
+      "read": true,
+      "write": false,
+      "kind": "partition",
+      "note": "Read Apple Partition Map tables and partition contents.",
+      "source": "third_party/7zip/CPP/7zip/Archive/ApmHandler.cpp"
+    },
+    {
+      "id": "ar",
+      "name": "Ar",
+      "extensions": [
+        "ar",
+        "a",
+        "deb",
+        "udeb",
+        "lib"
+      ],
+      "category": "Archives and packages",
+      "read": true,
+      "write": false,
+      "kind": "archive",
+      "note": "Read ar static libraries and Debian package containers.",
+      "source": "third_party/7zip/CPP/7zip/Archive/ArHandler.cpp"
+    },
+    {
+      "id": "arj",
+      "name": "Arj",
+      "extensions": [
+        "arj"
+      ],
+      "category": "Archives and packages",
+      "read": true,
+      "write": false,
+      "kind": "archive",
+      "note": "Read ARJ archives.",
+      "source": "third_party/7zip/CPP/7zip/Archive/ArjHandler.cpp"
+    },
+    {
+      "id": "base64",
+      "name": "Base64",
+      "extensions": [
+        "b64"
+      ],
+      "category": "Compressed and encoded streams",
+      "read": true,
+      "write": false,
+      "kind": "stream",
+      "note": "Decode Base64 text streams; open by extension or explicit format.",
+      "source": "third_party/7zip/CPP/7zip/Archive/Base64Handler.cpp"
+    },
+    {
+      "id": "coff",
+      "name": "COFF",
+      "extensions": [
+        "obj"
+      ],
+      "category": "Executables and firmware",
+      "read": true,
+      "write": false,
+      "kind": "executable",
+      "note": "Browse and extract COFF object-file contents.",
+      "source": "third_party/7zip/CPP/7zip/Archive/PeHandler.cpp"
+    },
+    {
+      "id": "cab",
+      "name": "Cab",
+      "extensions": [
+        "cab"
+      ],
+      "category": "Archives and packages",
+      "read": true,
+      "write": false,
+      "kind": "archive",
+      "note": "Read Microsoft Cabinet archives, including volumes and built-in compression methods.",
+      "source": "third_party/7zip/CPP/7zip/Archive/Cab/CabRegister.cpp"
+    },
+    {
+      "id": "chm",
+      "name": "Chm",
+      "extensions": [
+        "chm",
+        "chi",
+        "chq",
+        "chw"
+      ],
+      "category": "Documents and media",
+      "read": true,
+      "write": false,
+      "kind": "document",
+      "note": "Read compiled HTML Help and associated containers.",
+      "source": "third_party/7zip/CPP/7zip/Archive/Chm/ChmHandler.cpp"
+    },
+    {
+      "id": "compound",
+      "name": "Compound",
+      "extensions": [
+        "msi",
+        "msp",
+        "msm",
+        "doc",
+        "xls",
+        "ppt",
+        "aaf"
+      ],
+      "category": "Documents and media",
+      "read": true,
+      "write": false,
+      "kind": "document",
+      "note": "Read OLE Compound containers; document extensions identify the container structure.",
+      "source": "third_party/7zip/CPP/7zip/Archive/ComHandler.cpp"
+    },
+    {
+      "id": "cpio",
+      "name": "Cpio",
+      "extensions": [
+        "cpio"
+      ],
+      "category": "Archives and packages",
+      "read": true,
+      "write": false,
+      "kind": "archive",
+      "note": "Read CPIO archives with multiple header variants.",
+      "source": "third_party/7zip/CPP/7zip/Archive/CpioHandler.cpp"
+    },
+    {
+      "id": "cramfs",
+      "name": "CramFS",
+      "extensions": [
+        "cramfs"
+      ],
+      "category": "Filesystems",
+      "read": true,
+      "write": false,
+      "kind": "filesystem",
+      "note": "Read CramFS read-only filesystem images.",
+      "source": "third_party/7zip/CPP/7zip/Archive/CramfsHandler.cpp"
+    },
+    {
+      "id": "dmg",
+      "name": "Dmg",
+      "extensions": [
+        "dmg"
+      ],
+      "category": "Disks and partitions",
+      "read": true,
+      "write": false,
+      "kind": "image",
+      "note": "Read Apple DMG containers and inner images; support depends on the actual compression method.",
+      "source": "third_party/7zip/CPP/7zip/Archive/DmgHandler.cpp"
+    },
+    {
+      "id": "elf",
+      "name": "ELF",
+      "extensions": [
+        "elf"
+      ],
+      "category": "Executables and firmware",
+      "read": true,
+      "write": false,
+      "kind": "executable",
+      "note": "Browse and extract ELF contents.",
+      "source": "third_party/7zip/CPP/7zip/Archive/ElfHandler.cpp"
+    },
+    {
+      "id": "ext",
+      "name": "Ext",
+      "extensions": [
+        "ext",
+        "ext2",
+        "ext3",
+        "ext4",
+        "img"
+      ],
+      "category": "Filesystems",
+      "read": true,
+      "write": false,
+      "kind": "filesystem",
+      "note": "Read Ext-family filesystem images.",
+      "source": "third_party/7zip/CPP/7zip/Archive/ExtHandler.cpp"
+    },
+    {
+      "id": "fat",
+      "name": "FAT",
+      "extensions": [
+        "fat",
+        "img"
+      ],
+      "category": "Filesystems",
+      "read": true,
+      "write": false,
+      "kind": "filesystem",
+      "note": "Read FAT filesystem images.",
+      "source": "third_party/7zip/CPP/7zip/Archive/FatHandler.cpp"
+    },
+    {
+      "id": "flv",
+      "name": "FLV",
+      "extensions": [
+        "flv"
+      ],
+      "category": "Documents and media",
+      "read": true,
+      "write": false,
+      "kind": "media",
+      "note": "Browse and extract Flash Video streams.",
+      "source": "third_party/7zip/CPP/7zip/Archive/FlvHandler.cpp"
+    },
+    {
+      "id": "gpt",
+      "name": "GPT",
+      "extensions": [
+        "gpt",
+        "mbr"
+      ],
+      "category": "Disks and partitions",
+      "read": true,
+      "write": false,
+      "kind": "partition",
+      "note": "Read GUID Partition Table structures and partition contents.",
+      "source": "third_party/7zip/CPP/7zip/Archive/GptHandler.cpp"
+    },
+    {
+      "id": "hfs",
+      "name": "HFS",
+      "extensions": [
+        "hfs",
+        "hfsx"
+      ],
+      "category": "Filesystems",
+      "read": true,
+      "write": false,
+      "kind": "filesystem",
+      "note": "Read HFS/HFS+ filesystem images.",
+      "source": "third_party/7zip/CPP/7zip/Archive/HfsHandler.cpp"
+    },
+    {
+      "id": "hxs",
+      "name": "Hxs",
+      "extensions": [
+        "hxs",
+        "hxi",
+        "hxr",
+        "hxq",
+        "hxw",
+        "lit"
+      ],
+      "category": "Documents and media",
+      "read": true,
+      "write": false,
+      "kind": "document",
+      "note": "Read Microsoft Help 2 and related containers.",
+      "source": "third_party/7zip/CPP/7zip/Archive/Chm/ChmHandler.cpp"
+    },
+    {
+      "id": "ihex",
+      "name": "IHex",
+      "extensions": [
+        "ihex"
+      ],
+      "category": "Compressed and encoded streams",
+      "read": true,
+      "write": false,
+      "kind": "stream",
+      "note": "Read Intel HEX encoded streams.",
+      "source": "third_party/7zip/CPP/7zip/Archive/IhexHandler.cpp"
+    },
+    {
+      "id": "iso",
+      "name": "Iso",
+      "extensions": [
+        "iso",
+        "img"
+      ],
+      "category": "Disks and partitions",
+      "read": true,
+      "write": false,
+      "kind": "image",
+      "note": "Read ISO optical-disc images; the same extension may also be handled by UDF.",
+      "source": "third_party/7zip/CPP/7zip/Archive/Iso/IsoRegister.cpp"
+    },
+    {
+      "id": "lp",
+      "name": "LP",
+      "extensions": [
+        "lpimg",
+        "img"
+      ],
+      "category": "Disks and partitions",
+      "read": true,
+      "write": false,
+      "kind": "partition",
+      "note": "Read Android Logical Partition images.",
+      "source": "third_party/7zip/CPP/7zip/Archive/LpHandler.cpp"
+    },
+    {
+      "id": "lzh",
+      "name": "Lzh",
+      "extensions": [
+        "lzh",
+        "lha"
+      ],
+      "category": "Archives and packages",
+      "read": true,
+      "write": false,
+      "kind": "archive",
+      "note": "Read LZH/LHA archives.",
+      "source": "third_party/7zip/CPP/7zip/Archive/LzhHandler.cpp"
+    },
+    {
+      "id": "mbr",
+      "name": "MBR",
+      "extensions": [
+        "mbr"
+      ],
+      "category": "Disks and partitions",
+      "read": true,
+      "write": false,
+      "kind": "partition",
+      "note": "Read Master Boot Record partition tables and contents.",
+      "source": "third_party/7zip/CPP/7zip/Archive/MbrHandler.cpp"
+    },
+    {
+      "id": "macho",
+      "name": "MachO",
+      "extensions": [
+        "macho"
+      ],
+      "category": "Executables and firmware",
+      "read": true,
+      "write": false,
+      "kind": "executable",
+      "note": "Browse and extract Mach-O contents.",
+      "source": "third_party/7zip/CPP/7zip/Archive/MachoHandler.cpp"
+    },
+    {
+      "id": "mslz",
+      "name": "MsLZ",
+      "extensions": [
+        "mslz"
+      ],
+      "category": "Compressed and encoded streams",
+      "read": true,
+      "write": false,
+      "kind": "stream",
+      "note": "Read Microsoft SZDD compressed streams.",
+      "source": "third_party/7zip/CPP/7zip/Archive/MslzHandler.cpp"
+    },
+    {
+      "id": "mub",
+      "name": "Mub",
+      "extensions": [
+        "mub"
+      ],
+      "category": "Executables and firmware",
+      "read": true,
+      "write": false,
+      "kind": "executable",
+      "note": "Read Mach-O Universal Binary containers and architecture slices.",
+      "source": "third_party/7zip/CPP/7zip/Archive/MubHandler.cpp"
+    },
+    {
+      "id": "ntfs",
+      "name": "NTFS",
+      "extensions": [
+        "ntfs",
+        "img"
+      ],
+      "category": "Filesystems",
+      "read": true,
+      "write": false,
+      "kind": "filesystem",
+      "note": "Read NTFS filesystem images and metadata.",
+      "source": "third_party/7zip/CPP/7zip/Archive/NtfsHandler.cpp"
+    },
+    {
+      "id": "nsis",
+      "name": "Nsis",
+      "extensions": [
+        "nsis"
+      ],
+      "category": "Executables and firmware",
+      "read": true,
+      "write": false,
+      "kind": "executable",
+      "note": "Read NSIS installers; locate embedded containers in EXE files.",
+      "source": "third_party/7zip/CPP/7zip/Archive/Nsis/NsisRegister.cpp"
+    },
+    {
+      "id": "pe",
+      "name": "PE",
+      "extensions": [
+        "exe",
+        "dll",
+        "sys"
+      ],
+      "category": "Executables and firmware",
+      "read": true,
+      "write": false,
+      "kind": "executable",
+      "note": "Browse and extract PE contents, including recognized embedded archives.",
+      "source": "third_party/7zip/CPP/7zip/Archive/PeHandler.cpp"
+    },
+    {
+      "id": "ppmd",
+      "name": "Ppmd",
+      "extensions": [
+        "pmd"
+      ],
+      "category": "Compressed and encoded streams",
+      "read": true,
+      "write": false,
+      "kind": "stream",
+      "note": "Read standalone PPMd streams; PPMd encoding inside 7z does not imply .pmd creation support.",
+      "source": "third_party/7zip/CPP/7zip/Archive/PpmdHandler.cpp"
+    },
+    {
+      "id": "qcow",
+      "name": "QCOW",
+      "extensions": [
+        "qcow",
+        "qcow2",
+        "qcow2c"
+      ],
+      "category": "Disks and partitions",
+      "read": true,
+      "write": false,
+      "kind": "image",
+      "note": "Read QCOW-family virtual disk images.",
+      "source": "third_party/7zip/CPP/7zip/Archive/QcowHandler.cpp"
+    },
+    {
+      "id": "rar",
+      "name": "Rar",
+      "extensions": [
+        "rar",
+        "r00"
+      ],
+      "category": "Archives and packages",
+      "read": true,
+      "write": false,
+      "kind": "archive",
+      "note": "Read older RAR archives and volumes; no RAR encoder is provided.",
+      "source": "third_party/7zip/CPP/7zip/Archive/Rar/RarHandler.cpp"
+    },
+    {
+      "id": "rar5",
+      "name": "Rar5",
+      "extensions": [
+        "rar",
+        "r00"
+      ],
+      "category": "Archives and packages",
+      "read": true,
+      "write": false,
+      "kind": "archive",
+      "note": "Read RAR5 archives and volumes; signatures and contents distinguish Rar from Rar5.",
+      "source": "third_party/7zip/CPP/7zip/Archive/Rar/Rar5Handler.cpp"
+    },
+    {
+      "id": "rpm",
+      "name": "Rpm",
+      "extensions": [
+        "rpm"
+      ],
+      "category": "Archives and packages",
+      "read": true,
+      "write": false,
+      "kind": "archive",
+      "note": "Read RPM outer containers and enter compressed streams and CPIO contents.",
+      "source": "third_party/7zip/CPP/7zip/Archive/RpmHandler.cpp"
+    },
+    {
+      "id": "swf",
+      "name": "SWF",
+      "extensions": [
+        "swf"
+      ],
+      "category": "Documents and media",
+      "read": true,
+      "write": false,
+      "kind": "media",
+      "note": "Read uncompressed Flash SWF contents.",
+      "source": "third_party/7zip/CPP/7zip/Archive/SwfHandler.cpp"
+    },
+    {
+      "id": "swfc",
+      "name": "SWFc",
+      "extensions": [
+        "swf"
+      ],
+      "category": "Documents and media",
+      "read": true,
+      "write": false,
+      "kind": "media",
+      "note": "Read compressed Flash SWF; shares the SWF extension but uses a separate handler.",
+      "source": "third_party/7zip/CPP/7zip/Archive/SwfHandler.cpp"
+    },
+    {
+      "id": "sparse",
+      "name": "Sparse",
+      "extensions": [
+        "simg",
+        "img"
+      ],
+      "category": "Disks and partitions",
+      "read": true,
+      "write": false,
+      "kind": "image",
+      "note": "Read Android sparse images and expose the expanded virtual stream.",
+      "source": "third_party/7zip/CPP/7zip/Archive/SparseHandler.cpp"
+    },
+    {
+      "id": "split",
+      "name": "Split",
+      "extensions": [
+        "001"
+      ],
+      "category": "Volumes",
+      "read": true,
+      "write": false,
+      "kind": "split",
+      "note": "Read raw split-file sequences starting with .001; splitting and combining are file operations.",
+      "source": "third_party/7zip/CPP/7zip/Archive/SplitHandler.cpp"
+    },
+    {
+      "id": "squashfs",
+      "name": "SquashFS",
+      "extensions": [
+        "squashfs"
+      ],
+      "category": "Filesystems",
+      "read": true,
+      "write": false,
+      "kind": "filesystem",
+      "note": "Read SquashFS filesystem images.",
+      "source": "third_party/7zip/CPP/7zip/Archive/SquashfsHandler.cpp"
+    },
+    {
+      "id": "te",
+      "name": "TE",
+      "extensions": [
+        "te"
+      ],
+      "category": "Executables and firmware",
+      "read": true,
+      "write": false,
+      "kind": "executable",
+      "note": "Browse and extract Terse Executable contents.",
+      "source": "third_party/7zip/CPP/7zip/Archive/PeHandler.cpp"
+    },
+    {
+      "id": "uefic",
+      "name": "UEFIc",
+      "extensions": [
+        "scap"
+      ],
+      "category": "Executables and firmware",
+      "read": true,
+      "write": false,
+      "kind": "firmware",
+      "note": "Read UEFI Capsule containers.",
+      "source": "third_party/7zip/CPP/7zip/Archive/UefiHandler.cpp"
+    },
+    {
+      "id": "uefif",
+      "name": "UEFIf",
+      "extensions": [
+        "uefif"
+      ],
+      "category": "Executables and firmware",
+      "read": true,
+      "write": false,
+      "kind": "firmware",
+      "note": "Read UEFI Firmware Volumes.",
+      "source": "third_party/7zip/CPP/7zip/Archive/UefiHandler.cpp"
+    },
+    {
+      "id": "udf",
+      "name": "Udf",
+      "extensions": [
+        "udf",
+        "iso",
+        "img"
+      ],
+      "category": "Disks and partitions",
+      "read": true,
+      "write": false,
+      "kind": "image",
+      "note": "Read UDF optical-disc filesystem images.",
+      "source": "third_party/7zip/CPP/7zip/Archive/Udf/UdfHandler.cpp"
+    },
+    {
+      "id": "vdi",
+      "name": "VDI",
+      "extensions": [
+        "vdi"
+      ],
+      "category": "Disks and partitions",
+      "read": true,
+      "write": false,
+      "kind": "image",
+      "note": "Read VirtualBox virtual disk containers.",
+      "source": "third_party/7zip/CPP/7zip/Archive/VdiHandler.cpp"
+    },
+    {
+      "id": "vhd",
+      "name": "VHD",
+      "extensions": [
+        "vhd"
+      ],
+      "category": "Disks and partitions",
+      "read": true,
+      "write": false,
+      "kind": "image",
+      "note": "Read VHD virtual disk containers.",
+      "source": "third_party/7zip/CPP/7zip/Archive/VhdHandler.cpp"
+    },
+    {
+      "id": "vhdx",
+      "name": "VHDX",
+      "extensions": [
+        "vhdx",
+        "avhdx"
+      ],
+      "category": "Disks and partitions",
+      "read": true,
+      "write": false,
+      "kind": "image",
+      "note": "Read VHDX virtual disk containers.",
+      "source": "third_party/7zip/CPP/7zip/Archive/VhdxHandler.cpp"
+    },
+    {
+      "id": "vmdk",
+      "name": "VMDK",
+      "extensions": [
+        "vmdk"
+      ],
+      "category": "Disks and partitions",
+      "read": true,
+      "write": false,
+      "kind": "image",
+      "note": "Read VMDK virtual disk containers.",
+      "source": "third_party/7zip/CPP/7zip/Archive/VmdkHandler.cpp"
+    },
+    {
+      "id": "xar",
+      "name": "Xar",
+      "extensions": [
+        "xar",
+        "pkg",
+        "xip"
+      ],
+      "category": "Archives and packages",
+      "read": true,
+      "write": false,
+      "kind": "archive",
+      "note": "Read XAR containers; PKG/XIP are extension aliases, with inner members decoded by their actual methods.",
+      "source": "third_party/7zip/CPP/7zip/Archive/XarHandler.cpp"
+    },
+    {
+      "id": "z",
+      "name": "Z",
+      "extensions": [
+        "z",
+        "taz"
+      ],
+      "category": "Compressed and encoded streams",
+      "read": true,
+      "write": false,
+      "kind": "stream",
+      "note": "Read Unix compress streams; the suggested inner extension for .taz is .tar.",
+      "source": "third_party/7zip/CPP/7zip/Archive/ZHandler.cpp"
+    },
+    {
+      "id": "bzip2",
+      "name": "bzip2",
+      "extensions": [
+        "bz2",
+        "bzip2",
+        "tbz2",
+        "tbz"
+      ],
+      "category": "Compressed and encoded streams",
+      "read": true,
+      "write": true,
+      "kind": "stream",
+      "note": "Create a single BZip2 stream; package multiple files into TAR first.",
+      "source": "third_party/7zip/CPP/7zip/Archive/Bz2Handler.cpp"
+    },
+    {
+      "id": "gzip",
+      "name": "gzip",
+      "extensions": [
+        "gz",
+        "gzip",
+        "tgz",
+        "tpz",
+        "apk"
+      ],
+      "category": "Compressed and encoded streams",
+      "read": true,
+      "write": true,
+      "kind": "stream",
+      "note": "Create a single GZip stream; .tgz/.tpz aliases suggest an inner .tar; ZIP also uses .apk.",
+      "source": "third_party/7zip/CPP/7zip/Archive/GzHandler.cpp"
+    },
+    {
+      "id": "lzma",
+      "name": "lzma",
+      "extensions": [
+        "lzma"
+      ],
+      "category": "Compressed and encoded streams",
+      "read": true,
+      "write": false,
+      "kind": "stream",
+      "note": "Read standalone .lzma streams; the full default 7zz build has no writing handler for this format.",
+      "source": "third_party/7zip/CPP/7zip/Archive/LzmaHandler.cpp"
+    },
+    {
+      "id": "lzma86",
+      "name": "lzma86",
+      "extensions": [
+        "lzma86"
+      ],
+      "category": "Compressed and encoded streams",
+      "read": true,
+      "write": false,
+      "kind": "stream",
+      "note": "Read LZMA86 streams containing x86 branch-conversion information.",
+      "source": "third_party/7zip/CPP/7zip/Archive/LzmaHandler.cpp"
+    },
+    {
+      "id": "tar",
+      "name": "tar",
+      "extensions": [
+        "tar",
+        "ova"
+      ],
+      "category": "Archives and packages",
+      "read": true,
+      "write": true,
+      "kind": "archive",
+      "note": "Create and update TAR; GNU/POSIX selects header format. TAR stores data without compression.",
+      "source": "third_party/7zip/CPP/7zip/Archive/Tar/TarRegister.cpp"
+    },
+    {
+      "id": "wim",
+      "name": "wim",
+      "extensions": [
+        "wim",
+        "swm",
+        "esd",
+        "ppkg"
+      ],
+      "category": "Disks and partitions",
+      "read": true,
+      "write": true,
+      "kind": "image",
+      "note": "Create using Store only; compressed WIM/ESD is readable and updates depend on the image's structure.",
+      "source": "third_party/7zip/CPP/7zip/Archive/Wim/WimRegister.cpp"
+    },
+    {
+      "id": "xz",
+      "name": "xz",
+      "extensions": [
+        "xz",
+        "txz"
+      ],
+      "category": "Compressed and encoded streams",
+      "read": true,
+      "write": true,
+      "kind": "stream",
+      "note": "Create one XZ stream using LZMA2; package multiple files into TAR first.",
+      "source": "third_party/7zip/CPP/7zip/Archive/XzHandler.cpp"
+    },
+    {
+      "id": "zip",
+      "name": "zip",
+      "extensions": [
+        "zip",
+        "z01",
+        "zipx",
+        "jar",
+        "xpi",
+        "odt",
+        "ods",
+        "docx",
+        "xlsx",
+        "epub",
+        "ipa",
+        "apk",
+        "appx"
+      ],
+      "category": "Archives and packages",
+      "read": true,
+      "write": true,
+      "kind": "archive",
+      "note": "Create and update ZIP; aliases are not separate creation formats. Signed APKs, volumes and embedded-stub variants may be read-only.",
+      "source": "third_party/7zip/CPP/7zip/Archive/Zip/ZipRegister.cpp"
+    },
+    {
+      "id": "zstd",
+      "name": "zstd",
+      "extensions": [
+        "zst",
+        "tzst"
+      ],
+      "category": "Compressed and encoded streams",
+      "read": true,
+      "write": false,
+      "kind": "stream",
+      "note": "Read-only in the default 26.03 baseline; the suggested inner extension for .tzst is .tar.",
+      "source": "third_party/7zip/CPP/7zip/Archive/ZstdHandler.cpp"
+    },
+    {
+      "id": "hash",
+      "name": "Hash",
+      "extensions": [
+        "sha256",
+        "sha512",
+        "sha384",
+        "sha224",
+        "sha512-224",
+        "sha512-256",
+        "sha3-224",
+        "sha3-256",
+        "sha3-384",
+        "sha3-512",
+        "sha1",
+        "sha2",
+        "sha3",
+        "sha",
+        "md5",
+        "blake2s",
+        "blake2b",
+        "blake2sp",
+        "xxh64",
+        "crc32",
+        "crc64",
+        "cksum",
+        "asc"
+      ],
+      "category": "Checksums",
+      "read": true,
+      "write": true,
+      "kind": "hash",
+      "note": "Read, create and verify digest manifests using the current 10 hashers. More suffixes are recognized; these manifests do not store file contents.",
+      "source": "third_party/7zip/CPP/7zip/UI/Common/HashCalc.cpp"
+    }
+  ],
+  "createFormats": [
+    {
+      "id": "7z",
+      "label": "7z",
+      "extension": "7z",
+      "methods": [
+        "LZMA2",
+        "LZMA",
+        "PPMd",
+        "BZip2",
+        "Deflate",
+        "Deflate64",
+        "Copy"
+      ],
+      "guiMethods": [
+        "LZMA2",
+        "LZMA",
+        "PPMd",
+        "BZip2"
+      ],
+      "advancedMethods": [
+        "Deflate",
+        "Deflate64"
+      ],
+      "levels": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "defaultLevel": 5,
+      "encryption": [
+        "AES-256"
+      ],
+      "headerEncryption": true,
+      "solid": true,
+      "singleStream": false,
+      "multithread": true,
+      "filters": true,
+      "note": "Level 0 uses Store. Standard methods match the original Windows choices; advanced methods expose supported Deflate/Deflate64 encoding."
+    },
+    {
+      "id": "zip",
+      "label": "ZIP",
+      "extension": "zip",
+      "methods": [
+        "Deflate",
+        "Deflate64",
+        "BZip2",
+        "LZMA",
+        "PPMd",
+        "Copy"
+      ],
+      "guiMethods": [
+        "Deflate",
+        "Deflate64",
+        "BZip2",
+        "LZMA",
+        "PPMd"
+      ],
+      "advancedMethods": [],
+      "levels": [
+        0,
+        1,
+        3,
+        5,
+        7,
+        9
+      ],
+      "defaultLevel": 5,
+      "encryption": [
+        "ZipCrypto",
+        "AES-256"
+      ],
+      "headerEncryption": false,
+      "solid": false,
+      "singleStream": false,
+      "multithread": true,
+      "filters": false,
+      "note": "Level 0 uses Store; ZIP filenames are not encrypted. Update support depends on the opened archive."
+    },
+    {
+      "id": "gzip",
+      "label": "GZip",
+      "extension": "gz",
+      "methods": [
+        "Deflate"
+      ],
+      "guiMethods": [
+        "Deflate"
+      ],
+      "advancedMethods": [],
+      "levels": [
+        1,
+        5,
+        7,
+        9
+      ],
+      "defaultLevel": 5,
+      "encryption": [],
+      "headerEncryption": false,
+      "solid": false,
+      "singleStream": true,
+      "multithread": false,
+      "filters": false,
+      "note": "Compress one file stream. For a directory or several files, use TAR + GZip."
+    },
+    {
+      "id": "bzip2",
+      "label": "BZip2",
+      "extension": "bz2",
+      "methods": [
+        "BZip2"
+      ],
+      "guiMethods": [
+        "BZip2"
+      ],
+      "advancedMethods": [],
+      "levels": [
+        1,
+        3,
+        5,
+        7,
+        9
+      ],
+      "defaultLevel": 5,
+      "encryption": [],
+      "headerEncryption": false,
+      "solid": false,
+      "singleStream": true,
+      "multithread": true,
+      "filters": false,
+      "note": "Compress one file stream. For a directory or several files, use TAR + BZip2."
+    },
+    {
+      "id": "xz",
+      "label": "XZ",
+      "extension": "xz",
+      "methods": [
+        "LZMA2"
+      ],
+      "guiMethods": [
+        "LZMA2"
+      ],
+      "advancedMethods": [],
+      "levels": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "defaultLevel": 5,
+      "encryption": [],
+      "headerEncryption": false,
+      "solid": true,
+      "singleStream": true,
+      "multithread": true,
+      "filters": true,
+      "note": "One file stream; the solid-block control selects XZ stream block size. Use TAR + XZ for several files."
+    },
+    {
+      "id": "tar",
+      "label": "TAR",
+      "extension": "tar",
+      "methods": [
+        "GNU",
+        "POSIX"
+      ],
+      "guiMethods": [
+        "GNU",
+        "POSIX"
+      ],
+      "advancedMethods": [],
+      "levels": [
+        0
+      ],
+      "defaultLevel": 0,
+      "encryption": [],
+      "headerEncryption": false,
+      "solid": false,
+      "singleStream": false,
+      "multithread": false,
+      "filters": false,
+      "note": "GNU/POSIX selects TAR headers; TAR stores data without compression."
+    },
+    {
+      "id": "wim",
+      "label": "WIM",
+      "extension": "wim",
+      "methods": [
+        "Copy"
+      ],
+      "guiMethods": [
+        "Copy"
+      ],
+      "advancedMethods": [],
+      "levels": [
+        0
+      ],
+      "defaultLevel": 0,
+      "encryption": [],
+      "headerEncryption": false,
+      "solid": false,
+      "singleStream": false,
+      "multithread": false,
+      "filters": false,
+      "note": "The official encoder creates with Store only; reading supports compressed images. Solid ESD/WIM variants cannot be updated."
+    }
+  ],
+  "presets": [
+    {
+      "id": "tar.gz",
+      "label": "TAR + GZip",
+      "extension": "tar.gz",
+      "pipeline": [
+        "tar",
+        "gzip"
+      ],
+      "kind": "preset",
+      "singleStream": false,
+      "note": "Create TAR, then encode the whole TAR as GZip; .tgz is an alias."
+    },
+    {
+      "id": "tar.bz2",
+      "label": "TAR + BZip2",
+      "extension": "tar.bz2",
+      "pipeline": [
+        "tar",
+        "bzip2"
+      ],
+      "kind": "preset",
+      "singleStream": false,
+      "note": "Create TAR, then encode the whole TAR as BZip2; .tbz/.tbz2 are aliases."
+    },
+    {
+      "id": "tar.xz",
+      "label": "TAR + XZ",
+      "extension": "tar.xz",
+      "pipeline": [
+        "tar",
+        "xz"
+      ],
+      "kind": "preset",
+      "singleStream": false,
+      "note": "Create TAR, then encode the whole TAR as XZ; .txz is an alias."
+    }
+  ],
+  "hashers": [
+    {
+      "id": "CRC32",
+      "name": "CRC32",
+      "bytes": 4,
+      "bits": 32,
+      "methodId": "1"
+    },
+    {
+      "id": "MD5",
+      "name": "MD5",
+      "bytes": 16,
+      "bits": 128,
+      "methodId": "208"
+    },
+    {
+      "id": "SHA1",
+      "name": "SHA1",
+      "bytes": 20,
+      "bits": 160,
+      "methodId": "201"
+    },
+    {
+      "id": "SHA256",
+      "name": "SHA256",
+      "bytes": 32,
+      "bits": 256,
+      "methodId": "A"
+    },
+    {
+      "id": "SHA3-256",
+      "name": "SHA3-256",
+      "bytes": 32,
+      "bits": 256,
+      "methodId": "231"
+    },
+    {
+      "id": "SHA384",
+      "name": "SHA384",
+      "bytes": 48,
+      "bits": 384,
+      "methodId": "222"
+    },
+    {
+      "id": "SHA512",
+      "name": "SHA512",
+      "bytes": 64,
+      "bits": 512,
+      "methodId": "223"
+    },
+    {
+      "id": "XXH64",
+      "name": "XXH64",
+      "bytes": 8,
+      "bits": 64,
+      "methodId": "211"
+    },
+    {
+      "id": "CRC64",
+      "name": "CRC64",
+      "bytes": 8,
+      "bits": 64,
+      "methodId": "4"
+    },
+    {
+      "id": "BLAKE2sp",
+      "name": "BLAKE2sp",
+      "bytes": 32,
+      "bits": 256,
+      "methodId": "202"
+    }
+  ],
+  "codecs": [
+    {
+      "id": "303011B",
+      "name": "BCJ2",
+      "kind": "filter",
+      "encode": true,
+      "decode": true
+    },
+    {
+      "id": "3030103",
+      "name": "BCJ",
+      "kind": "filter",
+      "encode": true,
+      "decode": true
+    },
+    {
+      "id": "3030205",
+      "name": "PPC",
+      "kind": "filter",
+      "encode": true,
+      "decode": true
+    },
+    {
+      "id": "3030401",
+      "name": "IA64",
+      "kind": "filter",
+      "encode": true,
+      "decode": true
+    },
+    {
+      "id": "3030501",
+      "name": "ARM",
+      "kind": "filter",
+      "encode": true,
+      "decode": true
+    },
+    {
+      "id": "3030701",
+      "name": "ARMT",
+      "kind": "filter",
+      "encode": true,
+      "decode": true
+    },
+    {
+      "id": "3030805",
+      "name": "SPARC",
+      "kind": "filter",
+      "encode": true,
+      "decode": true
+    },
+    {
+      "id": "A",
+      "name": "ARM64",
+      "kind": "filter",
+      "encode": true,
+      "decode": true
+    },
+    {
+      "id": "B",
+      "name": "RISCV",
+      "kind": "filter",
+      "encode": true,
+      "decode": true
+    },
+    {
+      "id": "20302",
+      "name": "Swap2",
+      "kind": "filter",
+      "encode": true,
+      "decode": true
+    },
+    {
+      "id": "20304",
+      "name": "Swap4",
+      "kind": "filter",
+      "encode": true,
+      "decode": true
+    },
+    {
+      "id": "40202",
+      "name": "BZip2",
+      "kind": "compression",
+      "encode": true,
+      "decode": true
+    },
+    {
+      "id": "0",
+      "name": "Copy",
+      "kind": "store",
+      "encode": true,
+      "decode": true
+    },
+    {
+      "id": "40109",
+      "name": "Deflate64",
+      "kind": "compression",
+      "encode": true,
+      "decode": true
+    },
+    {
+      "id": "40108",
+      "name": "Deflate",
+      "kind": "compression",
+      "encode": true,
+      "decode": true
+    },
+    {
+      "id": "3",
+      "name": "Delta",
+      "kind": "filter",
+      "encode": true,
+      "decode": true
+    },
+    {
+      "id": "21",
+      "name": "LZMA2",
+      "kind": "compression",
+      "encode": true,
+      "decode": true
+    },
+    {
+      "id": "30101",
+      "name": "LZMA",
+      "kind": "compression",
+      "encode": true,
+      "decode": true
+    },
+    {
+      "id": "30401",
+      "name": "PPMD",
+      "kind": "compression",
+      "encode": true,
+      "decode": true
+    },
+    {
+      "id": "40301",
+      "name": "Rar1",
+      "kind": "compression",
+      "encode": false,
+      "decode": true
+    },
+    {
+      "id": "40302",
+      "name": "Rar2",
+      "kind": "compression",
+      "encode": false,
+      "decode": true
+    },
+    {
+      "id": "40303",
+      "name": "Rar3",
+      "kind": "compression",
+      "encode": false,
+      "decode": true
+    },
+    {
+      "id": "40305",
+      "name": "Rar5",
+      "kind": "compression",
+      "encode": false,
+      "decode": true
+    },
+    {
+      "id": "6F10701",
+      "name": "7zAES",
+      "kind": "encryption",
+      "encode": true,
+      "decode": true
+    },
+    {
+      "id": "6F00181",
+      "name": "AES256CBC",
+      "kind": "encryption",
+      "encode": true,
+      "decode": true
+    }
+  ],
+  "methodDetails": {
+    "LZMA2": {
+      "kind": "compression",
+      "dictionaryLabel": "Dictionary size",
+      "dictionaries": [
+        "Automatic",
+        "64 KiB",
+        "256 KiB",
+        "1 MiB",
+        "2 MiB",
+        "3 MiB",
+        "4 MiB",
+        "6 MiB",
+        "8 MiB",
+        "12 MiB",
+        "16 MiB",
+        "24 MiB",
+        "32 MiB",
+        "48 MiB",
+        "64 MiB",
+        "96 MiB",
+        "128 MiB",
+        "192 MiB",
+        "256 MiB",
+        "384 MiB",
+        "512 MiB",
+        "768 MiB",
+        "1 GiB",
+        "1.5 GiB",
+        "2 GiB",
+        "3 GiB",
+        "3.75 GiB"
+      ],
+      "wordSizeLabel": "Word size",
+      "wordSizes": [
+        8,
+        12,
+        16,
+        24,
+        32,
+        48,
+        64,
+        96,
+        128,
+        192,
+        256,
+        273
+      ],
+      "parameters": [
+        "d",
+        "fb",
+        "mf",
+        "mc",
+        "lc",
+        "lp",
+        "pb",
+        "a",
+        "mt",
+        "c",
+        "zhb"
+      ],
+      "note": "LZMA2 supports blocks and multiple threads. Dictionary, threads and block size affect memory requirements; dictionary limits follow the platform."
+    },
+    "LZMA": {
+      "kind": "compression",
+      "dictionaryLabel": "Dictionary size",
+      "dictionaries": [
+        "Automatic",
+        "64 KiB",
+        "256 KiB",
+        "1 MiB",
+        "2 MiB",
+        "3 MiB",
+        "4 MiB",
+        "6 MiB",
+        "8 MiB",
+        "12 MiB",
+        "16 MiB",
+        "24 MiB",
+        "32 MiB",
+        "48 MiB",
+        "64 MiB",
+        "96 MiB",
+        "128 MiB",
+        "192 MiB",
+        "256 MiB",
+        "384 MiB",
+        "512 MiB",
+        "768 MiB",
+        "1 GiB",
+        "1.5 GiB",
+        "2 GiB",
+        "3 GiB",
+        "3.75 GiB"
+      ],
+      "wordSizeLabel": "Word size",
+      "wordSizes": [
+        8,
+        12,
+        16,
+        24,
+        32,
+        48,
+        64,
+        96,
+        128,
+        192,
+        256,
+        273
+      ],
+      "parameters": [
+        "d",
+        "fb",
+        "mf",
+        "mc",
+        "lc",
+        "lp",
+        "pb",
+        "a",
+        "mt",
+        "eos",
+        "zhb"
+      ],
+      "note": "The LZMA encoder used in archives; the standalone .lzma handler has separate writing capabilities."
+    },
+    "PPMd": {
+      "kind": "compression",
+      "dictionaryLabel": "Memory size",
+      "dictionaries": [
+        "Automatic",
+        "1 MiB",
+        "2 MiB",
+        "3 MiB",
+        "4 MiB",
+        "6 MiB",
+        "8 MiB",
+        "12 MiB",
+        "16 MiB",
+        "24 MiB",
+        "32 MiB",
+        "48 MiB",
+        "64 MiB",
+        "96 MiB",
+        "128 MiB",
+        "192 MiB",
+        "256 MiB",
+        "384 MiB",
+        "512 MiB",
+        "768 MiB",
+        "1 GiB"
+      ],
+      "wordSizeLabel": "Model order",
+      "wordSizes": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        10,
+        12,
+        14,
+        16,
+        20,
+        24,
+        28,
+        32
+      ],
+      "zipWordSizes": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16
+      ],
+      "parameters": [
+        "mem",
+        "o"
+      ],
+      "note": "7z uses PPMd7 and ZIP uses PPMd8. The original 64-bit Windows GUI allows up to 1 GiB for 7z and 256 MiB for ZIP, with model orders 2–32 and 2–16 respectively.",
+      "zipDictionaries": [
+        "Automatic",
+        "1 MiB",
+        "2 MiB",
+        "4 MiB",
+        "8 MiB",
+        "16 MiB",
+        "32 MiB",
+        "64 MiB",
+        "128 MiB",
+        "256 MiB"
+      ]
+    },
+    "BZip2": {
+      "kind": "compression",
+      "dictionaryLabel": "Block size",
+      "dictionaries": [
+        "Automatic",
+        "100 KiB",
+        "200 KiB",
+        "300 KiB",
+        "400 KiB",
+        "500 KiB",
+        "600 KiB",
+        "700 KiB",
+        "800 KiB",
+        "900 KiB"
+      ],
+      "wordSizeLabel": "",
+      "wordSizes": [],
+      "parameters": [
+        "d",
+        "pass",
+        "mt"
+      ],
+      "note": "The Windows control displays KiB; the encoder normalizes to units of 100000 bytes."
+    },
+    "Deflate": {
+      "kind": "compression",
+      "dictionaryLabel": "Dictionary size",
+      "dictionaries": [
+        "32 KiB"
+      ],
+      "wordSizeLabel": "Word size",
+      "wordSizes": [
+        8,
+        12,
+        16,
+        24,
+        32,
+        48,
+        64,
+        96,
+        128,
+        192,
+        256,
+        258
+      ],
+      "parameters": [
+        "fb",
+        "pass",
+        "mc",
+        "a"
+      ],
+      "note": "Dictionary is fixed at 32 KiB."
+    },
+    "Deflate64": {
+      "kind": "compression",
+      "dictionaryLabel": "Dictionary size",
+      "dictionaries": [
+        "64 KiB"
+      ],
+      "wordSizeLabel": "Word size",
+      "wordSizes": [
+        8,
+        12,
+        16,
+        24,
+        32,
+        48,
+        64,
+        96,
+        128,
+        192,
+        256,
+        257
+      ],
+      "parameters": [
+        "fb",
+        "pass",
+        "mc",
+        "a"
+      ],
+      "note": "Dictionary is fixed at 64 KiB."
+    },
+    "Copy": {
+      "kind": "store",
+      "dictionaryLabel": "",
+      "dictionaries": [],
+      "wordSizeLabel": "",
+      "wordSizes": [],
+      "parameters": [],
+      "note": "Store: data is not compressed."
+    },
+    "GNU": {
+      "kind": "header",
+      "dictionaryLabel": "",
+      "dictionaries": [],
+      "wordSizeLabel": "",
+      "wordSizes": [],
+      "parameters": [],
+      "note": "TAR GNU header format."
+    },
+    "POSIX": {
+      "kind": "header",
+      "dictionaryLabel": "",
+      "dictionaries": [],
+      "wordSizeLabel": "",
+      "wordSizes": [],
+      "parameters": [],
+      "note": "TAR POSIX/PAX header format."
+    }
+  },
+  "filters": {
+    "7z": [
+      "Automatic",
+      "Off",
+      "BCJ",
+      "BCJ2",
+      "PPC",
+      "IA64",
+      "ARM",
+      "ARMT",
+      "SPARC",
+      "ARM64",
+      "RISCV",
+      "Delta",
+      "Swap2",
+      "Swap4"
+    ],
+    "xz": [
+      "Off",
+      "Delta",
+      "BCJ",
+      "PPC",
+      "IA64",
+      "ARM",
+      "ARMT",
+      "SPARC",
+      "ARM64",
+      "RISCV"
+    ]
+  },
+  "hashFileMethods": [
+    "SHA256",
+    "SHA1"
+  ],
+  "extensionMappings": {
+    "bzip2": {
+      "tbz2": "tar",
+      "tbz": "tar"
+    },
+    "gzip": {
+      "tgz": "tar",
+      "tpz": "tar",
+      "apk": "tar"
+    },
+    "xz": {
+      "txz": "tar"
+    },
+    "zstd": {
+      "tzst": "tar"
+    },
+    "z": {
+      "taz": "tar"
+    }
+  },
+  "sources": [
+    "docs/evidence/7zz-info.txt",
+    "third_party/7zip/CPP/7zip/Bundles/Format7zF/Arc_gcc.mak",
+    "third_party/7zip/CPP/7zip/UI/Common/LoadCodecs.cpp",
+    "third_party/7zip/CPP/7zip/UI/GUI/CompressDialog.cpp",
+    "third_party/7zip/CPP/7zip/UI/GUI/UpdateGUI.cpp"
+  ]
+}
