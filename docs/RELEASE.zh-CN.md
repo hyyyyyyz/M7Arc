@@ -1,6 +1,6 @@
 # macOS 构建与 GitHub Releases
 
-发行物是包含 Qt 与 7-Zip 运行依赖的 `M7Arc.app`，以 DMG 上传 GitHub Releases。首批提供 Apple Silicon 和 Intel 两个架构包，最低部署目标为 macOS 13。应用与引擎全部从本仓库构建，外层原始 `7zip/` 目录不参与发行。
+发行物是包含 Qt 与 7-Zip 运行依赖的 `M7Arc.app`，以 DMG 上传 GitHub Releases。首批提供 Apple Silicon 和 Intel 两个架构包，最低部署目标为 macOS 13。应用与引擎全部从本仓库构建，外层原始 `7zip/` 目录不参与发行。应用同时提供[完整官方 7zz 和 Console SFX](CLI_SFX.zh-CN.md)。
 
 当前发行采用 **ad-hoc 代码签名，没有 Developer ID 签名，也没有 Apple 公证**。缺少开发者证书不会阻止构建或上传。Ad-hoc 签名用于满足本地代码完整性及执行要求，不认证发布者身份。Qt 的部署工具提供相关签名选项；本项目在所有资源固定后明确完成包内签名。[Qt macOS 部署](https://doc.qt.io/qt-6/macos-deployment.html)
 
@@ -19,7 +19,7 @@
 
 ## 本地构建
 
-使用 Xcode 15/macOS 14 SDK 或更新工具链、CMake 3.24+、Ninja 和官方 Qt 6.11.2 macOS SDK。开发依赖为 Qt Base 与 Qt Tools；应用运行使用 Core、Gui、Widgets、Concurrent。Qt 官方 macOS 包提供 arm64 与 x86_64，应用构建明确选择目标架构与 macOS 13.0 部署目标。[Qt 支持平台与架构](https://doc.qt.io/qt-6/macos.html)
+使用 Xcode 15/macOS 14 SDK 或更新工具链、CMake 3.24+、Ninja 和官方 Qt 6.11.2 macOS SDK。开发依赖为 Qt Base、Qt Tools 及 Linguist 工具需要的 Qt Declarative；应用运行使用 Core、Gui、Widgets、Concurrent。Qt 官方 macOS 包提供 arm64 与 x86_64，应用构建明确选择目标架构与 macOS 13.0 部署目标。[Qt 支持平台与架构](https://doc.qt.io/qt-6/macos.html)
 
 在仓库根目录运行；把 `qt_sdk_prefix` 设置为本机 Qt SDK 中包含 `bin/macdeployqt` 的目录：
 

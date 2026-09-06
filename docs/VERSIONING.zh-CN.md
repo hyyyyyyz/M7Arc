@@ -24,7 +24,7 @@
 - Apple Silicon 包：`M7Arc-0.1.0-alpha.1-macos-arm64.dmg`。
 - Intel 包：`M7Arc-0.1.0-alpha.1-macos-x86_64.dmg`。
 - Universal 2 包采用 `macos-universal2` 后缀，须同时包含完整 arm64 与 x86_64 依赖。
-- `CFBundleShortVersionString` 保存数字部分 `0.1.0`；`CFBundleVersion` 使用同版本数字及 Apple 接受的开发后缀，例如 `0.1.0a1`。完整 SemVer 显示在 About 与发行文件名中。
+- `CFBundleShortVersionString` 保存数字部分 `0.1.0`；`CFBundleVersion` 使用同版本数字及 Apple 接受的开发后缀，例如 `0.1.0a1`。`alpha.N` 对应 `aN`，`beta.N` 对应 `bN`，`rc.N` 对应 `fcN`，每阶段序号为 1–255。完整 SemVer 显示在 About 与发行文件名中。
 
 引擎版本 `7-Zip 26.03`、Qt 版本与应用版本分别记录。升级引擎属于功能或修复变更，按实际用户影响选择应用 minor 或 patch，不把应用版本改成 7-Zip 的版本号。
 

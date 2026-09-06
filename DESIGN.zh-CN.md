@@ -363,9 +363,9 @@ M7Arc/
 1. **全功能以官方能力和可移植用户操作为准。** RAR 创建、Zstd 写入、DMG/APFS 卷创建不是当前默认 7-Zip 提供的能力。镜像浏览也不等于挂载、磁盘修复或读取正在使用的加密系统卷。
 2. **Windows 平台对象需要语义替代。** 盘符、Explorer COM、NTFS ADS、ACL、junction、WSL 链接、大页权限和 FAR DLL 不能逐项变成同名 macOS 对象；功能矩阵规定其目标能力与保留方式。
 3. **上游 File Manager 有真实流程缺口。** 包内向外移动未在对应 Agent 入口实现；嵌套包返回时的 Cancel 未完整传播；外部编辑绑定当前面板且存在同名成员定位问题。M7Arc 在应用会话层定义明确结果，详见功能矩阵。
-4. **Mac 元数据尚需实现。** 本机有限样本确认默认 xattr 丢失；源码还使用 inode change time 作为 CTime，恢复路径忽略 creation time。AppleDouble 互操作、resource fork、ACL 与真实 birth time 必须在 P4 验收。其他解压器是否恢复 7z/TAR 中的 sidecar 取决于其实现。
+4. **元数据互操作存在格式差异。** M7Arc 通过 AppleDouble 保存 xattrs、资源叉、Finder 信息和 ACL，并保存真实 birth time。其他解压器是否恢复 7z/TAR 中的 sidecar 取决于其实现。
 5. **串行引擎操作是初始调度取舍。** 一个长作业期间，新归档打开/扫描可能等待；已有列表仍可浏览。提高任务并发前，需要消除涉及的全局状态并验证各实例线程模型。
-6. **验证范围有限。** 本次环境为 macOS 27.0、Apple clang 21、arm64；未覆盖 macOS 13、Intel 真机、所有格式样本或 Qt 应用。官方 CLI 编译成功不等于 Qt 引擎库与最终产品已经完成。
+6. **验证范围有限。** 本机环境为 macOS 27.0、Apple clang 21、arm64，并可通过 Rosetta 执行 x86_64 构建；macOS 13、Intel 真机与所有格式样本仍需对应环境验收。
 7. **系统扩展与 SFX 受平台发行规则影响。** Services/Quick Actions 的显示与用户启用状态有关；内嵌新 payload 的 Mac 自解压 app 需要对完整产物重新签名，Windows SFX 只在目标 Windows 系统执行。
 8. **名称仍为候选。** 有限公开检索未发现 M7Arc 的明确同类冲突，域名、组织名及商标可用性需在正式品牌发布时确认。
 9. **外部模块有明确的 ABI 与发行条件。** 当前官方接口、编译宏和 CPU 架构必须匹配，旧 p7zip 与 Windows 模块不可直接加载。主应用为第三方原生扩展承担进程内插件的运行语义；预览扩展和自解压器使用随包模块集合。

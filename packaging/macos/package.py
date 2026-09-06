@@ -2,6 +2,7 @@
 """Deploy a self-contained, ad-hoc signed M7Arc application and disk image."""
 
 import argparse
+from contextlib import ExitStack
 import os
 from pathlib import Path
 import plistlib
@@ -95,8 +96,9 @@ def main():
     qt_prefix = args.qt_prefix.resolve()
     output = args.output.resolve()
     macdeployqt = qt_prefix / "bin/macdeployqt"
-    if not (app / "Contents/MacOS/M7Arc").is_file():
-        parser.error(f"M7Arc executable is missing from {app}")
+    for executable in ("M7Arc", "M7ArcExtractor", "7zz", "7zCon.sfx"):
+        if not (app / "Contents/MacOS" / executable).is_file():
+            parser.error(f"Required executable {executable} is missing from {app}; build the complete application before packaging")
     if not macdeployqt.is_file():
         parser.error(f"macdeployqt was not found at {macdeployqt}")
     with (app / "Contents/Info.plist").open("rb") as stream:
@@ -114,24 +116,36 @@ def main():
         raise RuntimeError(f"Unsupported application architectures: {architectures}")
     output.mkdir(parents=True, exist_ok=True)
     dmg = output / f"M7Arc-{version}-macos-{architecture}.dmg"
-    with tempfile.TemporaryDirectory(prefix="m7arc-package-", dir=output) as directory:
+    with tempfile.TemporaryDirectory(prefix="m7arc-package-", dir=output) as directory, ExitStack() as cleanup:
         staging = Path(directory) / "image"
         staging.mkdir()
         deployed = staging / "M7Arc.app"
+        # Launching the smoke test registers this temporary application with LaunchServices.
+        cleanup.callback(subprocess.run, [
+            "/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister",
+            "-u", str(deployed),
+        ], check=False)
         run("ditto", app, deployed)
         licenses = add_licenses(deployed)
-        run(macdeployqt, deployed, "-always-overwrite", "-no-codesign", "-verbose=1")
+        extractor = deployed / "Contents/MacOS/M7ArcExtractor"
+        run(macdeployqt, deployed, "-always-overwrite", "-no-codesign", "-verbose=1", f"-executable={extractor}")
         objects = verify_runtime(deployed, architecture)
+        main_executable = deployed / "Contents/MacOS" / info["CFBundleExecutable"]
         for path in sorted(objects, key=lambda item: len(item.parts), reverse=True):
-            run("codesign", "--force", "--sign", "-", "--timestamp=none", path)
+            if path != main_executable:
+                run("codesign", "--force", "--sign", "-", "--timestamp=none", path)
         for framework in sorted(deployed.rglob("*.framework"), key=lambda item: len(item.parts), reverse=True):
             run("codesign", "--force", "--sign", "-", "--timestamp=none", framework)
+        for extension in sorted(deployed.rglob("*.appex"), key=lambda item: len(item.parts), reverse=True):
+            run("codesign", "--force", "--sign", "-", "--timestamp=none", "--entitlements",
+                PROJECT / "src/platform/quicklook/Preview.entitlements", extension)
         run("codesign", "--force", "--sign", "-", "--timestamp=none", deployed)
         run("codesign", "--verify", "--deep", "--strict", deployed)
         environment = os.environ.copy()
         for variable in ("QT_PLUGIN_PATH", "QT_QPA_PLATFORM_PLUGIN_PATH", "DYLD_LIBRARY_PATH", "DYLD_FRAMEWORK_PATH"):
             environment.pop(variable, None)
         run(deployed / "Contents/MacOS/M7Arc", "--smoke-test", env=environment, timeout=30, cwd=staging)
+        run(extractor, "--smoke-test", env=environment, timeout=30, cwd=staging)
         (staging / "Applications").symlink_to("/Applications", target_is_directory=True)
         shutil.copytree(licenses, staging / "Licenses")
         for name in ("INSTALL.zh-CN.txt", "INSTALL.en.txt"):
