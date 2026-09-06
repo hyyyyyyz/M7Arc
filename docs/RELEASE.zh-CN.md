@@ -17,6 +17,8 @@
 
 更新时先退出 M7Arc，再将新版应用拖入“应用程序”替换。预览阶段通过 Releases 手动更新。卸载时退出应用并将其移入废纸篓。
 
+Finder 归档预览：安装并启动后，在“系统设置 → 通用 → 登录项与扩展 → M7Arc”中开启“快速查看”，选中归档并按空格查看成员列表。若已开启但未出现成员表格，可将 M7Arc 的这一开关关闭再开启。macOS 13 的扩展入口位于“隐私与安全”。详细系统入口见 [macOS 集成说明](MACOS_INTEGRATION.zh-CN.md)。
+
 ## 本地构建
 
 使用 Xcode 15/macOS 14 SDK 或更新工具链、CMake 3.24+、Ninja 和官方 Qt 6.11.2 macOS SDK。开发依赖为 Qt Base、Qt Tools 及 Linguist 工具需要的 Qt Declarative；应用运行使用 Core、Gui、Widgets、Concurrent。Qt 官方 macOS 包提供 arm64 与 x86_64，应用构建明确选择目标架构与 macOS 13.0 部署目标。[Qt 支持平台与架构](https://doc.qt.io/qt-6/macos.html)

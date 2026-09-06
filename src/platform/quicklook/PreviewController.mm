@@ -14,13 +14,17 @@ static NSString *Text(const std::string &value) {
     return [[NSString alloc] initWithBytes:value.data() length:value.size() encoding:NSUTF8StringEncoding] ?: @"";
 }
 
+static NSString *Localized(NSString *english, NSString *chinese) {
+    return [NSLocale.preferredLanguages.firstObject hasPrefix:@"zh"] ? chinese : english;
+}
+
 @implementation M7ArcPreviewController
 - (void)loadView {
     self.view = [[NSView alloc] initWithFrame:NSMakeRect(0, 0, 780, 520)];
     self.preferredContentSize = NSMakeSize(780, 520);
     self.titleLabel = [NSTextField labelWithString:@"M7Arc"];
     self.titleLabel.font = [NSFont systemFontOfSize:19 weight:NSFontWeightSemibold];
-    self.summaryLabel = [NSTextField labelWithString:@"Reading archive…"];
+    self.summaryLabel = [NSTextField labelWithString:Localized(@"Reading archive…", @"正在读取归档…")];
     self.summaryLabel.textColor = NSColor.secondaryLabelColor;
     NSScrollView *scroll = [[NSScrollView alloc] init];
     scroll.hasVerticalScroller = YES;
@@ -31,8 +35,10 @@ static NSString *Text(const std::string &value) {
     self.table.rowHeight = 24;
     self.table.dataSource = self;
     self.table.delegate = self;
-    for (NSArray *description in @[@[@"path", @"Name", @430], @[@"size", @"Size", @100],
-                                   @[@"packed", @"Packed", @100], @[@"method", @"Method", @180]]) {
+    for (NSArray *description in @[@[@"path", Localized(@"Name", @"名称"), @430],
+                                   @[@"size", Localized(@"Size", @"大小"), @100],
+                                   @[@"packed", Localized(@"Packed", @"压缩后"), @100],
+                                   @[@"method", Localized(@"Method", @"方法"), @180]]) {
         NSTableColumn *column = [[NSTableColumn alloc] initWithIdentifier:description[0]];
         column.title = description[1];
         column.width = [description[2] doubleValue];
@@ -84,10 +90,11 @@ static NSString *Text(const std::string &value) {
                         @"method": Text(entry.method)}];
                 }
                 rows = items;
-                summary = [NSString stringWithFormat:@"%@ · %lu items%@", Text(snapshot.format),
-                    (unsigned long)snapshot.entries.size(), snapshot.entries.size() > displayed ? @" · First 5,000 shown" : @""];
+                summary = [NSString stringWithFormat:Localized(@"%@ · %lu items%@", @"%@ · %lu 项%@"), Text(snapshot.format),
+                    (unsigned long)snapshot.entries.size(), snapshot.entries.size() > displayed
+                        ? Localized(@" · First 5,000 shown", @" · 显示前 5,000 项") : @""];
             } catch (const std::exception &error) {
-                summary = [@"Open in M7Arc: " stringByAppendingString:Text(error.what())];
+                summary = [Localized(@"Open in M7Arc: ", @"请使用 M7Arc 打开：") stringByAppendingString:Text(error.what())];
             }
             dispatch_async(dispatch_get_main_queue(), ^{
                 self.entries = rows;

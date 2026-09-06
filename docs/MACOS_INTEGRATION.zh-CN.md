@@ -40,9 +40,11 @@ M7Arc 的 Finder Services、Quick Actions、文件关联和归档成员拖放共
 
 预览关联覆盖常用归档、压缩流、文件系统和磁盘镜像，声明由格式目录生成。需要密码或缺失分卷时，预览提示用 M7Arc 打开。扩展使用独立 App Sandbox 和用户文件只读 entitlement，随应用放在 `Contents/PlugIns`。
 
+安装并打开 M7Arc 后，在“系统设置 → 通用 → 登录项与扩展 → M7Arc”中启用“快速查看”。如果开关已开启而 Finder 仍只显示通用归档图标，将 M7Arc 的快速查看关闭再开启，然后重新选择文件并按空格。旧版 macOS 的扩展设置位于“隐私与安全”中。
+
 ## 工程接线
 
-根 CMake 引入 `cmake/macos.cmake`，对 Qt 应用调用 `m7arc_add_macos_integrations(M7Arc)`。应用 Info.plist 插入 `${M7ARC_SERVICES_PLIST}` 与 `${M7ARC_IMPORTED_ARCHIVE_TYPES_PLIST}`。扩展在所有资源固定后独立签名，再签名外层应用。
+根 CMake 引入 `cmake/macos.cmake`，对 Qt 应用调用 `m7arc_add_macos_integrations(M7Arc)`。应用 Info.plist 插入 `${M7ARC_SERVICES_PLIST}` 与 `${M7ARC_IMPORTED_ARCHIVE_TYPES_PLIST}`。扩展在所有资源固定后独立签名，再签名外层应用。打包临时应用退出测试后注销自己的 LaunchServices 记录。
 
 | 接口 | 职责 |
 | --- | --- |
@@ -56,7 +58,9 @@ M7Arc 的 Finder Services、Quick Actions、文件关联和归档成员拖放共
 
 ## 验证范围与已知限制
 
-原生 pasteboard 多选回调、Automator 工作流加载、Quick Look controller 的实际归档读取、拖放交付函数的文件/目录重命名和取消清理都有本地执行验证。Finder 菜单可见性、扩展宿主加载和用户交互提示另需在安装后的系统环境中验证；控制器测试不代表系统已启用扩展。
+原生 pasteboard 多选回调、Automator 工作流加载、Quick Look controller 的实际归档读取、拖放交付函数的文件/目录重命名和取消清理都有本地执行验证。Finder 菜单可见性、成员拖出的完整鼠标交互和用户交互提示仍需系统界面验收。
+
+`0.1.0-alpha.1` 的 Apple Silicon DMG 安装副本已通过实际 Finder 空格预览：系统宿主加载随包扩展，表格正确显示 7z 成员名称、原始大小、压缩大小和 LZMA2 方法。该包使用 ad-hoc 签名和独立沙箱权限。
 
 Ad-hoc 签名不提供 Developer ID 身份或 Apple 公证。系统是否启用 Quick Look 扩展取决于安装、签名和用户扩展设置，发布说明记录实际宿主验证结果。应用本身的归档浏览、压缩和提取不依赖 Quick Look 注册成功。
 

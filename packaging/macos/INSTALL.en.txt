@@ -10,6 +10,11 @@ Installing M7Arc
 Choose arm64 for Apple Silicon or x86_64 for Intel. The minimum target is macOS 13.
 Qt and 7-Zip runtime components are included; no separate installation is needed.
 
+Finder previews: after opening the installed app, enable Quick Look for M7Arc in
+System Settings > General > Login Items & Extensions. Select an archive and press
+Space to view its members. If the member table does not appear, turn that M7Arc
+switch off and on. On macOS 13, extension settings are under Privacy & Security.
+
 To upgrade, quit M7Arc before replacing the application. To uninstall, quit it
 and move it to the Trash. See the release notes for supported features and known
 limitations of each preview.
