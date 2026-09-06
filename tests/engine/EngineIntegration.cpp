@@ -32,7 +32,9 @@ int main() {
         std::ofstream(root / "input/中文.txt") << "hello archive\n";
         std::ofstream(root / "input/script.sh") << "#!/bin/sh\necho hi\n";
         fs::permissions(root / "input/script.sh", fs::perms::owner_all);
-        m7arc::ArchiveEngine engine;
+        m7arc::EngineOptions engineOptions;
+        engineOptions.loadUserModules = false;
+        m7arc::ArchiveEngine engine(engineOptions);
         std::cerr << "Registered " << engine.formats().size() << " formats, " << engine.codecs().size()
                   << " codecs, " << engine.hashers().size() << " hashers\n";
         for (const auto& f : engine.formats())
@@ -341,6 +343,22 @@ int main() {
         auto wrongZip = engine.test((root / "aes.zip").string(), {}, {"wrong password", {}});
         check(!wrongZip.ok() && wrongZip.passwordMayBeIncorrect,
               "Encrypted data failures expose password retry classification");
+        good(engine.renameDirectory(prefixArchive.string(), "nested", "relocated"),
+             "Rename implicit archive directory");
+        auto relocated = engine.list(prefixArchive.string());
+        bool relocatedMember = false;
+        for (const auto& entry : relocated.entries) {
+            check(!entry.path.starts_with("nested/"), "Implicit directory rename moves all descendants");
+            if (entry.path == "relocated/folder/中文.txt")
+                relocatedMember = true;
+        }
+        check(relocatedMember, "Implicit directory has its new prefix");
+        good(engine.extract(prefixArchive.string(), (root / "relocated-out").string(), {}, extract),
+             "Extract renamed implicit directory");
+        char relocatedAttr[128]{};
+        check(getxattr((root / "relocated-out/relocated/folder/中文.txt").c_str(), "com.m7arc.test",
+                       relocatedAttr, sizeof(relocatedAttr), 0, 0) == 15,
+              "Implicit directory rename preserves member metadata");
         auto encryptedList = engine.list((root / "aes.zip").string());
         std::uint32_t encryptedIndex = 0;
         for (const auto& e : encryptedList.entries)
@@ -393,7 +411,7 @@ int main() {
         }
         m7arc::ExtractOptions current;
         current.pathMode = m7arc::PathMode::Current;
-        current.currentDirectory = "nested/folder";
+        current.currentDirectory = "relocated/folder";
         current.overwrite = m7arc::Overwrite::Replace;
         good(engine.extract(prefixArchive.string(), (root / "current-path").string(), {}, current),
              "Extract current folder");
@@ -465,6 +483,36 @@ int main() {
                         rootOwner = true;
                 }
         check(rootOwner, "Root-owned input retains original uid in archive");
+        fs::create_directories(root / "hash-tree/empty");
+        std::ofstream(root / "hash-tree/a.txt") << "abc";
+        std::ofstream(root / "hash-tree/b.txt") << "abc";
+        const auto summary = engine.hashSummary({(root / "hash-tree").string()}, {"SHA256", "CRC32"});
+        check(summary.fileCount == 2 && summary.directoryCount == 2 && summary.totalBytes == 6 &&
+                  summary.files.size() == 4,
+              "Hash summary counts files and directories in one traversal");
+        fs::rename(root / "hash-tree/b.txt", root / "hash-tree/renamed.txt");
+        const auto renamedSummary = engine.hashSummary({(root / "hash-tree").string()}, {"SHA256", "CRC32"});
+        check(summary.totals[0].dataSum == renamedSummary.totals[0].dataSum &&
+                  summary.totals[0].dataAndNamesSum != renamedSummary.totals[0].dataAndNamesSum,
+              "Data checksum totals are stable while name-inclusive totals reflect a rename");
+        std::ofstream(root / "verify-pass.txt") << "abc";
+        std::ofstream(root / "verify-mismatch.txt") << "different bytes";
+        std::ofstream(root / "verify.sha256") << knownHash[0].digest << "  verify-pass.txt\n"
+                                              << knownHash[0].digest << "  verify-mismatch.txt\n"
+                                              << knownHash[0].digest << "  verify-missing.txt\n";
+        const auto verification = engine.verifyManifest((root / "verify.sha256").string());
+        check(!verification.ok() && verification.entries.size() == 3,
+              "Manifest verification reports every attempted member");
+        for (const auto& item : verification.entries) {
+            if (item.path == "verify-pass.txt")
+                check(item.status == m7arc::VerificationStatus::Passed, "Manifest matching member passes");
+            if (item.path == "verify-mismatch.txt")
+                check(item.status == m7arc::VerificationStatus::Mismatch,
+                      "Manifest changed member reports mismatch");
+            if (item.path == "verify-missing.txt")
+                check(item.status == m7arc::VerificationStatus::Missing,
+                      "Manifest absent member reports missing");
+        }
         m7arc::BenchmarkOptions bench;
         bench.threads = 1;
         bench.dictionaryBytes = 1 << 18;

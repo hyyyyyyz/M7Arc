@@ -55,6 +55,9 @@ EXPORT_CODECS
 
 #include "../../../Windows/FileFind.h"
 #include "../../../Windows/DLL.h"
+#ifndef _WIN32
+#include <dlfcn.h>
+#endif
 
 #ifdef _WIN32
 #include "../../../Windows/FileName.h"
@@ -516,6 +519,10 @@ void CCodecs::AddLastError(const FString &path)
   CCodecError &error = Errors.AddNew();
   error.Path = path;
   error.ErrorCode = res;
+  #ifndef _WIN32
+  if (const char *message = dlerror())
+    error.Message = message;
+  #endif
 }
 
 
@@ -788,7 +795,11 @@ void CCodecs::CloseLibs()
 #endif // Z7_EXTERNAL_CODECS
 
 
-HRESULT CCodecs::Load()
+HRESULT CCodecs::Load(
+    #ifdef Z7_EXTERNAL_CODECS
+    const FStringVector *modulePaths
+    #endif
+    )
 {
   /*
   #ifdef NEW_FOLDER_INTERFACE
@@ -848,6 +859,13 @@ HRESULT CCodecs::Load()
   // printf("\nLoad codecs \n");
 
   #ifdef Z7_EXTERNAL_CODECS
+    if (modulePaths)
+    {
+      FOR_VECTOR(i, *modulePaths)
+        RINOK(LoadDll((*modulePaths)[i], true))
+    }
+    else
+    {
     const FString baseFolder = GetBaseFolderPrefixFromRegistry();
     {
       bool loadedOK;
@@ -857,6 +875,7 @@ HRESULT CCodecs::Load()
     }
     RINOK(LoadDllsFromFolder(baseFolder + kCodecsFolderName))
     RINOK(LoadDllsFromFolder(baseFolder + kFormatsFolderName))
+    }
 
   NeedSetLibCodecs = true;
     
@@ -1037,7 +1056,7 @@ Z7_COM7F_IMF(CCodecs::CreateDecoder(UInt32 index, const GUID *iid, void **coder)
 {
   #ifdef EXPORT_CODECS
   if (index < g_NumCodecs)
-    return CreateDecoder(index, iid, coder);
+    return ::CreateDecoder(index, iid, coder);
   #endif
   
   #ifdef Z7_EXTERNAL_CODECS
@@ -1060,7 +1079,7 @@ Z7_COM7F_IMF(CCodecs::CreateEncoder(UInt32 index, const GUID *iid, void **coder)
 {
   #ifdef EXPORT_CODECS
   if (index < g_NumCodecs)
-    return CreateEncoder(index, iid, coder);
+    return ::CreateEncoder(index, iid, coder);
   #endif
 
   #ifdef Z7_EXTERNAL_CODECS
@@ -1108,7 +1127,7 @@ Z7_COM7F_IMF(CCodecs::CreateHasher(UInt32 index, IHasher **hasher))
 {
   #ifdef EXPORT_CODECS
   if (index < g_NumHashers)
-    return CreateHasher(index, hasher);
+    return ::CreateHasher(index, hasher);
   #endif
   #ifdef Z7_EXTERNAL_CODECS
   const CDllHasherInfo &ci = Hashers[index - NUM_EXPORT_HASHERS];
@@ -1154,7 +1173,7 @@ bool CCodecs::GetCodec_DecoderIsAssigned(UInt32 index) const
   if (index < g_NumCodecs)
   {
     NCOM::CPropVariant prop;
-    if (GetProperty(index, NMethodPropID::kDecoderIsAssigned, &prop) == S_OK)
+    if (::GetMethodProperty(index, NMethodPropID::kDecoderIsAssigned, &prop) == S_OK)
     {
       if (prop.vt == VT_BOOL)
         return VARIANT_BOOLToBool(prop.boolVal);
@@ -1177,7 +1196,7 @@ bool CCodecs::GetCodec_EncoderIsAssigned(UInt32 index) const
   if (index < g_NumCodecs)
   {
     NCOM::CPropVariant prop;
-    if (GetProperty(index, NMethodPropID::kEncoderIsAssigned, &prop) == S_OK)
+    if (::GetMethodProperty(index, NMethodPropID::kEncoderIsAssigned, &prop) == S_OK)
     {
       if (prop.vt == VT_BOOL)
         return VARIANT_BOOLToBool(prop.boolVal);
@@ -1201,7 +1220,7 @@ bool CCodecs::GetCodec_IsFilter(UInt32 index, bool &isAssigned) const
   if (index < g_NumCodecs)
   {
     NCOM::CPropVariant prop;
-    if (GetProperty(index, NMethodPropID::kIsFilter, &prop) == S_OK)
+    if (::GetMethodProperty(index, NMethodPropID::kIsFilter, &prop) == S_OK)
     {
       if (prop.vt == VT_BOOL)
       {

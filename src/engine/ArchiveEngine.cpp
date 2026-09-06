@@ -1,4 +1,8 @@
+// Define 7-Zip interface GUIDs before including upstream interface headers.
+#include "Common/MyInitGuid.h"
+
 #include "ArchiveEngine.h"
+#include "EngineRuntime.h"
 #include "platform/MacMetadata.h"
 
 #include "7zVersion.h"
@@ -13,7 +17,6 @@
 #include "7zip/UI/Common/SetProperties.h"
 #include "7zip/UI/Common/Update.h"
 #include "Common/MyCom.h"
-#include "Common/MyInitGuid.h"
 #include "Common/StringConvert.h"
 #include "Common/UTFConvert.h"
 #include "Windows/PropVariant.h"
@@ -206,10 +209,12 @@ class OpenCallback final : public IOpenCallbackUI {
 class ExtractCallback final : public IFolderArchiveExtractCallback,
                               public IFolderArchiveExtractCallback2,
                               public ICryptoGetTextPassword,
+                              public IArchiveRequestMemoryUseCallback,
                               public CMyUnknownImp {
     Z7_COM_QI_BEGIN2(IFolderArchiveExtractCallback)
     Z7_COM_QI_ENTRY(IFolderArchiveExtractCallback2)
     Z7_COM_QI_ENTRY(ICryptoGetTextPassword)
+    Z7_COM_QI_ENTRY(IArchiveRequestMemoryUseCallback)
     Z7_COM_QI_END
     Z7_COM_ADDREF_RELEASE
     OperationContext& ctx;
@@ -261,6 +266,27 @@ class ExtractCallback final : public IFolderArchiveExtractCallback,
     }
     Z7_COM7F_IMF(CryptoGetTextPassword(BSTR* p)) override {
         return ctx.getPassword(p);
+    }
+    Z7_COM7F_IMF(RequestMemoryUse(UInt32 flags, UInt32, UInt32, const wchar_t* path, UInt64 required,
+                                  UInt64* allowed, UInt32* answer))
+    override {
+        std::lock_guard lock(ctx.mutex);
+        RINOK(ctx.check())
+        if (!ctx.callbacks.memoryRequest)
+            return S_OK;
+        MemoryRequest request{utf8(path), required, *allowed,
+                              (flags & NRequestMemoryUseFlags::k_IsReport) != 0};
+        const auto decision = ctx.callbacks.memoryRequest(request);
+        if (request.reportOnly)
+            return ctx.check();
+        if (decision == MemoryAnswer::Cancel) {
+            *answer = NRequestMemoryAnswerFlags::k_Stop;
+            ctx.result.cancelled = true;
+            return E_ABORT;
+        }
+        *allowed = std::max(*allowed, required);
+        *answer = NRequestMemoryAnswerFlags::k_Allow;
+        return ctx.check();
     }
 };
 class UpdateCallback final : public IUpdateCallbackUI2 {
@@ -616,12 +642,9 @@ void addProperty(CObjectVector<CProperty>& properties, const std::string& name, 
 } // namespace
 
 struct ArchiveEngine::Impl {
-    CCodecs* codecs = new CCodecs;
-    CMyComPtr<IUnknown> reference = codecs;
-    Impl() {
-        require(codecs->Load(), "Load 7-Zip formats");
-        Codecs_AddHashArcHandler(codecs);
-    }
+    std::shared_ptr<EngineRuntime> runtime;
+    CCodecs* codecs;
+    explicit Impl(const EngineOptions& options) : runtime(engineRuntime(options)), codecs(runtime->codecs) {}
     void open(CArchiveLink& link, const std::string& path, const OpenOptions& options,
               OperationContext& ctx) {
         const auto absolutePath = fs::absolute(path).lexically_normal();
@@ -702,7 +725,8 @@ struct ArchiveEngine::Impl {
     }
     OperationResult extract(const std::string& path, const std::string& destination,
                             const std::vector<std::uint32_t>& indices, const ExtractOptions& options,
-                            const OpenOptions& openOptions, bool testing, const Callbacks& callbacks) {
+                            const OpenOptions& openOptions, bool testing, const Callbacks& callbacks,
+                            ManifestResult* verification = nullptr) {
         OperationContext ctx(callbacks, options.password);
         CArchiveLink link;
         open(link, path, openOptions, ctx);
@@ -710,6 +734,8 @@ struct ArchiveEngine::Impl {
         UInt32 count = 0;
         require(arc.Archive->GetNumberOfItems(&count), "Read item count");
         const bool hashArchive = arc.FormatIndex >= 0 && codecs->Formats[arc.FormatIndex].Flags_HashHandler();
+        if (verification && !hashArchive)
+            throw EngineError("Select a checksum manifest to verify");
         if (hashArchive && !testing)
             throw EngineError(
                 "A checksum manifest contains names and digests. Use Test to verify its files.");
@@ -810,6 +836,25 @@ struct ArchiveEngine::Impl {
         if (hr == S_OK)
             hr = closeResult;
         ctx.finish(hr);
+        if (verification) {
+            for (unsigned i = 0; i < extract->M7Arc_ItemResults.Size(); ++i) {
+                const auto& item = extract->M7Arc_ItemResults[i];
+                ManifestEntryResult entry;
+                entry.path = memberPaths[item.Index];
+                if (item.Result == NArchive::NExtract::NOperationResult::kOK)
+                    entry.status = VerificationStatus::Passed;
+                else if (item.SystemError == ENOENT || item.SystemError == ENOTDIR)
+                    entry.status = VerificationStatus::Missing;
+                else if (item.Result == NArchive::NExtract::NOperationResult::kCRCError)
+                    entry.status = VerificationStatus::Mismatch;
+                if (entry.status == VerificationStatus::Mismatch)
+                    entry.message = "Checksum mismatch";
+                else if (entry.status != VerificationStatus::Passed)
+                    entry.message = item.SystemError ? std::system_category().message(item.SystemError)
+                                                     : operationError(item.Result);
+                verification->entries.push_back(std::move(entry));
+            }
+        }
         if (!testing && !ctx.result.cancelled) {
             std::map<std::string, std::vector<fs::path>> written;
             for (unsigned i = 0; i < extract->M7Arc_WrittenIndices.Size(); ++i)
@@ -870,7 +915,7 @@ struct ArchiveEngine::Impl {
         return ctx.result;
     }
 };
-ArchiveEngine::ArchiveEngine() : impl_(std::make_unique<Impl>()) {}
+ArchiveEngine::ArchiveEngine(const EngineOptions& options) : impl_(std::make_unique<Impl>(options)) {}
 ArchiveEngine::~ArchiveEngine() = default;
 std::string ArchiveEngine::version() {
     return MY_VERSION;
@@ -883,6 +928,8 @@ std::vector<FormatInfo> ArchiveEngine::formats() const {
         f.name = utf8(a.Name);
         f.canWrite = a.UpdateEnabled;
         f.isHash = a.Flags_HashHandler();
+        if (a.LibIndex >= 0)
+            f.modulePath = impl_->codecs->Libs[a.LibIndex].Path.Ptr();
         for (unsigned j = 0; j < a.Exts.Size(); ++j)
             f.extensions.push_back(utf8(a.Exts[j].Ext));
         result.push_back(std::move(f));
@@ -891,19 +938,44 @@ std::vector<FormatInfo> ArchiveEngine::formats() const {
 }
 std::vector<CodecInfo> ArchiveEngine::codecs() const {
     std::vector<CodecInfo> result;
-    for (unsigned i = 0; i < g_NumCodecs; ++i) {
-        const auto& c = *g_Codecs[i];
-        result.push_back({c.Name, c.Id, c.CreateEncoder != nullptr, c.CreateDecoder != nullptr, c.IsFilter});
+    UInt32 count = 0;
+    require(impl_->runtime->reference->GetNumMethods(&count), "Read codec count");
+    for (UInt32 i = 0; i < count; ++i) {
+        CodecInfo info;
+        info.name = impl_->codecs->GetCodec_Name(i).Ptr();
+        UInt64 id = 0;
+        require(impl_->codecs->GetCodec_Id(i, id), "Read codec ID");
+        info.id = id;
+        info.encode = impl_->codecs->GetCodec_EncoderIsAssigned(i);
+        info.decode = impl_->codecs->GetCodec_DecoderIsAssigned(i);
+        bool assigned = false;
+        info.filter = impl_->codecs->GetCodec_IsFilter(i, assigned);
+        const int library = impl_->codecs->GetCodec_LibIndex(i);
+        if (library >= 0)
+            info.modulePath = impl_->codecs->Libs[library].Path.Ptr();
+        result.push_back(std::move(info));
     }
     return result;
 }
 std::vector<HasherInfo> ArchiveEngine::hashers() const {
     std::vector<HasherInfo> result;
-    for (unsigned i = 0; i < g_NumHashers; ++i) {
-        const auto& h = *g_Hashers[i];
-        result.push_back({h.Name, h.Id, h.DigestSize});
+    for (UInt32 i = 0; i < static_cast<IHashers*>(impl_->codecs)->GetNumHashers(); ++i) {
+        HasherInfo info;
+        info.name = impl_->codecs->GetHasherName(i).Ptr();
+        info.id = impl_->codecs->GetHasherId(i);
+        info.digestSize = impl_->codecs->GetHasherDigestSize(i);
+        const int library = impl_->codecs->GetHasherLibIndex(i);
+        if (library >= 0)
+            info.modulePath = impl_->codecs->Libs[library].Path.Ptr();
+        result.push_back(std::move(info));
     }
     return result;
+}
+std::vector<ModuleInfo> ArchiveEngine::modules() const {
+    return impl_->runtime->modules;
+}
+std::vector<std::string> ArchiveEngine::moduleDirectories() const {
+    return impl_->runtime->directories;
 }
 ArchiveSnapshot ArchiveEngine::list(const std::string& path, const OpenOptions& options,
                                     const Callbacks& callbacks) {
@@ -1237,7 +1309,9 @@ ArchiveEngine::createRaw(const std::vector<std::string>& inputs, const std::stri
         update.VolumesSizes.Add(size);
     }
     auto& props = update.MethodMode.Properties;
-    if (format != "tar" && format != "wim")
+    const bool standardCompression =
+        format == "7z" || format == "zip" || format == "gzip" || format == "bzip2" || format == "xz";
+    if (standardCompression)
         addProperty(props, "x", std::to_string(options.level));
     if (!options.method.empty()) {
         if (format == "tar")
@@ -1256,7 +1330,7 @@ ArchiveEngine::createRaw(const std::vector<std::string>& inputs, const std::stri
     if (options.wordSize)
         addProperty(props, (format == "7z" ? std::string("0") : std::string()) + (orderMode ? "o" : "fb"),
                     std::to_string(options.wordSize));
-    if (options.threads && format != "tar" && format != "wim")
+    if (options.threads && standardCompression)
         addProperty(props, "mt", std::to_string(options.threads));
     if (format == "7z") {
         addProperty(props, "s",
@@ -1442,7 +1516,8 @@ OperationResult rewriteArchive(CCodecs* codecs, CArchiveLink& link, const std::s
                                std::optional<std::pair<std::uint32_t, std::string>> rename,
                                OperationContext& ctx,
                                std::optional<std::pair<std::uint32_t, std::string>> replacement = {},
-                               std::optional<std::pair<std::uint32_t, std::string>> comment = {}) {
+                               std::optional<std::pair<std::uint32_t, std::string>> comment = {},
+                               std::optional<std::string> directoryPrefix = {}) {
     const CArc& arc = *link.GetArc();
     if (link.Arcs.Size() != 1 || arc.IsReadOnly || arc.FormatIndex < 0 ||
         !codecs->Formats[arc.FormatIndex].UpdateEnabled)
@@ -1487,7 +1562,7 @@ OperationResult rewriteArchive(CCodecs* codecs, CArchiveLink& link, const std::s
     if (rename) {
         UString p;
         require(arc.GetItem_Path(rename->first, p), "Read member path");
-        oldPrefix = utf8(p);
+        oldPrefix = directoryPrefix.value_or(utf8(p));
         fs::path replacement(rename->second);
         if (replacement.empty() || replacement.is_absolute())
             throw EngineError("Enter a relative archive member path");
@@ -1504,7 +1579,7 @@ OperationResult rewriteArchive(CCodecs* codecs, CArchiveLink& link, const std::s
             UString p;
             require(arc.GetItem_Path(i, p), "Read member path");
             auto original = utf8(p);
-            if (i == rename->first)
+            if ((!directoryPrefix && i == rename->first) || original == oldPrefix)
                 newName = rename->second;
             else if (original.starts_with(oldPrefix + "/"))
                 newName = rename->second + original.substr(oldPrefix.size());
@@ -1624,6 +1699,41 @@ OperationResult ArchiveEngine::rename(const std::string& path, std::uint32_t ind
     impl_->open(link, path, options, ctx);
     return rewriteArchive(impl_->codecs, link, path, {}, std::make_pair(index, newPath), ctx);
 }
+OperationResult ArchiveEngine::renameDirectory(const std::string& path, const std::string& oldPrefix,
+                                               const std::string& newPrefix, const OpenOptions& options,
+                                               const Callbacks& callbacks) {
+    std::string prefix = oldPrefix;
+    while (!prefix.empty() && prefix.back() == '/')
+        prefix.pop_back();
+    if (prefix.empty())
+        throw EngineError("Select an archive directory to rename");
+    OperationContext ctx(callbacks, options.password);
+    CArchiveLink link;
+    impl_->open(link, path, options, ctx);
+    const auto& arc = *link.GetArc();
+    UInt32 count = 0;
+    require(arc.Archive->GetNumberOfItems(&count), "Read member count");
+    std::optional<UInt32> member;
+    for (UInt32 i = 0; i < count; ++i) {
+        UString name;
+        require(arc.GetItem_Path(i, name), "Read member path");
+        const auto original = utf8(name);
+        if (original == prefix) {
+            CPropVariant directory;
+            require(arc.Archive->GetProperty(i, kpidIsDir, &directory), "Read member type");
+            if (directory.vt != VT_BOOL || directory.boolVal == VARIANT_FALSE)
+                throw EngineError("The selected path is a file, not a directory");
+            member = i;
+            break;
+        }
+        if (original.starts_with(prefix + "/"))
+            member = i;
+    }
+    if (!member)
+        throw EngineError("The archive directory no longer exists");
+    return rewriteArchive(impl_->codecs, link, path, {}, std::make_pair(*member, newPrefix), ctx, {}, {},
+                          prefix);
+}
 OperationResult ArchiveEngine::replace(const std::string& path, std::uint32_t index,
                                        const std::string& editedLocalFile, const OpenOptions& options,
                                        const Callbacks& callbacks) {
@@ -1642,63 +1752,138 @@ OperationResult ArchiveEngine::setComment(const std::string& path, std::uint32_t
         throw EngineError("This archive format does not support member comments");
     return rewriteArchive(impl_->codecs, link, path, {}, {}, ctx, {}, std::make_pair(index, comment));
 }
+bool ManifestResult::ok() const {
+    return !cancelled && errors.empty() && std::all_of(entries.begin(), entries.end(), [](const auto& entry) {
+        return entry.status == VerificationStatus::Passed;
+    });
+}
+ManifestResult ArchiveEngine::verifyManifest(const std::string& path, const Callbacks& callbacks) {
+    ManifestResult result;
+    ExtractOptions extraction;
+    const auto operation = impl_->extract(path, {}, {}, extraction, {{}, "Hash"}, true, callbacks, &result);
+    result.cancelled = operation.cancelled;
+    if (!operation.ok() && (result.entries.empty() || !operation.errors.empty()))
+        result.errors = operation.errors;
+    return result;
+}
+namespace {
+std::string hashText(const CHasherState& hasher, unsigned group) {
+    char digest[2 * (k_HashCalc_DigestSize_Max + k_HashCalc_ExtraSize) + 2]{};
+    hasher.WriteToString(group, digest);
+    return digest;
+}
+class HashCallback final : public IHashCallbackUI {
+    OperationContext& ctx;
+    fs::path base;
+    std::string current;
+    UInt64 totalBytes = 0;
+
+  public:
+    HashSummary summary;
+    HashCallback(OperationContext& context, fs::path parent) : ctx(context), base(std::move(parent)) {}
+    HRESULT StartScanning() override {
+        return ctx.phase("Scanning");
+    }
+    HRESULT FinishScanning(const CDirItemsStat&) override {
+        return ctx.check();
+    }
+    HRESULT SetNumFiles(UInt64) override {
+        return ctx.check();
+    }
+    HRESULT SetTotal(UInt64 total) override {
+        totalBytes = total;
+        return ctx.report({}, total);
+    }
+    HRESULT SetCompleted(const UInt64* value) override {
+        return ctx.report(value ? std::optional<std::uint64_t>(*value) : std::nullopt);
+    }
+    HRESULT CheckBreak() override {
+        return ctx.check();
+    }
+    HRESULT BeforeFirstFile(const CHashBundle&) override {
+        RINOK(ctx.phase("Hashing"))
+        return ctx.report(0, totalBytes);
+    }
+    HRESULT GetStream(const wchar_t* name, bool) override {
+        current = (base / fs::path(utf8(name))).lexically_normal().string();
+        return ctx.item(current);
+    }
+    HRESULT OpenFileError(const FString& path, DWORD error) override {
+        ctx.result.errors.push_back(std::string(path.Ptr()) + ": " + std::system_category().message(error));
+        return E_FAIL;
+    }
+    HRESULT ScanError(const FString& path, DWORD error) override {
+        return OpenFileError(path, error);
+    }
+    HRESULT ScanProgress(const CDirItemsStat&, const FString& path, bool) override {
+        return ctx.item(path.Ptr());
+    }
+    HRESULT SetOperationResult(UInt64 size, const CHashBundle& hashes, bool showHash) override {
+        if (showHash)
+            for (unsigned i = 0; i < hashes.Hashers.Size(); ++i)
+                summary.files.push_back({current, hashes.Hashers[i].Name.Ptr(),
+                                         hashText(hashes.Hashers[i], k_HashCalc_Index_Current), size});
+        return ctx.check();
+    }
+    HRESULT AfterLastFile(CHashBundle& hashes) override {
+        summary.fileCount = hashes.NumFiles;
+        summary.directoryCount = hashes.NumDirs;
+        summary.totalBytes = hashes.FilesSize;
+        for (unsigned i = 0; i < hashes.Hashers.Size(); ++i) {
+            const auto& hasher = hashes.Hashers[i];
+            summary.totals.push_back({hasher.Name.Ptr(), hashText(hasher, k_HashCalc_Index_DataSum),
+                                      hashText(hasher, k_HashCalc_Index_NamesSum)});
+        }
+        return ctx.check();
+    }
+};
+} // namespace
+HashSummary ArchiveEngine::hashSummary(const std::vector<std::string>& inputs,
+                                       const std::vector<std::string>& algorithms,
+                                       const Callbacks& callbacks) {
+    if (inputs.empty())
+        throw EngineError("Select at least one file or folder");
+    if (algorithms.empty())
+        throw EngineError("Select a checksum algorithm");
+    fs::path base = fs::absolute(inputs.front()).lexically_normal().parent_path();
+    for (const auto& input : inputs) {
+        const auto path = fs::absolute(input).lexically_normal();
+        while (!base.empty()) {
+            const auto relative = path.lexically_relative(base);
+            if (!relative.empty() && *relative.begin() != "..")
+                break;
+            base = base.parent_path();
+        }
+    }
+    NWildcard::CCensor censor;
+    auto& pair = censor.Pairs.AddNew();
+    pair.Prefix = wide(base.string() + "/");
+    for (const auto& input : inputs) {
+        NWildcard::CItem item;
+        item.Recursive = false;
+        item.ForFile = item.ForDir = true;
+        item.WildcardMatching = false;
+        SplitPathToParts(
+            wide(fs::absolute(input).lexically_normal().lexically_relative(base).generic_string()),
+            item.PathParts);
+        pair.Head.AddItem(true, item);
+    }
+    CHashOptions options;
+    for (const auto& algorithm : algorithms)
+        options.Methods.Add(wide(algorithm));
+    OperationContext ctx(callbacks);
+    HashCallback callback(ctx, base);
+    AString error;
+    const auto result = HashCalc(&impl_->runtime->external, censor, options, error, &callback);
+    if (!ctx.result.errors.empty())
+        throw EngineError(ctx.result.errors.front());
+    require(result, error.IsEmpty() ? "Calculate checksums" : error.Ptr());
+    return callback.summary;
+}
 std::vector<HashResult> ArchiveEngine::hash(const std::vector<std::string>& inputs,
                                             const std::vector<std::string>& algorithms,
                                             const Callbacks& callbacks) {
-    if (algorithms.empty())
-        throw EngineError("Select a checksum algorithm");
-    OperationContext ctx(callbacks);
-    std::vector<HashResult> result;
-    CHashBundle bundle;
-    UStringVector methods;
-    for (const auto& a : algorithms)
-        methods.Add(wide(a));
-    require(bundle.SetMethods(methods), "Unknown checksum algorithm");
-    std::vector<fs::path> files;
-    for (const auto& input : inputs) {
-        if (fs::is_directory(input)) {
-            for (const auto& e : fs::recursive_directory_iterator(input))
-                if (e.is_regular_file())
-                    files.push_back(e.path());
-        } else
-            files.emplace_back(input);
-    }
-    std::sort(files.begin(), files.end());
-    std::uint64_t total = 0;
-    for (const auto& file : files)
-        total += fs::file_size(file);
-    ctx.phase("Hashing");
-    ctx.report(0, total);
-    std::array<char, 1 << 18> buffer{};
-    std::uint64_t completed = 0;
-    for (const auto& file : files) {
-        require(ctx.item(file.string()), "Hash cancelled");
-        std::ifstream in(file, std::ios::binary);
-        if (!in)
-            throw EngineError("Cannot read " + file.string());
-        bundle.InitForNewFile();
-        std::uint64_t size = 0;
-        while (in) {
-            in.read(buffer.data(), buffer.size());
-            const auto n = in.gcount();
-            if (n > 0) {
-                bundle.Update(buffer.data(), static_cast<UInt32>(n));
-                size += n;
-                completed += n;
-                require(ctx.report(completed, total), "Hash cancelled");
-            }
-        }
-        if (!in.eof())
-            throw EngineError("Read error: " + file.string());
-        bundle.SetSize(size);
-        bundle.Final(false, false, wide(file.filename().string()));
-        for (unsigned i = 0; i < bundle.Hashers.Size(); ++i) {
-            char digest[2 * k_HashCalc_DigestSize_Max + 32]{};
-            bundle.Hashers[i].WriteToString(k_HashCalc_Index_Current, digest);
-            result.push_back({file.string(), bundle.Hashers[i].Name.Ptr(), digest, size});
-        }
-    }
-    return result;
+    return hashSummary(inputs, algorithms, callbacks).files;
 }
 namespace {
 class BenchmarkCallback final : public IBenchCallback, public IBenchPrintCallback {
@@ -1740,7 +1925,7 @@ BenchmarkResult ArchiveEngine::benchmark(const BenchmarkOptions& options, const 
     addProperty(props, "d", std::to_string(options.dictionaryBytes) + "b");
     addProperty(props, "time", std::to_string(options.seconds));
     require(ctx.phase("Benchmark"), "Benchmark cancelled");
-    require(Bench(&callback, &callback, props, 1, false), "Benchmark");
+    require(Bench(&impl_->runtime->external, &callback, &callback, props, 1, false), "Benchmark");
     return callback.result;
 }
 } // namespace m7arc

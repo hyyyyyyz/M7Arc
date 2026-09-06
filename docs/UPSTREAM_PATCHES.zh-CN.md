@@ -17,6 +17,10 @@
 
 更新上游时保留这两个字段、初始化清空和成功写入记录点，再运行 `engine.integration` 验证选择提取、跳过覆盖、自动改名及元数据往返。
 
+`M7Arc_ItemResults` 记录条目索引、官方操作结果和文件打开错误。Hash handler 校验清单时，它将每个成员映射为通过、缺失、不匹配或错误，保留一次遍历的完整结果；普通提取同样沿用官方错误处理。更新上游时运行 `engine.integration` 中的 SHA256 清单用例验证三种实际结果。
+
+应用的提取回调实现官方 `IArchiveRequestMemoryUseCallback`，将格式 handler 提出的内存请求交给界面。允许继续时返回所需内存额度，取消时返回 `E_ABORT`。`engine.external_modules` 的真实格式模块调用该接口，验证请求字段和继续／取消行为。
+
 ## AppleDouble 存储
 
 创建容器归档时，通过 APFS clone／系统复制建立临时输入树，并以 `__MACOSX/<目录>/._<名称>` 保存 AppleDouble 侧车。侧车包含扩展属性、Finder 信息、资源叉、ACL 和创建时间。扫描完成后，数据成员的物理读取路径映射回原文件；临时树负责成员命名、筛选和侧车组织。压缩流因此读取原始所有者、硬链接关系和文件属性。
@@ -45,3 +49,16 @@ M7Arc 在该回调中恢复原输入的所有者、目录时间，并将 `CDirIt
 文件：`third_party/7zip/CPP/7zip/Archive/Zip/ZipHandlerOut.cpp`。
 
 ZIP 的 UTF-8 标志同时覆盖文件名和注释。使用 UTF-8 编码且注释含非 ASCII 字符时设置该标志，使 ASCII 文件名附带中文注释的归档在 Windows 和 macOS 上具有相同解释。成员注释接口仅向实际支持写入此属性的 ZIP 格式开放。
+
+## 内外模块共享方法目录
+
+文件：
+
+- `third_party/7zip/CPP/7zip/UI/Common/LoadCodecs.h`
+- `third_party/7zip/CPP/7zip/UI/Common/LoadCodecs.cpp`
+
+`CCodecs::Load` 在启用外部模块时接受一个可选的显式模块路径列表。M7Arc 提供已发现的 macOS 模块路径，跳过独立主 `7z.so` 的默认查找；未传列表的官方命令行行为保持不变。动态库加载失败时记录 `dlerror()` 原始原因。
+
+`EXPORT_CODECS` 分支通过全局 `::CreateEncoder`、`::CreateDecoder`、`::CreateHasher` 工厂与 `::GetMethodProperty` 查询提供内建方法。外部格式可以通过 `SetCodecs` 获得内建和其他外部方法。
+
+模块位置、构建示例和运行时生命周期见 [外部模块](EXTERNAL_MODULES.zh-CN.md)。更新上游时运行 `engine.external_modules` 验证双向方法调用和退出释放。

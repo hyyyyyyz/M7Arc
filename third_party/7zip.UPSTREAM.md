@@ -9,7 +9,7 @@
 | Source release date | 2026-09-03, from `C/7zVersion.h` |
 | Snapshot directory | `7zip/` |
 | Source files | 1,294, excluding Git repository metadata |
-| Local modifications | None |
+| Local modifications | Extraction result records, update path handling, UTF-8 ZIP comments and explicit native module loading; see [upstream patches](../docs/UPSTREAM_PATCHES.zh-CN.md) |
 
 The snapshot is tracked as ordinary files in the M7Arc repository. It includes the complete official source tree and original license documents; it has no nested `.git` directory and requires no submodule initialization.
 

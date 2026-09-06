@@ -17,6 +17,7 @@ struct FormatInfo {
     bool canRead = true;
     bool canWrite = false;
     bool isHash = false;
+    std::string modulePath;
 };
 struct CodecInfo {
     std::string name;
@@ -24,11 +25,26 @@ struct CodecInfo {
     bool encode = false;
     bool decode = false;
     bool filter = false;
+    std::string modulePath;
 };
 struct HasherInfo {
     std::string name;
     std::uint64_t id = 0;
     std::uint32_t digestSize = 0;
+    std::string modulePath;
+};
+struct EngineOptions {
+    bool loadUserModules = true;
+    std::vector<std::string> additionalModuleDirectories;
+};
+struct ModuleInfo {
+    std::string path;
+    bool loaded = false;
+    std::uint32_t version = 0;
+    std::vector<std::string> formats;
+    std::vector<std::string> codecs;
+    std::vector<std::string> hashers;
+    std::string error;
 };
 struct Property {
     std::uint32_t id = 0;
@@ -72,6 +88,13 @@ struct OverwriteRequest {
     std::optional<std::uint64_t> existingSize;
     std::optional<std::uint64_t> incomingSize;
 };
+struct MemoryRequest {
+    std::string path;
+    std::uint64_t requiredBytes = 0;
+    std::uint64_t allowedBytes = 0;
+    bool reportOnly = false;
+};
+enum class MemoryAnswer { Continue, Cancel };
 struct Callbacks {
     // Callbacks run on the engine worker or an internal codec thread. Returning
     // false from progress cancels the operation; it can also wait while paused.
@@ -79,6 +102,7 @@ struct Callbacks {
     std::function<bool()> cancelled;
     std::function<std::optional<std::string>()> password;
     std::function<OverwriteAnswer(const OverwriteRequest&)> overwrite;
+    std::function<MemoryAnswer(const MemoryRequest&)> memoryRequest;
     std::vector<std::pair<std::string, std::string>> passwordOverrides;
 };
 struct OpenOptions {
@@ -142,6 +166,30 @@ struct HashResult {
     std::string digest;
     std::uint64_t size = 0;
 };
+struct HashTotal {
+    std::string algorithm;
+    std::string dataSum;
+    std::string dataAndNamesSum;
+};
+struct HashSummary {
+    std::vector<HashResult> files;
+    std::vector<HashTotal> totals;
+    std::uint64_t fileCount = 0;
+    std::uint64_t directoryCount = 0;
+    std::uint64_t totalBytes = 0;
+};
+enum class VerificationStatus { Passed, Missing, Mismatch, Error };
+struct ManifestEntryResult {
+    std::string path;
+    VerificationStatus status = VerificationStatus::Error;
+    std::string message;
+};
+struct ManifestResult {
+    std::vector<ManifestEntryResult> entries;
+    bool cancelled = false;
+    std::vector<std::string> errors;
+    bool ok() const;
+};
 struct BenchmarkOptions {
     unsigned threads = 2;
     std::uint64_t dictionaryBytes = 1 << 24;
@@ -177,7 +225,7 @@ class EngineError : public std::runtime_error {
 // Paths and text are UTF-8. Entry indices identify members of the listed archive.
 class ArchiveEngine {
   public:
-    ArchiveEngine();
+    explicit ArchiveEngine(const EngineOptions& options = {});
     ~ArchiveEngine();
     ArchiveEngine(const ArchiveEngine&) = delete;
     ArchiveEngine& operator=(const ArchiveEngine&) = delete;
@@ -185,6 +233,8 @@ class ArchiveEngine {
     std::vector<CodecInfo> codecs() const;
     std::vector<HasherInfo> hashers() const;
     static std::string version();
+    std::vector<ModuleInfo> modules() const;
+    std::vector<std::string> moduleDirectories() const;
     ArchiveSnapshot list(const std::string& path, const OpenOptions& options = {},
                          const Callbacks& callbacks = {});
     // An empty index list selects every entry. Nonempty selections are exact indices.
@@ -201,12 +251,18 @@ class ArchiveEngine {
                            const OpenOptions& options = {}, const Callbacks& callbacks = {});
     OperationResult rename(const std::string& path, std::uint32_t index, const std::string& newPath,
                            const OpenOptions& options = {}, const Callbacks& callbacks = {});
+    OperationResult renameDirectory(const std::string& path, const std::string& oldPrefix,
+                                    const std::string& newPrefix, const OpenOptions& options = {},
+                                    const Callbacks& callbacks = {});
     OperationResult replace(const std::string& path, std::uint32_t index, const std::string& editedLocalFile,
                             const OpenOptions& options = {}, const Callbacks& callbacks = {});
     OperationResult setComment(const std::string& path, std::uint32_t index, const std::string& comment,
                                const OpenOptions& options = {}, const Callbacks& callbacks = {});
     std::vector<HashResult> hash(const std::vector<std::string>& inputs,
                                  const std::vector<std::string>& algorithms, const Callbacks& callbacks = {});
+    HashSummary hashSummary(const std::vector<std::string>& inputs,
+                            const std::vector<std::string>& algorithms, const Callbacks& callbacks = {});
+    ManifestResult verifyManifest(const std::string& path, const Callbacks& callbacks = {});
     BenchmarkResult benchmark(const BenchmarkOptions& options = {}, const Callbacks& callbacks = {});
     static MemoryEstimate estimateMemory(const CreateOptions& options);
 

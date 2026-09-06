@@ -495,6 +495,8 @@ public:
 
   // M7Arc records completed writes for native metadata restoration. Paths reflect
   // overwrite renaming and path transformations performed by this callback.
+  struct CM7ArcItemResult { UInt32 Index; Int32 Result; DWORD SystemError; };
+  CRecordVector<CM7ArcItemResult> M7Arc_ItemResults;
   CRecordVector<UInt32> M7Arc_WrittenIndices;
   FStringVector M7Arc_WrittenPaths;
 

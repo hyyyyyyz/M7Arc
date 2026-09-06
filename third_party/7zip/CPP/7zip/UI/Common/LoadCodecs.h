@@ -382,7 +382,11 @@ public:
     return formatIndex < 0 ? L"#" : (const wchar_t *)Formats[(unsigned)formatIndex].Name;
   }
 
-  HRESULT Load();
+  HRESULT Load(
+      #ifdef Z7_EXTERNAL_CODECS
+      const FStringVector *modulePaths = NULL
+      #endif
+      );
 
   #ifndef Z7_SFX
   int FindFormatForArchiveName(const UString &arcPath) const;
