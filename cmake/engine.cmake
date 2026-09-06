@@ -14,7 +14,7 @@ elseif(APPLE AND NOT CMAKE_OSX_ARCHITECTURES AND CMAKE_SYSTEM_PROCESSOR STREQUAL
     set_source_files_properties("${M7ARC_7ZIP_ROOT}/C/LzmaDec.c" PROPERTIES COMPILE_DEFINITIONS Z7_LZMA_DEC_OPT)
 endif()
 find_package(Threads REQUIRED)
-add_library(m7arc_engine SHARED ${CMAKE_CURRENT_LIST_DIR}/../src/engine/ArchiveEngine.cpp $<TARGET_OBJECTS:sevenzip_objects>)
+add_library(m7arc_engine SHARED ${CMAKE_CURRENT_LIST_DIR}/../src/engine/ArchiveEngine.cpp ${CMAKE_CURRENT_LIST_DIR}/../src/engine/MemoryEstimate.cpp $<TARGET_OBJECTS:sevenzip_objects>)
 target_compile_features(m7arc_engine PUBLIC cxx_std_20)
 target_include_directories(m7arc_engine PUBLIC "${CMAKE_CURRENT_LIST_DIR}/../src" PRIVATE "${M7ARC_7ZIP_ROOT}/CPP" "${M7ARC_7ZIP_ROOT}/C")
 target_link_libraries(m7arc_engine PRIVATE m7arc_platform Threads::Threads ${CMAKE_DL_LIBS})

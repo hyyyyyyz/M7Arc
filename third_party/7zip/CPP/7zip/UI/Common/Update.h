@@ -116,7 +116,7 @@ struct CUpdateOptions
   UString StdInFileName;
   UString EMailAddress;
   FString WorkingDir;
-  // UString AddPathPrefix;
+  UString AddPathPrefix;
 
   CObjectVector<CRenamePair> RenamePairs;
   CRecordVector<UInt64> VolumesSizes;
@@ -204,6 +204,8 @@ DECLARE_INTERFACE(IUpdateCallbackUI2):
     public IDirItemsCallback
 {
   Z7_IFACE_PURE(IUpdateCallbackUI2)
+  // M7Arc supplies source ownership for cloned macOS staging inputs.
+  virtual HRESULT M7Arc_PrepareDirItems(CDirItems &) { return S_OK; }
 };
 Z7_PURE_INTERFACES_END
 
