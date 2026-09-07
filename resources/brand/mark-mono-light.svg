@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256" role="img" aria-labelledby="title">
+  <title id="title">M7Arc Fold 7, ivory</title>
+  <defs>
+    <mask id="crease" maskUnits="userSpaceOnUse" x="0" y="0" width="256" height="256">
+      <path fill="#FFF" d="M0 0h256v256H0Z"/>
+      <path fill="none" stroke="#000" stroke-width="4" stroke-linecap="round" d="M154 82h53c11 0 18 2 24 7"/>
+    </mask>
+  </defs>
+  <g fill="#F7F1E6" mask="url(#crease)">
+    <path d="M162 73 232 79C235 87 232 93 226 101L128 224C123 230 117 233 109 233H55C43 233 39 224 47 214Z"/>
+    <path d="M54 26h134c10 0 17 4 22 12l21 35c3 5 4 11 0 16-6-7-13-9-24-9H54c-36 0-36-54 0-54Z"/>
+  </g>
+</svg>

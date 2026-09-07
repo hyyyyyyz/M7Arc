@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256" role="img" aria-labelledby="title">
+  <title id="title">M7Arc Fold 7</title>
+  <defs>
+    <linearGradient id="stem" x1="205" y1="77" x2="88" y2="233" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#E64A08"/>
+      <stop offset=".38" stop-color="#FF7018"/>
+      <stop offset="1" stop-color="#FF5F0F"/>
+    </linearGradient>
+    <linearGradient id="head" x1="95" y1="26" x2="158" y2="89" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FF8C32"/>
+      <stop offset="1" stop-color="#FF6512"/>
+    </linearGradient>
+    <linearGradient id="fold" x1="199" y1="81" x2="183" y2="110" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#AD3305" stop-opacity=".64"/>
+      <stop offset="1" stop-color="#AD3305" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <path fill="url(#stem)" d="M162 73 232 79C235 87 232 93 226 101L128 224C123 230 117 233 109 233H55C43 233 39 224 47 214Z"/>
+  <path fill="url(#fold)" d="m156 81 73 1c4 3 4 7 1 12l-18 24-85 1Z"/>
+  <path fill="url(#head)" d="M54 26h134c10 0 17 4 22 12l21 35c3 5 4 11 0 16-6-7-13-9-24-9H54c-36 0-36-54 0-54Z"/>
+  <path fill="none" stroke="#FFB66E" stroke-width="2.5" stroke-linecap="round" d="M157 80h50c11 0 18 2 24 9"/>
+</svg>

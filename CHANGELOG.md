@@ -4,6 +4,23 @@ Application versions follow [Semantic Versioning](docs/VERSIONING.zh-CN.md). The
 
 ## Unreleased
 
+## 0.1.0-alpha.2
+
+### Changed
+
+- Orange Fold 7 app icon with an ivory rounded tile, including all macOS icon sizes and graphical self-extracting applications.
+- Editable color and monochrome project marks, light/dark wordmarks, and a shared brand guide.
+- Repository header uses the project wordmark and follows the page appearance.
+
+### Fixed
+
+- Incremental builds now pick up changes to VERSION automatically, keeping the main application, extractor and bundle versions consistent.
+
+### Known limitations
+
+- No Developer ID signature or Apple notarization. First launch may require the macOS Privacy & Security exception for this application.
+- macOS 13 installation, Intel desktop interaction and Windows SFX execution remain subject to device validation. Archive capabilities and other limitations remain as documented for 0.1.0-alpha.1.
+
 ## 0.1.0-alpha.1
 
 First executable preview of the C++20 / Qt Widgets file manager for macOS, using the complete official 7-Zip 26.03 engine.

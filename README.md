@@ -1,3 +1,10 @@
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="resources/brand/wordmark-dark.svg">
+    <img src="resources/brand/wordmark-light.svg" alt="M7Arc" width="336">
+  </picture>
+</p>
+
 # M7Arc
 
 M7Arc 是基于官方 7-Zip 26.03 完整引擎的 macOS 归档与文件管理器，使用 C++20 和 Qt Widgets。它保留 7-Zip File Manager 的六组菜单、七按钮工具栏、地址栏和单/双面板，并采用 macOS 系统字体、轮廓图标、圆角控件与浅色/深色界面。
@@ -22,7 +29,7 @@ GUI 通过结构化 C++ API 直接调用引擎。随应用附带的官方 `7zz` 
 
 [GitHub Releases](https://github.com/hyyyyyyz/M7Arc/releases) 提供 DMG 安装附件。打开与你的处理器对应的安装包，将 M7Arc 拖入“应用程序”后启动。Qt 和 7-Zip 运行依赖均包含在应用中。
 
-首个可执行预览版本是 **0.1.0-alpha.1**。修复提升 patch，新增功能提升 minor，不兼容变化提升 major；预览构建递增 `alpha.N`、`beta.N` 或 `rc.N`。`VERSION` 是应用、DMG 和 Release 的唯一版本源。详见[版本规则](docs/VERSIONING.zh-CN.md)。
+当前可执行预览版本是 **0.1.0-alpha.2**。修复提升 patch，新增功能提升 minor，不兼容变化提升 major；预览构建递增 `alpha.N`、`beta.N` 或 `rc.N`。`VERSION` 是应用、DMG 和 Release 的唯一版本源。详见[版本规则](docs/VERSIONING.zh-CN.md)。
 
 当前发行使用 ad-hoc 签名，没有 Developer ID 签名和 Apple 公证。如果 macOS 阻止首次启动，可按[Apple 的说明](https://support.apple.com/en-us/102445)在“系统设置 → 隐私与安全性”中对已确认来源的应用选择“仍要打开”。
 
@@ -62,6 +69,8 @@ M7Arc/
 ```
 
 ## 设计资料
+
+[品牌与图标](docs/BRAND.zh-CN.md)记录「折页 7」标志、字标、配色和使用方式，可编辑 SVG 保存在 `resources/brand/`。
 
 [总设计](DESIGN.zh-CN.md)、[功能迁移矩阵](docs/FEATURE_PARITY.zh-CN.md)、[格式能力](docs/FORMAT_CAPABILITIES.zh-CN.md)、[窗口和参数](docs/DIALOG_SPEC.zh-CN.md)、[文件管理工作流](docs/FILE_MANAGER_SPEC.zh-CN.md)与[阶段范围](docs/ROADMAP.zh-CN.md)定义产品功能。[源码地图](docs/SOURCE_MAP.zh-CN.md)记录上游模块关系；[本地补丁](docs/UPSTREAM_PATCHES.zh-CN.md)记录随项目维护的上游改动。
 
