@@ -403,6 +403,7 @@ QAction* MainWindow::command(const QString& id, const QString& text, const QKeyS
     if (actions_.contains(id))
         return actions_[id];
     auto* a = new QAction(text, this);
+    a->setMenuRole(QAction::NoRole);
     a->setObjectName(id);
     if (!shortcut.isEmpty())
         a->setShortcut(shortcut);
@@ -505,6 +506,7 @@ void MainWindow::buildMenus() {
         ->setChecked(QSettings().value("view/hidden", false).toBool());
     favorites_ = menuBar()->addMenu(tr("收藏夹"));
     auto* set = favorites_->addMenu(tr("设置书签"));
+    set->menuAction()->setMenuRole(QAction::NoRole);
     for (int i = 0; i < 10; ++i)
         add(set, "favorite-set:" + QString::number(i), tr("槽位 %1").arg(i));
     for (int i = 0; i < 10; ++i)

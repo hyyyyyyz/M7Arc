@@ -1,6 +1,6 @@
 # 0.1.0-alpha.1 发行验证
 
-验证日期：2026-09-06。测试环境为 Apple Silicon、macOS 27、Apple Clang 21 与 Qt 6.11.2。应用分别构建 arm64 和 x86_64，最低部署目标均为 macOS 13；x86_64 程序在本机通过 Rosetta 执行。
+验证日期：2026-09-06。本地测试环境为 Apple Silicon、macOS 27、Apple Clang 21 与 Qt 6.11.2；GitHub Actions 使用 macOS 15.7.9 的 Apple Silicon 和 Intel runner。应用分别构建 arm64 和 x86_64，最低部署目标均为 macOS 13。本地 x86_64 程序通过 Rosetta 执行，CI 中两个架构均在对应原生架构上执行。
 
 ## 自动化集成验证
 
@@ -16,6 +16,13 @@
 | 系统入口 | Services 真实 pasteboard 回调、文件 promise 输出、Quick Actions 工作流、Quick Look 控制器目录读取 |
 | CLI 与 SFX | 官方 7zz、Mac console SFX、图形提取器构建、Windows 三种 stub 与安装配置、实际载荷解包 |
 | 应用启动 | Qt 主窗口、资源、翻译和引擎连接 |
+
+提交 `56f8f32` 的 [GitHub Actions 运行](https://github.com/hyyyyyyz/M7Arc/actions/runs/34009884537)通过两个架构的构建、测试和分发验证。DMG 已上传为该次运行的构建产物。
+
+| 原生 CI 环境 | CTest | DMG 打包与部署后启动 | SFX 与磁盘镜像分发验证 |
+| --- | --- | --- | --- |
+| [macOS 15.7.9 · arm64](https://github.com/hyyyyyyz/M7Arc/actions/runs/34009884537/job/101423751269) | 15 / 15 通过 | 通过 | 通过 |
+| [macOS 15.7.9 · x86_64](https://github.com/hyyyyyyz/M7Arc/actions/runs/34009884537/job/101423751406) | 15 / 15 通过 | 通过 | 通过 |
 
 ## DMG 与独立运行
 
@@ -36,6 +43,6 @@ Apple Silicon DMG 安装副本通过 Finder Quick Look 验证：启用 M7Arc 的
 ## 已知限制
 
 - 当前包没有 Developer ID 签名和 Apple 公证；ad-hoc 签名不认证发布者身份。
-- macOS 13 的真实安装和运行、Intel 真机与 Windows SFX 的实际启动尚待对应设备验收。
+- macOS 13 的真实安装和运行、Intel Mac 的桌面交互验收与 Windows SFX 的实际启动尚待对应设备验证。
 - 格式目录包含官方完整能力，但测试样本尚未覆盖每种格式及其所有变体。
 - 单次本地性能测量用于确认大归档界面可用性，不代表全部设备的性能。

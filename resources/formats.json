@@ -938,7 +938,7 @@
       "singleStream": false,
       "multithread": true,
       "filters": true,
-      "note": "0 级为 Store；普通算法列表保留 Windows 原项，高级方法开放引擎支持的 Deflate/Deflate64。"
+      "note": "0 级仅存储，不压缩。展开“更多选项”可选择 Deflate、Deflate64 等高级压缩方法。"
     },
     {
       "id": "zip",

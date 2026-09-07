@@ -938,7 +938,7 @@
       "singleStream": false,
       "multithread": true,
       "filters": true,
-      "note": "Level 0 uses Store. Standard methods match the original Windows choices; advanced methods expose supported Deflate/Deflate64 encoding."
+      "note": "Level 0 stores files without compression. Expand More options to choose advanced methods such as Deflate and Deflate64."
     },
     {
       "id": "zip",
