@@ -1,0 +1,352 @@
+.hero-visual {
+  --tilt-x: 0deg;
+  --tilt-y: 0deg;
+  --pointer-x: 50%;
+  --pointer-y: 50%;
+  --scene-x: 0px;
+  --scene-y: 0px;
+  perspective: 1000px;
+}
+
+.hero-visual::before {
+  inset: -12px;
+  background:
+    radial-gradient(ellipse at var(--pointer-x) var(--pointer-y), #ffb75c42, transparent 62%),
+    radial-gradient(ellipse at 70% 70%, #f87c3c12, transparent 65%);
+  border-radius: 50%;
+  filter: blur(16px);
+  animation: aura-breathe 8s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.logo-tilt {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: rotateX(var(--tilt-x)) rotateY(var(--tilt-y));
+  transition: transform .55s cubic-bezier(.2, .8, .2, 1);
+  transform-style: preserve-3d;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.hero-icon {
+  user-select: none;
+  filter: drop-shadow(0 30px 24px #a65c2124);
+  animation: logo-float 6.5s ease-in-out infinite;
+}
+
+.orbit {
+  pointer-events: none;
+  border-color: #e6c5a660;
+  overflow: clip;
+}
+
+.orbit::before,
+.orbit::after {
+  content: "";
+  position: absolute;
+  animation: orbit-travel 22s linear infinite;
+}
+
+.orbit::before {
+  inset: -1px;
+  border: 1px solid transparent;
+  border-top-color: #e5915770;
+  border-radius: 50%;
+  transform: rotate(-36deg);
+}
+
+.orbit::after {
+  inset: 0;
+  background:
+    radial-gradient(circle at 15.4% 15.4%, #e99860 0 3px, transparent 4px),
+    radial-gradient(circle at 15.4% 15.4%, #edac6830, transparent 13px);
+}
+
+.orbit-two {
+  border-color: #e8cbb53d;
+}
+
+.orbit-two::before,
+.orbit-two::after {
+  animation-duration: 32s;
+  animation-direction: reverse;
+}
+
+.orbit-two::before {
+  border-top-color: #e6b08166;
+}
+
+.orbit-two::after {
+  background: radial-gradient(circle at 15% 15%, #e5bb84 0 2px, transparent 3px);
+}
+
+.format-tag {
+  --tag-angle: -10deg;
+  translate: calc(var(--scene-x) * -.65) calc(var(--scene-y) * -.65);
+  transition: translate .7s cubic-bezier(.2, .8, .2, 1);
+  animation: tag-float 7s ease-in-out infinite;
+  box-shadow: 0 8px 22px #915d1610;
+  pointer-events: none;
+}
+
+.tag-zip {
+  --tag-angle: 9deg;
+  animation-delay: -2.5s;
+  animation-duration: 8s;
+}
+
+.tag-rar {
+  --tag-angle: -6deg;
+  animation-delay: -4s;
+  animation-duration: 9s;
+}
+
+.scene-sparks {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.scene-sparks i {
+  position: absolute;
+  width: 9px;
+  height: 9px;
+  left: 21%;
+  top: 6%;
+  background: #df9a59;
+  clip-path: polygon(50% 0, 62% 38%, 100% 50%, 62% 62%, 50% 100%, 38% 62%, 0 50%, 38% 38%);
+  animation: spark-drift 5s ease-in-out infinite;
+}
+
+.scene-sparks i:nth-child(2) {
+  left: 88%;
+  top: 61%;
+  width: 6px;
+  height: 6px;
+  animation-delay: -2s;
+}
+
+.scene-sparks i:nth-child(3) {
+  left: 10%;
+  top: 76%;
+  animation-delay: -3.5s;
+}
+
+.scene-sparks i:nth-child(4) {
+  left: 71%;
+  top: 9%;
+  width: 5px;
+  height: 5px;
+  animation-delay: -1s;
+}
+
+.hero h1 span {
+  background: linear-gradient(110deg, #c54919 10%, #df5113 35%, #f58a36 50%, #c54919 68%);
+  background-size: 220% 100%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  animation: title-light 12s ease-in-out infinite;
+}
+
+.motion-toggle {
+  position: absolute;
+  bottom: -39px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  min-height: 30px;
+  padding: 4px 10px;
+  border: 1px solid transparent;
+  border-radius: 20px;
+  background: transparent;
+  font: inherit;
+  font-size: 11px;
+  color: #8a7965;
+  cursor: pointer;
+}
+
+.motion-toggle[hidden] { display: none; }
+.motion-toggle svg { width: 13px; height: 13px; }
+.motion-toggle .play-symbol { display: none; }
+.motion-toggle[aria-pressed="true"] .pause-symbol { display: none; }
+.motion-toggle[aria-pressed="true"] .play-symbol { display: block; }
+
+.motion-toggle:hover {
+  color: var(--orange);
+  border-color: #e3c9ae;
+  background: #fff9ed;
+}
+
+.motion-toggle:focus-visible {
+  outline: 2px solid var(--orange);
+  outline-offset: 3px;
+}
+
+.button-primary {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.button-primary::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(110deg, transparent 20%, #fff5 50%, transparent 80%);
+  transform: translateX(-140%);
+  pointer-events: none;
+}
+
+.download-card {
+  position: relative;
+  transition: transform .35s cubic-bezier(.2, .8, .2, 1), border-color .3s, box-shadow .3s;
+}
+
+.download-card > svg {
+  transition: transform .3s, color .3s;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .button-primary:hover::after {
+    animation: button-sheen .7s ease-out;
+  }
+
+  .download-card:hover {
+    transform: translateY(-4px);
+    border-color: #d48b51;
+    box-shadow: 0 14px 32px #9a501114, 0 1px 3px #9a50110a;
+  }
+
+  .download-card:hover > svg {
+    color: var(--orange);
+    transform: translateY(3px);
+  }
+
+  .format-list span {
+    transition: color .25s, transform .25s;
+  }
+
+  .format-list span:hover {
+    color: var(--orange);
+    transform: translateY(-3px);
+  }
+}
+
+[data-reveal] {
+  transition: opacity .8s ease, transform .8s cubic-bezier(.16, 1, .3, 1);
+}
+
+.reveal-pending:not(.is-visible) {
+  opacity: 0;
+  transform: translateY(28px);
+}
+
+.window-stage.reveal-pending:not(.is-visible) {
+  transform: perspective(1000px) translateY(36px) rotateX(4deg) scale(.98);
+}
+
+.features-grid article:nth-child(2) { transition-delay: .09s; }
+.features-grid article:nth-child(3) { transition-delay: .18s; }
+.download-options[data-reveal] { transition-delay: .12s; }
+
+[data-reveal]:focus-within {
+  opacity: 1;
+  transform: none;
+}
+
+@keyframes logo-float {
+  0%, 100% { transform: translateY(5px) rotate(-8deg); }
+  50% { transform: translateY(-14px) rotate(-4deg); }
+}
+
+@keyframes tag-float {
+  0%, 100% { transform: translateY(4px) rotate(var(--tag-angle)); }
+  50% { transform: translateY(-9px) rotate(calc(var(--tag-angle) + 4deg)); }
+}
+
+@keyframes orbit-travel {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes aura-breathe {
+  0%, 100% { opacity: .6; transform: scale(.94); }
+  50% { opacity: 1; transform: scale(1.06); }
+}
+
+@keyframes spark-drift {
+  0%, 100% { opacity: .25; transform: translateY(4px) scale(.7); }
+  50% { opacity: .8; transform: translateY(-7px) scale(1); }
+}
+
+@keyframes title-light {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+@keyframes button-sheen {
+  to { transform: translateX(140%); }
+}
+
+@media (max-width: 800px) {
+  .hero { padding-bottom: 70px; }
+}
+
+@media (max-width: 480px) {
+  .hero-visual::before { inset: 0; }
+  .motion-toggle { bottom: -37px; min-height: 36px; }
+  .scene-sparks i:nth-child(2) { left: 90%; }
+}
+
+:root[data-motion="paused"] *,
+:root[data-motion="paused"] *::before,
+:root[data-motion="paused"] *::after,
+:root[data-page-hidden="true"] *,
+:root[data-page-hidden="true"] *::before,
+:root[data-page-hidden="true"] *::after,
+.hero-visual[data-resting="true"] *,
+.hero-visual[data-resting="true"] *::before,
+.hero-visual[data-resting="true"] *::after,
+.hero-visual[data-resting="true"]::before {
+  animation-play-state: paused !important;
+}
+
+:root[data-motion="paused"] { scroll-behavior: auto; }
+
+:root[data-motion="paused"] [data-reveal] {
+  opacity: 1;
+  transform: none;
+  animation: none;
+  transition: none;
+}
+
+:root[data-motion="paused"] .logo-tilt { transform: none; transition: none; }
+:root[data-motion="paused"] .format-tag { translate: none; transition: none; }
+:root[data-motion="paused"] .button,
+:root[data-motion="paused"] .download-card,
+:root[data-motion="paused"] .download-card > svg,
+:root[data-motion="paused"] .format-list span { transform: none; transition: none; }
+
+:root:not([data-motion]) *,
+:root:not([data-motion]) *::before,
+:root:not([data-motion]) *::after {
+  animation: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root:not([data-motion="active"]) *,
+  :root:not([data-motion="active"]) *::before,
+  :root:not([data-motion="active"]) *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  :root:not([data-motion="active"]) [data-reveal] {
+    opacity: 1;
+    transform: none;
+  }
+}
