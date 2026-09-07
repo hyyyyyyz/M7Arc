@@ -27,6 +27,8 @@ GUI 通过结构化 C++ API 直接调用引擎。随应用附带的官方 `7zz` 
 
 ## 安装与版本
 
+[官网与下载](https://hyyyyyyz.github.io/M7Arc/)提供功能介绍、Apple Silicon 和 Intel 安装包入口，以及首次安装说明。
+
 [GitHub Releases](https://github.com/hyyyyyyz/M7Arc/releases) 提供 DMG 安装附件。打开与你的处理器对应的安装包，将 M7Arc 拖入“应用程序”后启动。Qt 和 7-Zip 运行依赖均包含在应用中。
 
 当前可执行预览版本是 **0.1.0-alpha.2**。修复提升 patch，新增功能提升 minor，不兼容变化提升 major；预览构建递增 `alpha.N`、`beta.N` 或 `rc.N`。`VERSION` 是应用、DMG 和 Release 的唯一版本源。详见[版本规则](docs/VERSIONING.zh-CN.md)。
@@ -65,6 +67,7 @@ M7Arc/
 ├── packaging/macos/          # 部署、ad-hoc 签名、DMG、Release
 ├── docs/                     # 设计、接口、构建与发行文档
 ├── design/                   # 离线交互原型
+├── website/                  # GitHub Pages 官网与下载入口
 └── third_party/7zip/         # 官方完整源码与原许可证
 ```
 

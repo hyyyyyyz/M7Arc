@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f8f7f3">
+  <meta name="description" content="M7Arc 是为 macOS 打造的开源归档与文件管理器。完整 7-Zip 引擎，双面板操作，支持 Apple Silicon 和 Intel。直接下载 Mac 安装包。">
+  <title>M7Arc — 7-Zip 的强大，在 Mac 上展开</title>
+  <link rel="icon" href="./assets/mark.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">跳到主要内容</a>
+  <header class="site-header wrap">
+    <a class="brand" href="#" aria-label="M7Arc 首页"><img src="./assets/mark.svg" width="34" height="34" alt=""><span>M7Arc</span></a>
+    <nav aria-label="主要导航">
+      <a href="#features">功能</a>
+      <a href="#download">下载</a>
+      <a class="github-link" href="https://github.com/hyyyyyyz/M7Arc">GitHub <span aria-hidden="true">↗</span></a>
+    </nav>
+  </header>
+
+  <main id="main">
+    <section class="hero wrap" aria-labelledby="hero-title">
+      <div class="hero-copy">
+        <a class="release-link" href="https://github.com/hyyyyyyz/M7Arc/releases/tag/v0.1.0-alpha.2"><span class="status-dot"></span>0.1.0-alpha.2 已发布 <span aria-hidden="true">↗</span></a>
+        <h1 id="hero-title">7-Zip 的强大，<br><span>在 Mac 上展开。</span></h1>
+        <p class="hero-description">一个顺手的归档与文件管理器。<br>从快速打包，到每一个压缩细节，<br class="mobile-break">都由你掌握。</p>
+        <div class="hero-actions">
+          <a class="button button-primary" href="https://github.com/hyyyyyyz/M7Arc/releases/download/v0.1.0-alpha.2/M7Arc-0.1.0-alpha.2-macos-arm64.dmg" data-download="arm64"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m-4-4 4 4 4-4M5 16v4h14v-4"/></svg>下载 Apple Silicon 版</a>
+          <a class="button button-secondary" href="https://github.com/hyyyyyyz/M7Arc/releases/download/v0.1.0-alpha.2/M7Arc-0.1.0-alpha.2-macos-x86_64.dmg" data-download="x86_64">Intel 版 <span aria-hidden="true">↓</span></a>
+        </div>
+        <p class="hero-note">免费开源 <span>·</span> macOS 13+ <span>·</span> Alpha 预览版</p>
+      </div>
+      <div class="hero-visual" aria-label="M7Arc 橙色折页 7 应用图标">
+        <div class="orbit orbit-one" aria-hidden="true"></div><div class="orbit orbit-two" aria-hidden="true"></div>
+        <span class="format-tag tag-7z" aria-hidden="true">.7z</span><span class="format-tag tag-zip" aria-hidden="true">.zip</span><span class="format-tag tag-rar" aria-hidden="true">.rar</span>
+        <img class="hero-icon" src="./assets/app-icon.png" width="1024" height="1024" alt="米白色圆角底座上的橙色折页 7" fetchpriority="high">
+        <div class="visual-caption"><span class="tiny-line"></span> 收纳有序，展开自如。</div>
+      </div>
+    </section>
+
+    <section class="format-strip wrap" aria-label="支持的常用归档格式">
+      <p>常用归档，一处处理。</p>
+      <div class="format-list"><span>7z</span><span>ZIP</span><span>RAR</span><span>TAR</span><span>GZIP</span><span>XZ</span><span>WIM</span><span>ISO</span></div>
+      <span class="format-caption">读取、创建能力随格式而定</span>
+    </section>
+
+    <section class="workspace-section wrap" id="features" aria-labelledby="workspace-title">
+      <div class="section-heading"><div><p class="eyebrow">熟悉，也更顺手</p><h2 id="workspace-title">文件与归档，<br class="mobile-break">都在同一张工作台。</h2></div><p class="section-intro">保留经典的双面板布局，<br>融入 Mac 的日常使用习惯。</p></div>
+      <div class="window-stage">
+        <div class="app-window" role="img" aria-label="M7Arc 界面示意：上方是添加、提取、测试等常用操作，左侧是项目文件，右侧是归档内容。">
+          <div class="window-title"><span class="traffic-lights"><i></i><i></i><i></i></span><span>M7Arc</span><span class="window-title-note">文件管理器</span></div>
+          <div class="toolbar" aria-hidden="true">
+            <div><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="4"/><path d="M12 7v10M7 12h10"/></svg><span>添加</span></div>
+            <div><svg viewBox="0 0 24 24"><path d="M12 3v12m-4-4 4 4 4-4M4 15v6h16v-6"/></svg><span>提取</span></div>
+            <div><svg viewBox="0 0 24 24"><path d="m12 2 9 4v6c0 5-9 10-9 10S3 17 3 12V6zM8 11l3 3 5-6"/></svg><span>测试</span></div>
+            <span class="toolbar-rule"></span>
+            <div><svg viewBox="0 0 24 24"><rect x="8" y="7" width="12" height="14" rx="2"/><path d="M15 7V3H3v14h5"/></svg><span>复制</span></div>
+            <div><svg viewBox="0 0 24 24"><path d="M3 12h17m-7-7 7 7-7 7"/></svg><span>移动</span></div>
+            <div><svg viewBox="0 0 24 24"><path d="M3 6h18M9 6V3h6v3M5 6l1 15h12l1-15M10 10v7m4-7v7"/></svg><span>删除</span></div>
+            <div class="toolbar-info"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6m0-11v2"/></svg><span>信息</span></div>
+            <div class="toolbar-end"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M12 3v18"/></svg><span>双面板</span></div>
+          </div>
+          <div class="panes" aria-hidden="true">
+            <div class="pane">
+              <div class="path"><span>⌂</span> 工作项目 <span class="path-slash">/</span> Studio <span class="path-arrow">⌄</span></div>
+              <div class="table-head"><span>名称 <small>⌃</small></span><span>大小</span><span>修改日期</span></div>
+              <div class="file-row"><span><i class="file-icon folder"></i>品牌素材</span><span>—</span><span>今天 10:24</span></div>
+              <div class="file-row"><span><i class="file-icon folder"></i>项目文档</span><span>—</span><span>今天 09:41</span></div>
+              <div class="file-row selected"><span><i class="file-icon archive"></i>Studio.7z</span><span>24.8 MB</span><span>今天 10:32</span></div>
+              <div class="file-row"><span><i class="file-icon document"></i>项目说明.txt</span><span>2 KB</span><span>昨天 16:08</span></div>
+              <div class="file-row"><span><i class="file-icon document"></i>封面.png</span><span>4.2 MB</span><span>昨天 15:20</span></div>
+              <div class="pane-footer">5 个项目 <span>已选择 Studio.7z</span></div>
+            </div>
+            <div class="pane">
+              <div class="path"><span class="archive-symbol">▣</span> Studio.7z <span class="path-slash">/</span> <span class="path-arrow">⌄</span></div>
+              <div class="table-head"><span>名称 <small>⌃</small></span><span>大小</span><span>压缩方法</span></div>
+              <div class="file-row"><span><i class="file-icon folder"></i>品牌素材</span><span>—</span><span>—</span></div>
+              <div class="file-row"><span><i class="file-icon folder"></i>项目文档</span><span>—</span><span>—</span></div>
+              <div class="file-row"><span><i class="file-icon document"></i>项目说明.txt</span><span>2 KB</span><span>LZMA2</span></div>
+              <div class="file-row"><span><i class="file-icon document"></i>封面.png</span><span>4.2 MB</span><span>LZMA2</span></div>
+              <div class="file-row empty"><span>&nbsp;</span></div>
+              <div class="pane-footer">4 个项目 <span>7z 归档</span></div>
+            </div>
+          </div>
+          <div class="window-status"><span><i></i>就绪</span><span>浏览 · 整理 · 压缩 · 提取</span></div>
+        </div>
+        <p class="illustration-note">界面示意 · 实际显示随系统外观与个人设置变化</p>
+      </div>
+      <div class="features-grid">
+        <article><span class="feature-number">01 / ARCHIVE</span><h3>压缩与解压</h3><p>创建 7z、ZIP 等归档，解压 RAR。密码、分卷与压缩参数，按需掌握。</p></article>
+        <article><span class="feature-number">02 / ORGANIZE</span><h3>双面板整理</h3><p>左右浏览、复制与移动。深入嵌套归档，也能编辑里面的文件。</p></article>
+        <article><span class="feature-number">03 / MAC</span><h3>融入你的 Mac</h3><p>Finder 预览与拖放，保留文件标签和扩展属性。归档，也照顾细节。</p></article>
+      </div>
+    </section>
+
+    <section class="download-section" id="download" aria-labelledby="download-title">
+      <div class="wrap download-layout">
+        <div class="download-heading"><p class="eyebrow">准备好，展开更多</p><h2 id="download-title">给你的 Mac，<br>一个新的归档工具。</h2><p>选择你的 Mac 芯片，直接下载 DMG 安装包。<br>应用与全部运行依赖，一起打包好了。</p><a class="text-link" href="https://github.com/hyyyyyyz/M7Arc/releases/tag/v0.1.0-alpha.2">0.1.0-alpha.2 · 查看更新说明 <span aria-hidden="true">↗</span></a></div>
+        <div class="download-options">
+          <a class="download-card" href="https://github.com/hyyyyyyz/M7Arc/releases/download/v0.1.0-alpha.2/M7Arc-0.1.0-alpha.2-macos-arm64.dmg" data-download="arm64"><span class="chip-icon" aria-hidden="true">M</span><span class="download-card-copy"><strong>Apple Silicon</strong><span>M 系列 Mac <i>·</i> DMG <i>·</i> 28.9 MB</span></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m-4-4 4 4 4-4M5 16v4h14v-4"/></svg></a>
+          <a class="download-card" href="https://github.com/hyyyyyyz/M7Arc/releases/download/v0.1.0-alpha.2/M7Arc-0.1.0-alpha.2-macos-x86_64.dmg" data-download="x86_64"><span class="chip-icon intel-chip" aria-hidden="true">i</span><span class="download-card-copy"><strong>Intel</strong><span>Intel Mac <i>·</i> DMG <i>·</i> 29.1 MB</span></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m-4-4 4 4 4-4M5 16v4h14v-4"/></svg></a>
+          <details class="chip-help"><summary>不确定你的 Mac 使用哪种芯片？</summary><p>打开屏幕左上角的 Apple 菜单，选择“关于本机”。“芯片”显示 Apple M 系列时选择 Apple Silicon；“处理器”显示 Intel 时选择 Intel。</p></details>
+        </div>
+      </div>
+      <div class="wrap install-guide">
+        <div class="install-line"><span class="step">1</span><span>打开下载的 DMG</span><span class="step-line" aria-hidden="true"></span><span class="step">2</span><span>拖入“应用程序”</span><span class="step-line" aria-hidden="true"></span><span class="step">3</span><span>推出磁盘，启动 M7Arc</span></div>
+        <div class="install-details">
+          <details><summary>首次启动与预览版说明</summary><div class="detail-body"><p>当前版本没有 Apple 开发者身份签名和公证。如被系统阻止，确认来自本项目下载后，前往“系统设置 → 隐私与安全性”，为 M7Arc 选择“仍要打开”。<a href="https://support.apple.com/zh-cn/102445">Apple 安装说明 ↗</a></p><p>构建目标为 macOS 13 及以上；macOS 13 安装和 Intel 桌面交互仍待实机验证。Finder 空格预览需要在系统设置中启用 M7Arc 的“快速查看”扩展。</p></div></details>
+          <p class="signing-note">Alpha 预览版 · 暂未通过 Apple 公证</p>
+        </div>
+      </div>
+    </section>
+  </main>
+  <footer class="site-footer wrap"><a class="brand" href="#"><img src="./assets/mark.svg" width="28" height="28" alt=""><span>M7Arc</span></a><p>为 Mac 打造，向开源致意。</p><div><a href="https://github.com/hyyyyyyz/M7Arc">源代码 ↗</a><a href="https://github.com/hyyyyyyz/M7Arc/issues">反馈问题 ↗</a><a href="https://github.com/hyyyyyyz/M7Arc/blob/main/LICENSE">许可证</a></div></footer>
+</body>
+</html>
