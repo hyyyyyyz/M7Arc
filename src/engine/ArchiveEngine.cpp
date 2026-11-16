@@ -93,6 +93,39 @@ std::string operationError(Int32 code) {
         return "Archive operation failed (" + std::to_string(code) + ")";
     }
 }
+const char* stageName(Stage stage) {
+    switch (stage) {
+    case Stage::Scanning:
+        return "Scanning";
+    case Stage::Opening:
+        return "Opening";
+    case Stage::Compressing:
+        return "Compressing";
+    case Stage::Committing:
+        return "Committing";
+    case Stage::Testing:
+        return "Testing";
+    case Stage::Extracting:
+        return "Extracting";
+    case Stage::RestoringMacMetadata:
+        return "Restoring Mac metadata";
+    case Stage::PreservingMacMetadata:
+        return "Preserving Mac metadata";
+    case Stage::Updating:
+        return "Updating";
+    case Stage::Hashing:
+        return "Hashing";
+    case Stage::Benchmark:
+        return "Benchmark";
+    case Stage::BenchmarkCompressing:
+        return "Benchmark: compressing";
+    case Stage::BenchmarkDecompressing:
+        return "Benchmark: decompressing";
+    case Stage::None:
+        break;
+    }
+    return "";
+}
 struct OperationContext {
     const Callbacks& callbacks;
     std::string password;
@@ -135,9 +168,9 @@ struct OperationContext {
         }
         return S_OK;
     }
-    HRESULT phase(const std::string& name, const std::string& path = {}) {
+    HRESULT phase(Stage stage, const std::string& path = {}) {
         std::lock_guard lock(mutex);
-        progress = {name, path, 0, 0, false};
+        progress = {stageName(stage), path, 0, 0, false, stage};
         return report();
     }
     HRESULT item(const std::string& name) {
@@ -346,16 +379,16 @@ class UpdateCallback final : public IUpdateCallbackUI2 {
         return r;
     }
     HRESULT StartScanning() override {
-        return ctx.phase("Scanning");
+        return ctx.phase(Stage::Scanning);
     }
     HRESULT FinishScanning(const CDirItemsStat&) override {
         return ctx.check();
     }
     HRESULT StartOpenArchive(const wchar_t* name) override {
-        return ctx.phase("Opening", utf8(name));
+        return ctx.phase(Stage::Opening, utf8(name));
     }
     HRESULT StartArchive(const wchar_t* name, bool) override {
-        return ctx.phase("Compressing", utf8(name));
+        return ctx.phase(Stage::Compressing, utf8(name));
     }
     HRESULT FinishArchive(const CFinishArchiveStat&) override {
         return ctx.check();
@@ -367,7 +400,7 @@ class UpdateCallback final : public IUpdateCallbackUI2 {
         return ctx.check();
     }
     HRESULT MoveArc_Start(const wchar_t*, const wchar_t* dest, UInt64 size, Int32) override {
-        ctx.phase("Committing", utf8(dest));
+        ctx.phase(Stage::Committing, utf8(dest));
         return ctx.report({}, size);
     }
     HRESULT MoveArc_Progress(UInt64 total, UInt64 current) override {
@@ -680,7 +713,7 @@ struct ArchiveEngine::Impl {
                 ctx.passwordDefined = true;
                 break;
             }
-        require(ctx.phase("Opening", path), "Open cancelled");
+        require(ctx.phase(Stage::Opening, path), "Open cancelled");
         COpenOptions op;
         op.codecs = codecs;
         op.filePath = wide(path);
@@ -857,7 +890,7 @@ struct ArchiveEngine::Impl {
         CArchiveExtractCallback_Closer closer(extract);
         if (!testing)
             require(extract->PrepareHardLinks(&selected), "Prepare links");
-        ctx.phase(testing ? "Testing" : "Extracting");
+        ctx.phase(testing ? Stage::Testing : Stage::Extracting);
         HRESULT hr = arc.Archive->Extract(selected.ConstData(), selected.Size(), testing ? 1 : 0, extract);
         const HRESULT closeResult = closer.Close();
         if (hr == S_OK)
@@ -901,7 +934,7 @@ struct ArchiveEngine::Impl {
                                       FString((metadataDirectory.path.string() + "/").c_str()), noRemoval,
                                       false, arc.GetEstmatedPhySize());
                 CArchiveExtractCallback_Closer metadataCloser(metadataExtract);
-                ctx.phase("Restoring Mac metadata");
+                ctx.phase(Stage::RestoringMacMetadata);
                 HRESULT metadataResult = arc.Archive->Extract(metadataIndices.ConstData(),
                                                               metadataIndices.Size(), 0, metadataExtract);
                 const HRESULT metadataClose = metadataCloser.Close();
@@ -1177,7 +1210,7 @@ OperationResult ArchiveEngine::create(const std::vector<std::string>& inputs, co
         const fs::path data = staging.path / "data";
         fs::create_directories(data);
         OperationContext ctx(callbacks);
-        require(ctx.phase("Preserving Mac metadata"), "Compression cancelled");
+        require(ctx.phase(Stage::PreservingMacMetadata), "Compression cancelled");
         std::vector<std::string> stagedInputs;
         std::vector<std::pair<std::string, std::string>> sourceMappings;
         std::map<std::pair<dev_t, ino_t>, fs::path> hardLinks;
@@ -1665,7 +1698,7 @@ OperationResult rewriteArchive(CCodecs* codecs, CArchiveLink& link, const std::s
     CMyComPtr<IOutStream> streamRef = stream;
     if (!stream->Create_ALWAYS(temporary.path.c_str()))
         throw EngineError("Cannot create updated archive");
-    ctx.phase("Updating", path);
+    ctx.phase(Stage::Updating, path);
     HRESULT hr = out->UpdateItems(stream, static_cast<UInt32>(callback->items.size()), callback);
     const HRESULT closeResult = stream->Close();
     if (hr == S_OK)
@@ -1673,7 +1706,7 @@ OperationResult rewriteArchive(CCodecs* codecs, CArchiveLink& link, const std::s
     streamRef.Release();
     ctx.finish(hr);
     if (ctx.result.ok()) {
-        require(ctx.phase("Committing", path), "Update cancelled");
+        require(ctx.phase(Stage::Committing, path), "Update cancelled");
         TemporaryFile metadata(fs::absolute(path).parent_path());
         mac::packMetadata(path, metadata.path);
         mac::unpackMetadata(metadata.path, temporary.path);
@@ -1787,7 +1820,7 @@ class HashCallback final : public IHashCallbackUI {
     HashSummary summary;
     HashCallback(OperationContext& context, fs::path parent) : ctx(context), base(std::move(parent)) {}
     HRESULT StartScanning() override {
-        return ctx.phase("Scanning");
+        return ctx.phase(Stage::Scanning);
     }
     HRESULT FinishScanning(const CDirItemsStat&) override {
         return ctx.check();
@@ -1806,7 +1839,7 @@ class HashCallback final : public IHashCallbackUI {
         return ctx.check();
     }
     HRESULT BeforeFirstFile(const CHashBundle&) override {
-        RINOK(ctx.phase("Hashing"))
+        RINOK(ctx.phase(Stage::Hashing))
         return ctx.report(0, totalBytes);
     }
     HRESULT GetStream(const wchar_t* name, bool) override {
@@ -1903,7 +1936,7 @@ class BenchmarkCallback final : public IBenchCallback, public IBenchPrintCallbac
             result.encodeRating = info.GetRating_LzmaEnc(dictionary);
             result.encodeCpuPercent = Benchmark_GetUsage_Percents(info.GetUsage());
         }
-        return ctx.phase("Benchmark: compressing");
+        return ctx.phase(Stage::BenchmarkCompressing);
     }
     HRESULT SetDecodeResult(const CBenchInfo& info, bool final) override {
         if (final) {
@@ -1911,7 +1944,7 @@ class BenchmarkCallback final : public IBenchCallback, public IBenchPrintCallbac
             result.decodeRating = info.GetRating_LzmaDec();
             result.decodeCpuPercent = Benchmark_GetUsage_Percents(info.GetUsage());
         }
-        return ctx.phase("Benchmark: decompressing");
+        return ctx.phase(Stage::BenchmarkDecompressing);
     }
     void Print(const char*) override {}
     void NewLine() override {}
@@ -1929,7 +1962,7 @@ BenchmarkResult ArchiveEngine::benchmark(const BenchmarkOptions& options, const 
     addProperty(props, "mt", std::to_string(options.threads));
     addProperty(props, "d", std::to_string(options.dictionaryBytes) + "b");
     addProperty(props, "time", std::to_string(options.seconds));
-    require(ctx.phase("Benchmark"), "Benchmark cancelled");
+    require(ctx.phase(Stage::Benchmark), "Benchmark cancelled");
     require(Bench(&impl_->runtime->external, &callback, &callback, props, 1, false), "Benchmark");
     return callback.result;
 }

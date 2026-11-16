@@ -472,7 +472,7 @@ int main() {
              "Create compressed TAR for cancellation");
         {
             m7arc::Callbacks cancelInner;
-            cancelInner.progress = [](const m7arc::Progress& p) { return p.phase != "Extracting"; };
+            cancelInner.progress = [](const m7arc::Progress& p) { return p.stage != m7arc::Stage::Extracting; };
             bool cancelledKind = false;
             try {
                 engine.list((root / "cancel.tar.gz").string(), {}, cancelInner);
@@ -488,7 +488,7 @@ int main() {
         bool changed = false;
         m7arc::Callbacks changeInput;
         changeInput.progress = [&](const m7arc::Progress& p) {
-            if (p.phase == "Compressing" && !changed) {
+            if (p.stage == m7arc::Stage::Compressing && p.phase == "Compressing" && !changed) {
                 changed = true;
                 std::ofstream(changing) << "newer data";
             }

@@ -73,12 +73,30 @@ struct ArchiveSnapshot {
     std::vector<Property> properties;
     std::vector<std::string> volumes;
 };
+enum class Stage {
+    None,
+    Scanning,
+    Opening,
+    Compressing,
+    Committing,
+    Testing,
+    Extracting,
+    RestoringMacMetadata,
+    PreservingMacMetadata,
+    Updating,
+    Hashing,
+    Benchmark,
+    BenchmarkCompressing,
+    BenchmarkDecompressing
+};
 struct Progress {
+    // Display text for the current stage; stage carries the same information as an enum.
     std::string phase;
     std::string path;
     std::uint64_t completed = 0;
     std::uint64_t total = 0;
     bool totalKnown = false;
+    Stage stage = Stage::None;
 };
 enum class Overwrite { Ask, Replace, Skip, RenameIncoming, RenameExisting };
 enum class OverwriteAnswer { Replace, ReplaceAll, Skip, SkipAll, RenameIncoming, Cancel };
