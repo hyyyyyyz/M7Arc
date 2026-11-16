@@ -572,6 +572,41 @@ bool matchesPattern(const NWildcard::CCensorNode& node, const fs::path& relative
     bool include = false;
     return node.CheckPathVect(parts, file, include) && include;
 }
+fs::path archiveRelative(const fs::path& member, const fs::path& source, const fs::path& prefix,
+                         ArchivePathMode mode) {
+    return prefix / (mode == ArchivePathMode::Relative ? member.lexically_relative(source.parent_path())
+                                                       : member.relative_path());
+}
+// The single include/exclude rule for create(): excluded members are dropped; with include
+// patterns, a member is kept when it matches (files and directories alike) or lies on the path
+// to a matching member. Directories that match nothing are not archived.
+struct MemberSelection {
+    std::vector<fs::path> members;
+    std::set<fs::path> kept;
+};
+MemberSelection selectMembers(const fs::path& source, const fs::path& prefix, const CreateOptions& options,
+                              const NWildcard::CCensorNode& includeFilter,
+                              const NWildcard::CCensorNode& excludeFilter) {
+    MemberSelection selection;
+    selection.members.push_back(source);
+    if (fs::is_directory(fs::symlink_status(source)))
+        for (const auto& e : fs::recursive_directory_iterator(source))
+            selection.members.push_back(e.path());
+    for (const auto& member : selection.members) {
+        const auto relative = archiveRelative(member, source, prefix, options.pathMode);
+        const bool file = !fs::is_directory(fs::symlink_status(member));
+        if (matchesPattern(excludeFilter, relative, file))
+            continue;
+        if (options.includePatterns.empty() || matchesPattern(includeFilter, relative, file)) {
+            fs::path p = member;
+            while (p != source.parent_path() && !p.empty()) {
+                selection.kept.insert(p);
+                p = p.parent_path();
+            }
+        }
+    }
+    return selection;
+}
 struct SourceState {
     fs::path path;
     struct stat info;
@@ -581,21 +616,12 @@ std::vector<SourceState> sourceStates(const std::vector<std::string>& inputs, co
     NWildcard::CCensorNode include, exclude;
     addPatterns(include, options.includePatterns);
     addPatterns(exclude, options.excludePatterns);
+    const fs::path prefix = fs::path(options.archivePrefix).lexically_normal();
     for (const auto& input : inputs) {
         const auto source = fs::absolute(input).lexically_normal();
-        std::vector<fs::path> members{source};
-        if (fs::is_directory(fs::symlink_status(source)))
-            for (const auto& e : fs::recursive_directory_iterator(source))
-                members.push_back(e.path());
-        for (const auto& member : members) {
-            const auto relative =
-                fs::path(options.archivePrefix) / (options.pathMode == ArchivePathMode::Relative
-                                                       ? member.lexically_relative(source.parent_path())
-                                                       : member.relative_path());
-            const bool file = !fs::is_directory(fs::symlink_status(member));
-            if (matchesPattern(exclude, relative, file))
-                continue;
-            if (file && !options.includePatterns.empty() && !matchesPattern(include, relative, true))
+        const auto selection = selectMembers(source, prefix, options, include, exclude);
+        for (const auto& member : selection.members) {
+            if (!selection.kept.contains(member))
                 continue;
             SourceState state{member, {}};
             if (lstat(member.c_str(), &state.info) != 0)
@@ -710,7 +736,8 @@ struct ArchiveEngine::Impl {
             if (!result.ok())
                 throw EngineError(result.cancelled ? "Operation cancelled"
                                                    : (result.errors.empty() ? "Cannot open compressed TAR"
-                                                                            : result.errors.front()));
+                                                                            : result.errors.front()),
+                              result.cancelled ? EngineErrorKind::Cancelled : EngineErrorKind::General);
             fs::path payload;
             for (const auto& entry : fs::directory_iterator(directory))
                 if (entry.is_regular_file()) {
@@ -1166,32 +1193,12 @@ OperationResult ArchiveEngine::create(const std::vector<std::string>& inputs, co
             if (fs::exists(copied) || fs::is_symlink(copied))
                 throw EngineError("Multiple selected inputs map to the same archive path: " + name.string());
             mac::copyItem(source, copied, [&](std::uint64_t bytes) { return ctx.report(bytes) == S_OK; });
-            std::vector<fs::path> members{source};
-            if (fs::is_directory(fs::symlink_status(source)))
-                for (const auto& e : fs::recursive_directory_iterator(source))
-                    members.push_back(e.path());
-            std::set<fs::path> kept;
-            for (const auto& member : members) {
-                const auto relative = prefix / (options.pathMode == ArchivePathMode::Relative
-                                                    ? member.lexically_relative(source.parent_path())
-                                                    : member.relative_path());
-                const bool file = !fs::is_directory(fs::symlink_status(member));
-                if (matchesPattern(excludeFilter, relative, file))
-                    continue;
-                if (options.includePatterns.empty() || matchesPattern(includeFilter, relative, file)) {
-                    fs::path p = member;
-                    while (p != source.parent_path() && !p.empty()) {
-                        kept.insert(p);
-                        p = p.parent_path();
-                    }
-                }
-            }
+            const auto selection = selectMembers(source, prefix, options, includeFilter, excludeFilter);
+            const auto& members = selection.members;
+            const auto& kept = selection.kept;
             for (auto it = members.rbegin(); it != members.rend(); ++it)
                 if (!kept.contains(*it)) {
-                    const auto relative = prefix / (options.pathMode == ArchivePathMode::Relative
-                                                        ? it->lexically_relative(source.parent_path())
-                                                        : it->relative_path());
-                    fs::remove_all(data / relative);
+                    fs::remove_all(data / archiveRelative(*it, source, prefix, options.pathMode));
                 }
             if (!kept.contains(source))
                 continue;
@@ -1200,9 +1207,7 @@ OperationResult ArchiveEngine::create(const std::vector<std::string>& inputs, co
                 if (!kept.contains(member))
                     continue;
                 require(ctx.item(member.string()), "Compression cancelled");
-                const auto relative = prefix / (options.pathMode == ArchivePathMode::Relative
-                                                    ? member.lexically_relative(source.parent_path())
-                                                    : member.relative_path());
+                const auto relative = archiveRelative(member, source, prefix, options.pathMode);
                 sourceMappings.emplace_back((data / relative).string(), member.string());
                 if (options.storeHardLinks) {
                     struct stat st{};
