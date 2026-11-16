@@ -1,14 +1,10 @@
 #!/usr/bin/env python3
-"""Verify the complete CLI registry and real console SFX extraction."""
+"""Verify the complete CLI registry and console SFX extraction using the application's SFX builder."""
 
 import argparse
 from pathlib import Path
 import subprocess
-import sys
 import tempfile
-
-sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src/tools"))
-from create_sfx import create_sfx
 
 
 def command(*args, cwd=None):
@@ -23,6 +19,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--cli", type=Path, required=True)
     parser.add_argument("--sfx", type=Path, required=True)
+    parser.add_argument("--builder", type=Path, required=True, help="test driver around m7arc::tools::createConsoleSfx")
     args = parser.parse_args()
     cli, stub = args.cli.resolve(), args.sfx.resolve()
     catalog = command(cli, "i")
@@ -49,7 +46,7 @@ def main():
         archive = work / "payload.7z"
         command(cli, "a", "-t7z", "-m0=LZMA2", "-mx=3", archive, source.name, cwd=work)
         output = work / "M7Arc Archive.command"
-        create_sfx(stub, archive, output)
+        command(args.builder.resolve(), "console", stub, archive, output)
         command("codesign", "--verify", "--strict", output)
         command(output, "t", "-y")
         destination = work / "extracted"

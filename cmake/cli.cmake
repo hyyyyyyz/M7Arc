@@ -67,6 +67,7 @@ function(m7arc_attach_tools application_target)
         add_executable(m7arc_distribution_builder_tests
             "${CMAKE_CURRENT_FUNCTION_LIST_DIR}/../tests/tools/DistributionBuilderTest.cpp"
             "${CMAKE_CURRENT_FUNCTION_LIST_DIR}/../src/tools/DistributionBuilder.cpp"
+            "${CMAKE_CURRENT_FUNCTION_LIST_DIR}/../src/tools/SfxBuilder.cpp"
             "${M7ARC_TOOLS_SOURCE}/CPP/Common/TextConfig.cpp")
         target_include_directories(m7arc_distribution_builder_tests PRIVATE "${CMAKE_CURRENT_FUNCTION_LIST_DIR}/../src"
             "${M7ARC_TOOLS_SOURCE}/CPP")
@@ -95,6 +96,7 @@ endfunction()
 if(BUILD_TESTING)
     add_test(NAME tools.integration
         COMMAND "${Python3_EXECUTABLE}" "${CMAKE_CURRENT_LIST_DIR}/../tests/tools/ToolsIntegration.py"
-            --cli "${M7ARC_CLI_PATH}" --sfx "${M7ARC_SFX_PATH}")
+            --cli "${M7ARC_CLI_PATH}" --sfx "${M7ARC_SFX_PATH}"
+            --builder "$<TARGET_FILE:m7arc_distribution_builder_tests>")
     set_tests_properties(tools.integration PROPERTIES TIMEOUT 90)
 endif()

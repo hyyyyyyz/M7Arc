@@ -25,7 +25,7 @@ GUI 的归档浏览和操作直接接入引擎。随包 CLI 同时为熟悉 7-Zi
 
 ## 构建接线
 
-根 CMake 设置架构与最低部署目标之后引入 `cmake/cli.cmake`，定义应用 target 后调用 `m7arc_attach_tools(M7Arc)`。该调用为应用加入工具依赖，复制两个工具到 app，并编译 Qt C++ 的 `tools/SfxBuilder.cpp`。
+根 CMake 设置架构与最低部署目标之后引入 `cmake/cli.cmake`，定义应用 target 后调用 `m7arc_attach_tools(M7Arc)`。该调用为应用加入工具依赖，复制两个工具到 app，并编译 Qt C++ 的 `tools/SfxBuilder.cpp` 与 `tools/DistributionBuilder.cpp`。
 
 - `m7arc_cli`：构建官方 `Bundles/Alone2`。
 - `m7arc_sfx`：构建官方 `Bundles/SFXCon`。
@@ -38,14 +38,12 @@ GUI 的归档浏览和操作直接接入引擎。随包 CLI 同时为熟悉 7-Zi
 
 自解压器使用 **7z** payload，适合 LZMA2、LZMA、PPMd 或 Copy 编码，支持对应过滤器与 AES。默认创建参数使用 LZMA2；SFXCon 不包含 BZip2 和 Deflate 解码器。
 
-开发者可以运行：
+开发者可用构建出的 `7zz` 制作 payload，再通过应用的自解压对话框，或测试驱动 `m7arc_distribution_builder_tests` 调用同一个 `createConsoleSfx`：
 
 ```bash
 "build/release/tools/7zz" a -t7z -m0=LZMA2 payload.7z Documents
-python3 src/tools/create_sfx.py \
-  --stub build/release/tools/7zCon.sfx \
-  --archive payload.7z \
-  --output Documents.command
+build/release/m7arc_distribution_builder_tests console \
+  build/release/tools/7zCon.sfx payload.7z Documents.command
 ./Documents.command t
 ./Documents.command x -oextracted
 ```
@@ -79,7 +77,7 @@ Qt 应用使用 `m7arc::tools::createConsoleSfx(stub, archive, output)`，返回
 
 创建图形包使用已部署 M7Arc 的 `Contents/Frameworks` 与 Qt plugins，因此须从安装包运行 M7Arc，或先按发布流程部署开发构建。构建器将依赖复制到新 app，保持框架签名，再对外层 app 签名并执行严格校验。输出路径必须不存在，取消或失败会清理本次新建的输出。
 
-开发者接口位于 `src/tools/SfxBuilder.h`：
+控制台 SFX 接口位于 `src/tools/SfxBuilder.h`，图形包、DMG 与 Windows 接口位于 `src/tools/DistributionBuilder.h`（`SfxBuilder.h` 会一并包含）：
 
 ```cpp
 SfxBundleOptions options;
