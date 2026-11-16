@@ -14,3 +14,5 @@ include("${M7ARC_ROOT}/cmake/engine.cmake")
 add_library(m7arc_platform STATIC "${M7ARC_ROOT}/src/platform/MacMetadata.cpp")
 target_include_directories(m7arc_platform PUBLIC "${M7ARC_ROOT}/src")
 set_target_properties(m7arc_platform PROPERTIES POSITION_INDEPENDENT_CODE ON)
+# Binaries linked against this build find the library without an rpath.
+set_target_properties(m7arc_engine PROPERTIES INSTALL_NAME_DIR "${CMAKE_BINARY_DIR}/lib")
