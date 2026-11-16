@@ -30,9 +30,9 @@ m7arc::ArchiveEntry member(m7arc::ArchiveEngine& engine, const QString& archive,
     require(i != snapshot.entries.end(), "archive member exists");
     return *i;
 }
-std::shared_ptr<m7arc::EditSession> session(const QString& archive, const m7arc::ArchiveEntry& entry,
+std::shared_ptr<m7arc::app::EditSession> session(const QString& archive, const m7arc::ArchiveEntry& entry,
                                             const QString& local) {
-    auto result = std::make_shared<m7arc::EditSession>();
+    auto result = std::make_shared<m7arc::app::EditSession>();
     result->archivePath = archive;
     result->memberPath = QString::fromStdString(entry.path);
     result->index = entry.index;
@@ -68,7 +68,6 @@ int main(int argc, char** argv) {
                 "open nested archive");
         const auto nestedPath = QDir(work).filePath("inner.zip");
         auto nested = session(outer, outerMember, nestedPath);
-        nested->nestedArchive = true;
         const auto editedMember = member(engine, nestedPath, "docs/text.txt");
         const auto editsDirectory = root.filePath("edits");
         require(
@@ -76,11 +75,11 @@ int main(int argc, char** argv) {
             "open editable member");
         const auto editedPath = QDir(editsDirectory).filePath("docs/text.txt");
         auto edited = session(nestedPath, editedMember, editedPath);
-        m7arc::EditSessions sessions{nested, edited};
+        m7arc::app::EditSessionList sessions{nested, edited};
         require(!edited->changed(), "unchanged edit does not request rewrite");
         write(editedPath, "after — nested archive edit\n");
         require(edited->changed(), "editing requests rewrite");
-        require(m7arc::saveEditedMember(engine, *edited, sessions, {}).ok(), "save nested archive chain");
+        require(m7arc::app::saveEditedMember(engine, *edited, sessions, {}).ok(), "save nested archive chain");
         auto verify = root.filePath("verify");
         require(engine.extract(outer.toStdString(), verify.toStdString()).ok(),
                 "extract updated outer archive");
@@ -101,12 +100,28 @@ int main(int argc, char** argv) {
                 "modify archive independently");
         bool rejected = false;
         try {
-            m7arc::saveEditedMember(engine, *edited, sessions, {});
+            m7arc::app::saveEditedMember(engine, *edited, sessions, {});
         } catch (const m7arc::EngineError&) {
             rejected = true;
         }
         require(rejected, "stale archive edit must be rejected");
         require(read(editedPath) == "unsaved work remains available\n", "failed rewrite retains edited file");
+        // The tracker keeps one baseline per chain and forgets sessions whose file is gone.
+        m7arc::app::EditSessionTracker tracker;
+        const auto trackedOuter = tracker.track(outer, QString::fromStdString(outerMember.path), nestedPath, outerMember.index);
+        const auto trackedInner = tracker.track(nestedPath, QString::fromStdString(editedMember.path), editedPath, editedMember.index);
+        require(!tracker.anyChanged(), "fresh sessions are unchanged");
+        write(editedPath, "edited again, longer than before\n");
+        require(tracker.firstChanged() == trackedInner, "edited session found");
+        require(tracker.chain(*trackedInner) == QStringList({editedPath, nestedPath}), "chain lists enclosing sessions");
+        require(tracker.chain(*trackedOuter) == QStringList({nestedPath}), "outermost chain");
+        tracker.markSaved(trackedInner, tracker.chain(*trackedInner));
+        require(!tracker.anyChanged(), "saved chain becomes the new baseline");
+        write(editedPath, "third version\n");
+        tracker.markRestored(trackedInner);
+        require(!tracker.anyChanged(), "restored session becomes the new baseline");
+        require(QFile::remove(editedPath), "remove temporary file");
+        require(!tracker.anyChanged() && tracker.sessions().size() == 1, "vanished file ends its session");
         std::cout << "Edit session integration passed: nested propagation, unrelated member preservation, "
                      "stale revision rejection, retained edits.\n";
         return 0;

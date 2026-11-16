@@ -1,5 +1,6 @@
 #include "SfxDialog.h"
 #include "OperationController.h"
+#include "app/Settings.h"
 #include "tools/SfxBuilder.h"
 #include <QCheckBox>
 #include <QComboBox>
@@ -15,7 +16,6 @@
 #include <QLineEdit>
 #include <QMessageBox>
 #include <QPushButton>
-#include <QSettings>
 #include <QTemporaryDir>
 #include <QTabWidget>
 #include <QThread>
@@ -71,7 +71,7 @@ void showSfxCreation(QWidget* parent, const QStringList& inputs, const QString& 
     auto* showPassword = new QCheckBox(QObject::tr("显示密码"), &dialog);
     auto* encryptNames = new QCheckBox(QObject::tr("加密文件名"), &dialog);
     auto* metadata = new QCheckBox(QObject::tr("保留 macOS 元数据"), &dialog);
-    metadata->setChecked(QSettings().value("archive/macMetadata", true).toBool());
+    metadata->setChecked(app::Settings().preserveMacMetadata());
     form->addRow(showPassword);
     form->addRow(encryptNames);
     form->addRow(metadata);
@@ -224,7 +224,7 @@ void showSfxCreation(QWidget* parent, const QStringList& inputs, const QString& 
     installer.executeFile = executeFile->text();
     installer.executeParameters = executeParameters->text();
     auto temporary = std::make_shared<QTemporaryDir>(
-        QSettings().value("folders/temp", QDir::tempPath()).toString() + "/M7Arc-SFX-XXXXXX");
+        app::Settings().tempDirectory() + "/M7Arc-SFX-XXXXXX");
     jobs->run(
         QObject::tr("创建自解压程序"),
         [inputs, kind, output, displayName, applicationDirectory, sourceApp, options, installer,

@@ -1,5 +1,6 @@
 #include "ArchiveDialogs.h"
 #include "app/FormatCatalog.h"
+#include "app/Settings.h"
 #include "platform/services/MacServices.h"
 #include <QCheckBox>
 #include <QComboBox>
@@ -22,7 +23,6 @@
 #include <QRegularExpression>
 #include <QScrollArea>
 #include <QScreen>
-#include <QSettings>
 #include <QSignalBlocker>
 #include <QSpinBox>
 #include <QStandardItemModel>
@@ -193,7 +193,7 @@ CreateDialog::CreateDialog(const QStringList& inputs, const QString& directory, 
     r->addRow(hardLinks_);
     r->addRow(preserveAtime_);
     metadata_ = new QCheckBox(tr("保留 macOS 元数据"), this);
-    metadata_->setChecked(QSettings().value("archive/macMetadata", true).toBool());
+    metadata_->setChecked(app::Settings().preserveMacMetadata());
     metadata_->setToolTip(tr("保存 Finder 标签、扩展属性、资源叉、ACL 和创建时间。"));
     r->addRow(metadata_);
     auto* more = new QPushButton(tr("更多选项…"), this);
@@ -550,7 +550,7 @@ ExtractDialog::ExtractDialog(const QString& archive, const QString& destination,
     duplicateRoot_ = new QCheckBox(tr("消除重复根目录"), this);
     form->addRow(duplicateRoot_);
     metadata_ = new QCheckBox(tr("恢复 macOS 元数据"), this);
-    metadata_->setChecked(QSettings().value("archive/macMetadata", true).toBool());
+    metadata_->setChecked(app::Settings().preserveMacMetadata());
     form->addRow(metadata_);
     password_ = new QLineEdit(this);
     password_->setEchoMode(QLineEdit::Password);
@@ -692,7 +692,7 @@ void showSettings(QWidget* parent) {
     QDialog dialog(parent);
     dialog.setWindowTitle(QObject::tr("设置"));
     dialog.resize(780, 570);
-    QSettings settings;
+    app::Settings settings;
     auto* layout = new QVBoxLayout(&dialog);
     auto* tabs = new QTabWidget(&dialog);
     layout->addWidget(tabs);
@@ -778,7 +778,7 @@ void showSettings(QWidget* parent) {
                                                    {"info", QObject::tr("信息")}};
     for (const auto& [id, name] : menuNames) {
         auto* option = new QCheckBox(name, menuPage);
-        option->setChecked(settings.value("menus/" + id, true).toBool());
+        option->setChecked(settings.commandVisible(id));
         menuOptions.append({id, option});
         menuLayout->addWidget(option);
     }
@@ -787,8 +787,8 @@ void showSettings(QWidget* parent) {
 
     auto* foldersPage = new QWidget(tabs);
     auto* foldersForm = new QFormLayout(foldersPage);
-    auto* startup = new QLineEdit(settings.value("startup/path", QDir::homePath()).toString(), foldersPage);
-    auto* temporary = new QLineEdit(settings.value("folders/temp").toString(), foldersPage);
+    auto* startup = new QLineEdit(settings.startupPath(), foldersPage);
+    auto* temporary = new QLineEdit(settings.tempDirectoryOverride(), foldersPage);
     temporary->setPlaceholderText(QStandardPaths::writableLocation(QStandardPaths::TempLocation));
     foldersForm->addRow(QObject::tr("启动目录"), pathField(startup, foldersPage, false));
     foldersForm->addRow(QObject::tr("临时文件目录"), pathField(temporary, foldersPage, false));
@@ -802,9 +802,9 @@ void showSettings(QWidget* parent) {
 
     auto* programsPage = new QWidget(tabs);
     auto* programsForm = new QFormLayout(programsPage);
-    auto* viewer = new QLineEdit(settings.value("tools/viewer").toString(), programsPage);
-    auto* editor = new QLineEdit(settings.value("tools/editor").toString(), programsPage);
-    auto* diff = new QLineEdit(settings.value("tools/diff").toString(), programsPage);
+    auto* viewer = new QLineEdit(settings.viewer(), programsPage);
+    auto* editor = new QLineEdit(settings.editor(), programsPage);
+    auto* diff = new QLineEdit(settings.diffTool(), programsPage);
     programsForm->addRow(QObject::tr("查看器可执行程序 / 应用"), viewer);
     programsForm->addRow(QObject::tr("编辑器可执行程序 / 应用"), editor);
     programsForm->addRow(QObject::tr("Diff 可执行程序 / 应用"), diff);
@@ -817,17 +817,17 @@ void showSettings(QWidget* parent) {
 
     auto* generalPage = new QWidget(tabs);
     auto* generalLayout = new QVBoxLayout(generalPage);
-    auto addToggle = [&](const QString& key, const QString& title, bool fallback) {
+    auto addToggle = [&](const QString& title, bool value) {
         auto* option = new QCheckBox(title, generalPage);
-        option->setChecked(settings.value(key, fallback).toBool());
+        option->setChecked(value);
         generalLayout->addWidget(option);
         return option;
     };
-    auto* hidden = addToggle("view/hidden", QObject::tr("显示隐藏文件"), true);
-    auto* alternating = addToggle("view/alternating", QObject::tr("交替行背景"), true);
-    auto* autoRefresh = addToggle("view/autoRefresh", QObject::tr("自动刷新文件夹"), true);
-    auto* metadata = addToggle("archive/macMetadata", QObject::tr("创建和提取时保留 macOS 元数据"), true);
-    auto* restoreWindow = addToggle("window/restore", QObject::tr("记住窗口位置和大小"), true);
+    auto* hidden = addToggle(QObject::tr("显示隐藏文件"), settings.showHidden());
+    auto* alternating = addToggle(QObject::tr("交替行背景"), settings.alternatingRows());
+    auto* autoRefresh = addToggle(QObject::tr("自动刷新文件夹"), settings.autoRefresh());
+    auto* metadata = addToggle(QObject::tr("创建和提取时保留 macOS 元数据"), settings.preserveMacMetadata());
+    auto* restoreWindow = addToggle(QObject::tr("记住窗口位置和大小"), settings.restoreWindow());
     generalLayout->addStretch();
     tabs->addTab(generalPage, QObject::tr("设置"));
 
@@ -837,7 +837,7 @@ void showSettings(QWidget* parent) {
     language->addItem(QObject::tr("跟随系统"), "system");
     language->addItem("简体中文", "zh_CN");
     language->addItem("English", "en");
-    language->setCurrentIndex(qMax(0, language->findData(settings.value("ui/language", "system"))));
+    language->setCurrentIndex(qMax(0, language->findData(settings.language())));
     languageForm->addRow(QObject::tr("界面语言"), language);
     auto* languageNote = new QLabel(QObject::tr("语言更改在下次启动时生效。"), languagePage);
     languageNote->setWordWrap(true);
@@ -857,19 +857,19 @@ void showSettings(QWidget* parent) {
     QObject::connect(buttons, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
     if (dialog.exec() != QDialog::Accepted)
         return;
-    settings.setValue("startup/path", startup->text());
-    settings.setValue("folders/temp", temporary->text().trimmed());
-    settings.setValue("tools/viewer", viewer->text());
-    settings.setValue("tools/editor", editor->text());
-    settings.setValue("tools/diff", diff->text());
-    settings.setValue("view/hidden", hidden->isChecked());
-    settings.setValue("view/alternating", alternating->isChecked());
-    settings.setValue("view/autoRefresh", autoRefresh->isChecked());
-    settings.setValue("archive/macMetadata", metadata->isChecked());
-    settings.setValue("window/restore", restoreWindow->isChecked());
-    settings.setValue("ui/language", language->currentData());
+    settings.setStartupPath(startup->text());
+    settings.setTempDirectory(temporary->text());
+    settings.setViewer(viewer->text());
+    settings.setEditor(editor->text());
+    settings.setDiffTool(diff->text());
+    settings.setShowHidden(hidden->isChecked());
+    settings.setAlternatingRows(alternating->isChecked());
+    settings.setAutoRefresh(autoRefresh->isChecked());
+    settings.setPreserveMacMetadata(metadata->isChecked());
+    settings.setRestoreWindow(restoreWindow->isChecked());
+    settings.setLanguage(language->currentData().toString());
     for (const auto& [id, option] : menuOptions)
-        settings.setValue("menus/" + id, option->isChecked());
+        settings.setCommandVisible(id, option->isChecked());
 }
 
 } // namespace m7arc::ui

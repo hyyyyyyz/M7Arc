@@ -1,4 +1,5 @@
 #include "FilePane.h"
+#include "app/Settings.h"
 #include <QApplication>
 #include <QComboBox>
 #include <QDir>
@@ -18,7 +19,6 @@
 #include <QMimeData>
 #include <QMouseEvent>
 #include <QRegularExpression>
-#include <QSettings>
 #include <QStackedWidget>
 #include <QStyle>
 #include <QToolButton>
@@ -424,11 +424,11 @@ void FilePane::setFlat(bool on) {
         archive_->setFlat(on);
 }
 void FilePane::applySettings() {
-    QSettings s;
+    const app::Settings settings;
     files_->setFilter(QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System |
-                      (s.value("view/hidden", false).toBool() ? QDir::Hidden : QDir::Filter(0)));
-    files_->setOption(QFileSystemModel::DontWatchForChanges, !s.value("view/autoRefresh", true).toBool());
-    view_->setAlternatingRowColors(s.value("view/alternating", true).toBool());
+                      (settings.showHidden() ? QDir::Hidden : QDir::Filter(0)));
+    files_->setOption(QFileSystemModel::DontWatchForChanges, !settings.autoRefresh());
+    view_->setAlternatingRowColors(settings.alternatingRows());
 }
 void FilePane::setViewMode(const QString& mode) {
     if (mode == "details") {
