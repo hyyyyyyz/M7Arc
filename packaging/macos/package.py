@@ -43,6 +43,22 @@ def mach_objects(app):
     return result
 
 
+def thin_architectures(app, architecture):
+    """Drop slices other than the target from universal Mach-O files deployed from the Qt SDK."""
+    if architecture == "universal2":
+        return
+    for path in mach_objects(app):
+        found = set(run("lipo", "-archs", path, capture=True).split())
+        if found == {architecture}:
+            continue
+        if architecture not in found:
+            raise RuntimeError(f"{path.relative_to(app)} has no {architecture} slice")
+        thin = path.with_name(path.name + ".thin")
+        run("lipo", path, "-thin", architecture, "-output", thin)
+        shutil.copymode(path, thin)
+        thin.replace(path)
+
+
 def verify_runtime(app, architecture):
     required = {"arm64", "x86_64"} if architecture == "universal2" else {architecture}
     objects = mach_objects(app)
@@ -129,6 +145,7 @@ def main():
         licenses = add_licenses(deployed)
         extractor = deployed / "Contents/MacOS/M7ArcExtractor"
         run(macdeployqt, deployed, "-always-overwrite", "-no-codesign", "-verbose=1", f"-executable={extractor}")
+        thin_architectures(deployed, architecture)
         objects = verify_runtime(deployed, architecture)
         main_executable = deployed / "Contents/MacOS" / info["CFBundleExecutable"]
         for path in sorted(objects, key=lambda item: len(item.parts), reverse=True):
