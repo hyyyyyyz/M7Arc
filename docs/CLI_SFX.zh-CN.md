@@ -123,7 +123,7 @@ Windows 产物拼接官方 26.03 `7z.sfx` 或 `7zCon.sfx` 与 7z 载荷，输出
 
 ## 分发验证
 
-`tools.windows_sfx` 在 CTest 中验证两种 Windows 输出。图形分发测试以已部署 app 为输入，同时生成内嵌和外置 `.app` / DMG，验证独立启动、严格签名、加密提取，并挂载生成的 DMG 后再次执行提取：
+`tools.windows_sfx` 在 CTest 中验证两种 Windows 输出。`tools.mac_sfx_bundle` 是图形分发测试，配置时传入 `-DM7ARC_SFX_SOURCE_APP=<已部署的 M7Arc.app>` 才会运行，否则 CTest 显示为 Skipped。图形分发测试以已部署 app 为输入，同时生成内嵌和外置 `.app` / DMG，验证独立启动、严格签名、加密提取，并挂载生成的 DMG 后再次执行提取：
 
 ```sh
 python3 tests/tools/DistributionIntegration.py \

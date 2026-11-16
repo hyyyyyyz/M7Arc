@@ -76,8 +76,19 @@ function(m7arc_attach_tools application_target)
         add_test(NAME tools.windows_sfx COMMAND "${Python3_EXECUTABLE}"
             "${CMAKE_CURRENT_FUNCTION_LIST_DIR}/../tests/tools/DistributionIntegration.py"
             --builder "$<TARGET_FILE:m7arc_distribution_builder_tests>" --cli "${M7ARC_CLI_PATH}"
-            --windows-stubs "${CMAKE_CURRENT_FUNCTION_LIST_DIR}/../src/tools/windows")
+            --windows-stubs "${CMAKE_CURRENT_FUNCTION_LIST_DIR}/../src/tools/windows" --part windows)
         set_tests_properties(tools.windows_sfx PROPERTIES TIMEOUT 90)
+        # Needs a deployed M7Arc.app: pass -DM7ARC_SFX_SOURCE_APP=<path>. Without it CTest reports the test as skipped.
+        set(M7ARC_SFX_SOURCE_APP "" CACHE PATH "Deployed M7Arc.app used by tools.mac_sfx_bundle")
+        set(mac_bundle_arguments --part mac)
+        if(M7ARC_SFX_SOURCE_APP)
+            list(APPEND mac_bundle_arguments --source-app "${M7ARC_SFX_SOURCE_APP}")
+        endif()
+        add_test(NAME tools.mac_sfx_bundle COMMAND "${Python3_EXECUTABLE}"
+            "${CMAKE_CURRENT_FUNCTION_LIST_DIR}/../tests/tools/DistributionIntegration.py"
+            --builder "$<TARGET_FILE:m7arc_distribution_builder_tests>" --cli "${M7ARC_CLI_PATH}"
+            --windows-stubs "${CMAKE_CURRENT_FUNCTION_LIST_DIR}/../src/tools/windows" ${mac_bundle_arguments})
+        set_tests_properties(tools.mac_sfx_bundle PROPERTIES TIMEOUT 300 SKIP_RETURN_CODE 77)
     endif()
     add_custom_target(m7arc_bundle_tools
         COMMAND "${CMAKE_COMMAND}" -E make_directory "$<TARGET_BUNDLE_DIR:${application_target}>/Contents/MacOS"
