@@ -1,4 +1,4 @@
-#include "MacServices.h"
+#include "platform/services/MacServices.h"
 #include <QCoreApplication>
 #include <QFile>
 #include <QTemporaryDir>
