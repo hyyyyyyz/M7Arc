@@ -55,6 +55,7 @@ EXPORT_CODECS
 
 #include "../../../Windows/FileFind.h"
 #include "../../../Windows/DLL.h"
+// M7Arc-patch: shared-codecs
 #ifndef _WIN32
 #include <dlfcn.h>
 #endif
@@ -519,6 +520,7 @@ void CCodecs::AddLastError(const FString &path)
   CCodecError &error = Errors.AddNew();
   error.Path = path;
   error.ErrorCode = res;
+  // M7Arc-patch: shared-codecs
   #ifndef _WIN32
   if (const char *message = dlerror())
     error.Message = message;
@@ -795,6 +797,7 @@ void CCodecs::CloseLibs()
 #endif // Z7_EXTERNAL_CODECS
 
 
+// M7Arc-patch: shared-codecs. modulePaths replaces the default module search when set.
 HRESULT CCodecs::Load(
     #ifdef Z7_EXTERNAL_CODECS
     const FStringVector *modulePaths
@@ -1056,7 +1059,7 @@ Z7_COM7F_IMF(CCodecs::CreateDecoder(UInt32 index, const GUID *iid, void **coder)
 {
   #ifdef EXPORT_CODECS
   if (index < g_NumCodecs)
-    return ::CreateDecoder(index, iid, coder);
+    return ::CreateDecoder(index, iid, coder); // M7Arc-patch: shared-codecs
   #endif
   
   #ifdef Z7_EXTERNAL_CODECS
@@ -1079,7 +1082,7 @@ Z7_COM7F_IMF(CCodecs::CreateEncoder(UInt32 index, const GUID *iid, void **coder)
 {
   #ifdef EXPORT_CODECS
   if (index < g_NumCodecs)
-    return ::CreateEncoder(index, iid, coder);
+    return ::CreateEncoder(index, iid, coder); // M7Arc-patch: shared-codecs
   #endif
 
   #ifdef Z7_EXTERNAL_CODECS
@@ -1127,7 +1130,7 @@ Z7_COM7F_IMF(CCodecs::CreateHasher(UInt32 index, IHasher **hasher))
 {
   #ifdef EXPORT_CODECS
   if (index < g_NumHashers)
-    return ::CreateHasher(index, hasher);
+    return ::CreateHasher(index, hasher); // M7Arc-patch: shared-codecs
   #endif
   #ifdef Z7_EXTERNAL_CODECS
   const CDllHasherInfo &ci = Hashers[index - NUM_EXPORT_HASHERS];
@@ -1173,7 +1176,7 @@ bool CCodecs::GetCodec_DecoderIsAssigned(UInt32 index) const
   if (index < g_NumCodecs)
   {
     NCOM::CPropVariant prop;
-    if (::GetMethodProperty(index, NMethodPropID::kDecoderIsAssigned, &prop) == S_OK)
+    if (::GetMethodProperty(index, NMethodPropID::kDecoderIsAssigned, &prop) == S_OK) // M7Arc-patch: shared-codecs
     {
       if (prop.vt == VT_BOOL)
         return VARIANT_BOOLToBool(prop.boolVal);
@@ -1196,7 +1199,7 @@ bool CCodecs::GetCodec_EncoderIsAssigned(UInt32 index) const
   if (index < g_NumCodecs)
   {
     NCOM::CPropVariant prop;
-    if (::GetMethodProperty(index, NMethodPropID::kEncoderIsAssigned, &prop) == S_OK)
+    if (::GetMethodProperty(index, NMethodPropID::kEncoderIsAssigned, &prop) == S_OK) // M7Arc-patch: shared-codecs
     {
       if (prop.vt == VT_BOOL)
         return VARIANT_BOOLToBool(prop.boolVal);
@@ -1220,7 +1223,7 @@ bool CCodecs::GetCodec_IsFilter(UInt32 index, bool &isAssigned) const
   if (index < g_NumCodecs)
   {
     NCOM::CPropVariant prop;
-    if (::GetMethodProperty(index, NMethodPropID::kIsFilter, &prop) == S_OK)
+    if (::GetMethodProperty(index, NMethodPropID::kIsFilter, &prop) == S_OK) // M7Arc-patch: shared-codecs
     {
       if (prop.vt == VT_BOOL)
       {

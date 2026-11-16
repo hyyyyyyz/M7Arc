@@ -313,6 +313,7 @@ CArchiveExtractCallback::CArchiveExtractCallback():
 
 void CArchiveExtractCallback::InitBeforeNewArchive()
 {
+  // M7Arc-patch: extract-results
   M7Arc_ItemResults.Clear();
   M7Arc_WrittenIndices.Clear();
   M7Arc_WrittenPaths.Clear();
@@ -2889,6 +2890,7 @@ Z7_COM7F_IMF(CArchiveExtractCallback::SetOperationResult(Int32 opRes))
 
   SET_OWNER
 
+  // M7Arc-patch: extract-results
   if (opRes == NArchive::NExtract::NOperationResult::kOK
       && !_itemFailure && _extractMode && !_stdOutMode
       && !_diskFilePath.IsEmpty())
@@ -2897,6 +2899,7 @@ Z7_COM7F_IMF(CArchiveExtractCallback::SetOperationResult(Int32 opRes))
     M7Arc_WrittenPaths.Add(_diskFilePath);
   }
 
+  // M7Arc-patch: extract-results
   {
     CM7ArcItemResult result = { _index, opRes, 0 };
     M7Arc_ItemResults.Add(result);
@@ -3007,6 +3010,7 @@ Z7_COM7F_IMF(CArchiveExtractCallback::GetStream2(UInt32 index, ISequentialInStre
   inStreamSpec->Set_PreserveATime(_ntOptions.PreserveATime);
   if (!inStreamSpec->OpenShared(fullProcessedPath, _ntOptions.OpenShareForWrite))
   {
+    // M7Arc-patch: extract-results
     CM7ArcItemResult result = { index, NArchive::NExtract::NOperationResult::kUnavailable, GetLastError() };
     M7Arc_ItemResults.Add(result);
     RINOK(SendMessageError_with_LastError(kCantOpenInFile, fullProcessedPath))

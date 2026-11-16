@@ -1,0 +1,43 @@
+diff --git a/third_party/7zip/CPP/7zip/UI/Common/Update.cpp b/third_party/7zip/CPP/7zip/UI/Common/Update.cpp
+index 1c2754e..dd58021 100644
+--- a/third_party/7zip/CPP/7zip/UI/Common/Update.cpp
++++ b/third_party/7zip/CPP/7zip/UI/Common/Update.cpp
+@@ -1396,7 +1396,7 @@ HRESULT UpdateArchive(
+ 
+       const HRESULT res = EnumerateItems(censor,
+           options.PathMode,
+-          UString(), // options.AddPathPrefix,
++          options.AddPathPrefix, // M7Arc-patch: update-logical-paths
+           dirItems);
+ 
+       if (res != S_OK)
+@@ -1406,6 +1406,7 @@ HRESULT UpdateArchive(
+         return res;
+       }
+       
++      RINOK(callback->M7Arc_PrepareDirItems(dirItems)) // M7Arc-patch: update-logical-paths
+       RINOK(callback->FinishScanning(dirItems.Stat))
+ 
+       // 22.00: we don't need parent folder, if absolute path mode
+diff --git a/third_party/7zip/CPP/7zip/UI/Common/Update.h b/third_party/7zip/CPP/7zip/UI/Common/Update.h
+index ae141e5..c3c53a0 100644
+--- a/third_party/7zip/CPP/7zip/UI/Common/Update.h
++++ b/third_party/7zip/CPP/7zip/UI/Common/Update.h
+@@ -116,7 +116,7 @@ struct CUpdateOptions
+   UString StdInFileName;
+   UString EMailAddress;
+   FString WorkingDir;
+-  // UString AddPathPrefix;
++  UString AddPathPrefix; // M7Arc-patch: update-logical-paths
+ 
+   CObjectVector<CRenamePair> RenamePairs;
+   CRecordVector<UInt64> VolumesSizes;
+@@ -204,6 +204,8 @@ DECLARE_INTERFACE(IUpdateCallbackUI2):
+     public IDirItemsCallback
+ {
+   Z7_IFACE_PURE(IUpdateCallbackUI2)
++  // M7Arc-patch: update-logical-paths. M7Arc supplies source ownership for cloned macOS staging inputs.
++  virtual HRESULT M7Arc_PrepareDirItems(CDirItems &) { return S_OK; }
+ };
+ Z7_PURE_INTERFACES_END
+ 
