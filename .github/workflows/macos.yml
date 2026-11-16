@@ -41,26 +41,20 @@ jobs:
           archives: qtbase qttools qtdeclarative
           cache: true
       - name: Configure
-        run: >-
-          cmake -S . -B build/release -G Ninja
-          -DCMAKE_BUILD_TYPE=Release
-          -DCMAKE_PREFIX_PATH="$QT_ROOT_DIR"
-          -DCMAKE_OSX_DEPLOYMENT_TARGET=13.0
-          -DCMAKE_OSX_ARCHITECTURES=${{ matrix.arch }}
-          -DBUILD_TESTING=ON
+        run: cmake --preset ${{ matrix.arch }} -DCMAKE_PREFIX_PATH="$QT_ROOT_DIR"
       - name: Build
-        run: cmake --build build/release --parallel 3
+        run: cmake --build --preset ${{ matrix.arch }} --parallel 3
       - name: Test
-        run: ctest --test-dir build/release --output-on-failure
+        run: ctest --preset ${{ matrix.arch }}
       - name: Package and verify relocated application
-        run: python3 packaging/macos/package.py --qt-prefix "$QT_ROOT_DIR"
+        run: python3 packaging/macos/package.py --app build/${{ matrix.arch }}/M7Arc.app --qt-prefix "$QT_ROOT_DIR"
       - name: Verify graphical self-extracting applications and disk images
         shell: bash
         run: |
           images=(build/dist/M7Arc-*-macos-${{ matrix.arch }}.dmg)
           python3 tests/tools/DistributionIntegration.py \
-            --builder "$PWD/build/release/m7arc_distribution_builder_tests" \
-            --cli "$PWD/build/release/tools/7zz" \
+            --builder "$PWD/build/${{ matrix.arch }}/m7arc_distribution_builder_tests" \
+            --cli "$PWD/build/${{ matrix.arch }}/tools/7zz" \
             --windows-stubs "$PWD/src/tools/windows" \
             --source-dmg "${images[0]}"
       - name: Upload disk image
