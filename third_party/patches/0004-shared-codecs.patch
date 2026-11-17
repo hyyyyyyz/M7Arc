@@ -1,0 +1,135 @@
+diff --git a/third_party/7zip/CPP/7zip/UI/Common/LoadCodecs.cpp b/third_party/7zip/CPP/7zip/UI/Common/LoadCodecs.cpp
+index c944ee9..8e4d618 100644
+--- a/third_party/7zip/CPP/7zip/UI/Common/LoadCodecs.cpp
++++ b/third_party/7zip/CPP/7zip/UI/Common/LoadCodecs.cpp
+@@ -55,6 +55,10 @@ EXPORT_CODECS
+ 
+ #include "../../../Windows/FileFind.h"
+ #include "../../../Windows/DLL.h"
++// M7Arc-patch: shared-codecs
++#ifndef _WIN32
++#include <dlfcn.h>
++#endif
+ 
+ #ifdef _WIN32
+ #include "../../../Windows/FileName.h"
+@@ -516,6 +520,11 @@ void CCodecs::AddLastError(const FString &path)
+   CCodecError &error = Errors.AddNew();
+   error.Path = path;
+   error.ErrorCode = res;
++  // M7Arc-patch: shared-codecs
++  #ifndef _WIN32
++  if (const char *message = dlerror())
++    error.Message = message;
++  #endif
+ }
+ 
+ 
+@@ -788,7 +797,12 @@ void CCodecs::CloseLibs()
+ #endif // Z7_EXTERNAL_CODECS
+ 
+ 
+-HRESULT CCodecs::Load()
++// M7Arc-patch: shared-codecs. modulePaths replaces the default module search when set.
++HRESULT CCodecs::Load(
++    #ifdef Z7_EXTERNAL_CODECS
++    const FStringVector *modulePaths
++    #endif
++    )
+ {
+   /*
+   #ifdef NEW_FOLDER_INTERFACE
+@@ -848,6 +862,13 @@ HRESULT CCodecs::Load()
+   // printf("\nLoad codecs \n");
+ 
+   #ifdef Z7_EXTERNAL_CODECS
++    if (modulePaths)
++    {
++      FOR_VECTOR(i, *modulePaths)
++        RINOK(LoadDll((*modulePaths)[i], true))
++    }
++    else
++    {
+     const FString baseFolder = GetBaseFolderPrefixFromRegistry();
+     {
+       bool loadedOK;
+@@ -857,6 +878,7 @@ HRESULT CCodecs::Load()
+     }
+     RINOK(LoadDllsFromFolder(baseFolder + kCodecsFolderName))
+     RINOK(LoadDllsFromFolder(baseFolder + kFormatsFolderName))
++    }
+ 
+   NeedSetLibCodecs = true;
+     
+@@ -1037,7 +1059,7 @@ Z7_COM7F_IMF(CCodecs::CreateDecoder(UInt32 index, const GUID *iid, void **coder)
+ {
+   #ifdef EXPORT_CODECS
+   if (index < g_NumCodecs)
+-    return CreateDecoder(index, iid, coder);
++    return ::CreateDecoder(index, iid, coder); // M7Arc-patch: shared-codecs
+   #endif
+   
+   #ifdef Z7_EXTERNAL_CODECS
+@@ -1060,7 +1082,7 @@ Z7_COM7F_IMF(CCodecs::CreateEncoder(UInt32 index, const GUID *iid, void **coder)
+ {
+   #ifdef EXPORT_CODECS
+   if (index < g_NumCodecs)
+-    return CreateEncoder(index, iid, coder);
++    return ::CreateEncoder(index, iid, coder); // M7Arc-patch: shared-codecs
+   #endif
+ 
+   #ifdef Z7_EXTERNAL_CODECS
+@@ -1108,7 +1130,7 @@ Z7_COM7F_IMF(CCodecs::CreateHasher(UInt32 index, IHasher **hasher))
+ {
+   #ifdef EXPORT_CODECS
+   if (index < g_NumHashers)
+-    return CreateHasher(index, hasher);
++    return ::CreateHasher(index, hasher); // M7Arc-patch: shared-codecs
+   #endif
+   #ifdef Z7_EXTERNAL_CODECS
+   const CDllHasherInfo &ci = Hashers[index - NUM_EXPORT_HASHERS];
+@@ -1154,7 +1176,7 @@ bool CCodecs::GetCodec_DecoderIsAssigned(UInt32 index) const
+   if (index < g_NumCodecs)
+   {
+     NCOM::CPropVariant prop;
+-    if (GetProperty(index, NMethodPropID::kDecoderIsAssigned, &prop) == S_OK)
++    if (::GetMethodProperty(index, NMethodPropID::kDecoderIsAssigned, &prop) == S_OK) // M7Arc-patch: shared-codecs
+     {
+       if (prop.vt == VT_BOOL)
+         return VARIANT_BOOLToBool(prop.boolVal);
+@@ -1177,7 +1199,7 @@ bool CCodecs::GetCodec_EncoderIsAssigned(UInt32 index) const
+   if (index < g_NumCodecs)
+   {
+     NCOM::CPropVariant prop;
+-    if (GetProperty(index, NMethodPropID::kEncoderIsAssigned, &prop) == S_OK)
++    if (::GetMethodProperty(index, NMethodPropID::kEncoderIsAssigned, &prop) == S_OK) // M7Arc-patch: shared-codecs
+     {
+       if (prop.vt == VT_BOOL)
+         return VARIANT_BOOLToBool(prop.boolVal);
+@@ -1201,7 +1223,7 @@ bool CCodecs::GetCodec_IsFilter(UInt32 index, bool &isAssigned) const
+   if (index < g_NumCodecs)
+   {
+     NCOM::CPropVariant prop;
+-    if (GetProperty(index, NMethodPropID::kIsFilter, &prop) == S_OK)
++    if (::GetMethodProperty(index, NMethodPropID::kIsFilter, &prop) == S_OK) // M7Arc-patch: shared-codecs
+     {
+       if (prop.vt == VT_BOOL)
+       {
+diff --git a/third_party/7zip/CPP/7zip/UI/Common/LoadCodecs.h b/third_party/7zip/CPP/7zip/UI/Common/LoadCodecs.h
+index a81bb5c..8b1e673 100644
+--- a/third_party/7zip/CPP/7zip/UI/Common/LoadCodecs.h
++++ b/third_party/7zip/CPP/7zip/UI/Common/LoadCodecs.h
+@@ -382,7 +382,12 @@ public:
+     return formatIndex < 0 ? L"#" : (const wchar_t *)Formats[(unsigned)formatIndex].Name;
+   }
+ 
+-  HRESULT Load();
++  // M7Arc-patch: shared-codecs
++  HRESULT Load(
++      #ifdef Z7_EXTERNAL_CODECS
++      const FStringVector *modulePaths = NULL
++      #endif
++      );
+ 
+   #ifndef Z7_SFX
+   int FindFormatForArchiveName(const UString &arcPath) const;

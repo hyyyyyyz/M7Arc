@@ -1396,7 +1396,7 @@ HRESULT UpdateArchive(
 
       const HRESULT res = EnumerateItems(censor,
           options.PathMode,
-          options.AddPathPrefix,
+          options.AddPathPrefix, // M7Arc-patch: update-logical-paths
           dirItems);
 
       if (res != S_OK)
@@ -1406,7 +1406,7 @@ HRESULT UpdateArchive(
         return res;
       }
       
-      RINOK(callback->M7Arc_PrepareDirItems(dirItems))
+      RINOK(callback->M7Arc_PrepareDirItems(dirItems)) // M7Arc-patch: update-logical-paths
       RINOK(callback->FinishScanning(dirItems.Stat))
 
       // 22.00: we don't need parent folder, if absolute path mode

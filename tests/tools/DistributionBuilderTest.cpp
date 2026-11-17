@@ -1,3 +1,4 @@
+#include "tools/DistributionBuilder.h"
 #include "tools/SfxBuilder.h"
 #include <QCoreApplication>
 #include <QFile>
@@ -8,7 +9,9 @@ int main(int argc, char **argv) {
     QCoreApplication app(argc, argv);
     const auto args = app.arguments();
     QString error;
-    if (args.size() == 5 && args[1] == QStringLiteral("windows"))
+    if (args.size() == 5 && args[1] == QStringLiteral("console"))
+        error = m7arc::tools::createConsoleSfx(args[2], args[3], args[4]);
+    else if (args.size() == 5 && args[1] == QStringLiteral("windows"))
         error = m7arc::tools::createWindowsSfx(args[2], args[3], args[4]);
     else if (args.size() == 5 && args[1].startsWith(QStringLiteral("installer-"))) {
         m7arc::tools::WindowsInstallerOptions options;

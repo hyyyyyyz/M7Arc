@@ -1,0 +1,64 @@
+diff --git a/third_party/7zip/CPP/7zip/UI/Common/ArchiveExtractCallback.cpp b/third_party/7zip/CPP/7zip/UI/Common/ArchiveExtractCallback.cpp
+index a86dd20..8d8deb4 100644
+--- a/third_party/7zip/CPP/7zip/UI/Common/ArchiveExtractCallback.cpp
++++ b/third_party/7zip/CPP/7zip/UI/Common/ArchiveExtractCallback.cpp
+@@ -313,6 +313,10 @@ CArchiveExtractCallback::CArchiveExtractCallback():
+ 
+ void CArchiveExtractCallback::InitBeforeNewArchive()
+ {
++  // M7Arc-patch: extract-results
++  M7Arc_ItemResults.Clear();
++  M7Arc_WrittenIndices.Clear();
++  M7Arc_WrittenPaths.Clear();
+ #if defined(_WIN32) && !defined(UNDER_CE) && !defined(Z7_SFX)
+   ZoneBuf.Free();
+ #endif
+@@ -2886,6 +2890,20 @@ Z7_COM7F_IMF(CArchiveExtractCallback::SetOperationResult(Int32 opRes))
+ 
+   SET_OWNER
+ 
++  // M7Arc-patch: extract-results
++  if (opRes == NArchive::NExtract::NOperationResult::kOK
++      && !_itemFailure && _extractMode && !_stdOutMode
++      && !_diskFilePath.IsEmpty())
++  {
++    M7Arc_WrittenIndices.Add(_index);
++    M7Arc_WrittenPaths.Add(_diskFilePath);
++  }
++
++  // M7Arc-patch: extract-results
++  {
++    CM7ArcItemResult result = { _index, opRes, 0 };
++    M7Arc_ItemResults.Add(result);
++  }
+   return _extractCallback2->SetOperationResult(opRes, BoolToInt(_encrypted));
+   
+   COM_TRY_END
+@@ -2992,6 +3010,9 @@ Z7_COM7F_IMF(CArchiveExtractCallback::GetStream2(UInt32 index, ISequentialInStre
+   inStreamSpec->Set_PreserveATime(_ntOptions.PreserveATime);
+   if (!inStreamSpec->OpenShared(fullProcessedPath, _ntOptions.OpenShareForWrite))
+   {
++    // M7Arc-patch: extract-results
++    CM7ArcItemResult result = { index, NArchive::NExtract::NOperationResult::kUnavailable, GetLastError() };
++    M7Arc_ItemResults.Add(result);
+     RINOK(SendMessageError_with_LastError(kCantOpenInFile, fullProcessedPath))
+     return S_OK;
+   }
+diff --git a/third_party/7zip/CPP/7zip/UI/Common/ArchiveExtractCallback.h b/third_party/7zip/CPP/7zip/UI/Common/ArchiveExtractCallback.h
+index e1822c7..885e2db 100644
+--- a/third_party/7zip/CPP/7zip/UI/Common/ArchiveExtractCallback.h
++++ b/third_party/7zip/CPP/7zip/UI/Common/ArchiveExtractCallback.h
+@@ -493,6 +493,13 @@ public:
+   
+   FString DirPathPrefix_for_HashFiles;
+ 
++  // M7Arc-patch: extract-results. M7Arc records completed writes for native metadata restoration. Paths reflect
++  // overwrite renaming and path transformations performed by this callback.
++  struct CM7ArcItemResult { UInt32 Index; Int32 Result; DWORD SystemError; };
++  CRecordVector<CM7ArcItemResult> M7Arc_ItemResults;
++  CRecordVector<UInt32> M7Arc_WrittenIndices;
++  FStringVector M7Arc_WrittenPaths;
++
+   CArchiveExtractCallback();
+ 
+   void InitForMulti(bool multiArchives,

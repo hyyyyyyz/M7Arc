@@ -382,6 +382,7 @@ public:
     return formatIndex < 0 ? L"#" : (const wchar_t *)Formats[(unsigned)formatIndex].Name;
   }
 
+  // M7Arc-patch: shared-codecs
   HRESULT Load(
       #ifdef Z7_EXTERNAL_CODECS
       const FStringVector *modulePaths = NULL

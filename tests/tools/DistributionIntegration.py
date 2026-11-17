@@ -8,7 +8,10 @@ from pathlib import Path
 import plistlib
 import struct
 import subprocess
+import sys
 import tempfile
+
+SKIP = 77  # CTest SKIP_RETURN_CODE
 
 
 def run(*args, **kwargs):
@@ -43,7 +46,11 @@ def main():
     source = parser.add_mutually_exclusive_group()
     source.add_argument("--source-app", type=Path)
     source.add_argument("--source-dmg", type=Path)
+    parser.add_argument("--part", choices=("all", "windows", "mac"), default="all")
     args = parser.parse_args()
+    if args.part == "mac" and not (args.source_app or args.source_dmg):
+        print("SKIPPED: the Mac extractor bundle tests need a deployed M7Arc.app (--source-app) or installation image (--source-dmg).")
+        sys.exit(SKIP)
     with source_application(args) as source_app, tempfile.TemporaryDirectory(prefix="m7arc-distribution-") as directory:
         root = Path(directory)
         source = root / "Source"
@@ -53,67 +60,78 @@ def main():
         (source / "empty").mkdir()
         payload = root / "Payload.7z"
         run(args.cli, "a", "-t7z", "-m0=LZMA2", "-psecret", "-mhe=on", payload, ".", cwd=source)
-        for name in ("7z.sfx", "7zCon.sfx"):
-            stub = args.windows_stubs / name
-            output = root / (name + ".exe")
-            run(args.builder, "windows", stub, payload, output)
-            data = output.read_bytes()
-            header = stub.read_bytes()
-            assert data[:len(header)] == header
-            assert data[len(header):] == payload.read_bytes()
-            assert data[:2] == b"MZ"
-            offset = struct.unpack_from("<I", data, 60)[0]
-            assert data[offset:offset + 4] == b"PE\0\0"
-            assert struct.unpack_from("<H", data, offset + 4)[0] == 0x14C
-            destination = root / (name + "-extracted")
-            run(args.cli, "x", "-psecret", "-y", f"-o{destination}", output)
+        if args.part in ("all", "windows"):
+            check_windows(args, root, source, payload, contents)
+        if args.part in ("all", "mac"):
+            if source_app:
+                check_mac_bundles(args, root, source_app, payload, contents)
+            else:
+                print("SKIPPED: Mac extractor bundles (no --source-app or --source-dmg).")
+
+
+def check_windows(args, root, source, payload, contents):
+    for name in ("7z.sfx", "7zCon.sfx"):
+        stub = args.windows_stubs / name
+        output = root / (name + ".exe")
+        run(args.builder, "windows", stub, payload, output)
+        data = output.read_bytes()
+        header = stub.read_bytes()
+        assert data[:len(header)] == header
+        assert data[len(header):] == payload.read_bytes()
+        assert data[:2] == b"MZ"
+        offset = struct.unpack_from("<I", data, 60)[0]
+        assert data[offset:offset + 4] == b"PE\0\0"
+        assert struct.unpack_from("<H", data, offset + 4)[0] == 0x14C
+        destination = root / (name + "-extracted")
+        run(args.cli, "x", "-psecret", "-y", f"-o{destination}", output)
+        assert (destination / "中文 sample.txt").read_bytes() == contents
+        assert (destination / "empty").is_dir()
+    print("Windows x86 GUI and console SFX: PE structure, unchanged stub, encrypted payload, actual 7-Zip extraction passed.")
+    installer_payload = root / "Installer.7z"
+    run(args.cli, "a", "-t7z", "-m0=LZMA2", installer_payload, ".", cwd=source)
+    installer_stub = args.windows_stubs / "7zSD.sfx"
+    for mode in ("run", "open"):
+        output = root / f"installer-{mode}.exe"
+        run(args.builder, f"installer-{mode}", installer_stub, installer_payload, output)
+        data = output.read_bytes()
+        stub = installer_stub.read_bytes()
+        assert data[:len(stub)] == stub
+        assert data[len(stub):].startswith(b";!@Install@!UTF-8!\n")
+        assert data.endswith(installer_payload.read_bytes())
+        destination = root / f"installer-{mode}-extracted"
+        run(args.cli, "x", "-y", f"-o{destination}", output)
+        assert (destination / "中文 sample.txt").read_bytes() == contents
+    print("Windows installer SFX: upstream config parser round trip and payload extraction passed; configured commands were not run.")
+
+
+def check_mac_bundles(args, root, source_app, payload, contents):
+    environment = os.environ.copy()
+    for name in ("QT_PLUGIN_PATH", "QT_QPA_PLATFORM_PLUGIN_PATH", "DYLD_LIBRARY_PATH", "DYLD_FRAMEWORK_PATH"):
+        environment.pop(name, None)
+    password = root / "password.txt"
+    password.write_text("secret\n")
+    cancelled_app = root / "Cancelled.app"
+    cancelled = subprocess.run([str(args.builder), "app", str(source_app), str(payload), str(cancelled_app), "cancel"],
+                               capture_output=True)
+    assert cancelled.returncode != 0 and not cancelled_app.exists()
+    for mode in ("embedded", "external"):
+        app = root / f"独立 {mode}.app"
+        run(args.builder, "app", source_app, payload, app, mode)
+        run("codesign", "--verify", "--deep", "--strict", app)
+        executable = app / "Contents/MacOS/M7ArcExtractor"
+        run(executable, "--smoke-test", env=environment, cwd=root)
+        destination = root / (mode + "-extracted")
+        run(executable, "--extract-to", destination, "--password-file", password, env=environment, cwd=root)
+        assert (destination / "中文 sample.txt").read_bytes() == contents
+        assert (destination / "empty").is_dir()
+        dmg = root / (mode + ".dmg")
+        run(args.builder, "dmg", app, "" if mode == "embedded" else payload, dmg)
+        with mount_dmg(dmg) as volume:
+            mounted_executable = volume / app.name / "Contents/MacOS/M7ArcExtractor"
+            destination = root / (mode + "-dmg-extracted")
+            run(mounted_executable, "--extract-to", destination, "--password-file", password, env=environment, cwd=root)
             assert (destination / "中文 sample.txt").read_bytes() == contents
-            assert (destination / "empty").is_dir()
-        print("Windows x86 GUI and console SFX: PE structure, unchanged stub, encrypted payload, actual 7-Zip extraction passed.")
-        installer_payload = root / "Installer.7z"
-        run(args.cli, "a", "-t7z", "-m0=LZMA2", installer_payload, ".", cwd=source)
-        installer_stub = args.windows_stubs / "7zSD.sfx"
-        for mode in ("run", "open"):
-            output = root / f"installer-{mode}.exe"
-            run(args.builder, f"installer-{mode}", installer_stub, installer_payload, output)
-            data = output.read_bytes()
-            stub = installer_stub.read_bytes()
-            assert data[:len(stub)] == stub
-            assert data[len(stub):].startswith(b";!@Install@!UTF-8!\n")
-            assert data.endswith(installer_payload.read_bytes())
-            destination = root / f"installer-{mode}-extracted"
-            run(args.cli, "x", "-y", f"-o{destination}", output)
-            assert (destination / "中文 sample.txt").read_bytes() == contents
-        print("Windows installer SFX: upstream config parser round trip and payload extraction passed; configured commands were not run.")
-        if not source_app:
-            return
-        environment = os.environ.copy()
-        for name in ("QT_PLUGIN_PATH", "QT_QPA_PLATFORM_PLUGIN_PATH", "DYLD_LIBRARY_PATH", "DYLD_FRAMEWORK_PATH"):
-            environment.pop(name, None)
-        password = root / "password.txt"
-        password.write_text("secret\n")
-        cancelled_app = root / "Cancelled.app"
-        cancelled = subprocess.run([str(args.builder), "app", str(source_app), str(payload), str(cancelled_app), "cancel"],
-                                   capture_output=True)
-        assert cancelled.returncode != 0 and not cancelled_app.exists()
-        for mode in ("embedded", "external"):
-            app = root / f"独立 {mode}.app"
-            run(args.builder, "app", source_app, payload, app, mode)
-            run("codesign", "--verify", "--deep", "--strict", app)
-            executable = app / "Contents/MacOS/M7ArcExtractor"
-            run(executable, "--smoke-test", env=environment, cwd=root)
-            destination = root / (mode + "-extracted")
-            run(executable, "--extract-to", destination, "--password-file", password, env=environment, cwd=root)
-            assert (destination / "中文 sample.txt").read_bytes() == contents
-            assert (destination / "empty").is_dir()
-            dmg = root / (mode + ".dmg")
-            run(args.builder, "dmg", app, "" if mode == "embedded" else payload, dmg)
-            with mount_dmg(dmg) as volume:
-                mounted_executable = volume / app.name / "Contents/MacOS/M7ArcExtractor"
-                destination = root / (mode + "-dmg-extracted")
-                run(mounted_executable, "--extract-to", destination, "--password-file", password, env=environment, cwd=root)
-                assert (destination / "中文 sample.txt").read_bytes() == contents
-        print("Mac embedded/external extractors: independent startup, strict signing, encrypted extraction and mounted DMG extraction passed.")
+    print("Mac embedded/external extractors: independent startup, strict signing, encrypted extraction and mounted DMG extraction passed.")
 
 
 if __name__ == "__main__":

@@ -335,7 +335,7 @@ Z7_COM7F_IMF(CHandler::UpdateItems(ISequentialOutStream *outStream, UInt32 numIt
         else
         {
           UString s = prop.bstrVal;
-          // UTF-8 flags cover both the member name and its comment.
+          // M7Arc-patch: zip-comment-utf8. UTF-8 flags cover both the member name and its comment.
           if (tryUtf8 && !s.IsAscii())
             ui.IsUtf8 = true;
           AString a;

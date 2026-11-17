@@ -24,6 +24,44 @@ target_compile_options(m7arc_quicklook PRIVATE -fobjc-arc -fapplication-extensio
 target_link_options(m7arc_quicklook PRIVATE "-Wl,-e,_NSExtensionMain")
 target_link_libraries(m7arc_quicklook PRIVATE m7arc_engine "-framework AppKit" "-framework QuickLookUI")
 
+# Test targets and CTest entries for the macOS integrations.
+function(m7arc_define_macos_tests)
+    set(macos_sources "${CMAKE_CURRENT_FUNCTION_LIST_DIR}/../src/platform")
+    set(macos_tests "${CMAKE_CURRENT_FUNCTION_LIST_DIR}/../tests/platform")
+    add_executable(m7arc_services_tests
+        "${macos_tests}/ServicesTest.mm"
+        "${macos_sources}/services/MacServices.mm")
+    target_include_directories(m7arc_services_tests PRIVATE "${macos_sources}/..")
+    target_compile_options(m7arc_services_tests PRIVATE -fobjc-arc)
+    target_link_libraries(m7arc_services_tests PRIVATE Qt6::Core "-framework AppKit" "-framework UniformTypeIdentifiers")
+    add_test(NAME platform.services COMMAND m7arc_services_tests)
+    add_executable(m7arc_file_promises_tests
+        "${macos_tests}/FilePromisesTest.cpp"
+        "${macos_sources}/drag/MacFilePromises.mm")
+    target_include_directories(m7arc_file_promises_tests PRIVATE "${macos_sources}/..")
+    target_compile_options(m7arc_file_promises_tests PRIVATE -fobjc-arc)
+    target_link_libraries(m7arc_file_promises_tests PRIVATE m7arc_engine Qt6::Widgets
+        "-framework AppKit" "-framework UniformTypeIdentifiers")
+    add_test(NAME platform.file_promises COMMAND m7arc_file_promises_tests)
+    add_executable(m7arc_preview_tests
+        "${macos_tests}/PreviewTest.mm"
+        "${macos_sources}/quicklook/PreviewController.mm")
+    target_compile_options(m7arc_preview_tests PRIVATE -fobjc-arc)
+    target_link_libraries(m7arc_preview_tests PRIVATE m7arc_engine "-framework AppKit" "-framework QuickLookUI")
+    add_dependencies(m7arc_preview_tests m7arc_cli)
+    add_test(NAME platform.quicklook_controller COMMAND "${Python3_EXECUTABLE}"
+        "${macos_tests}/PreviewIntegration.py" "${M7ARC_CLI_PATH}" "$<TARGET_FILE:m7arc_preview_tests>")
+    set_tests_properties(platform.quicklook_controller PROPERTIES TIMEOUT 60)
+    add_executable(m7arc_workflow_tests "${macos_tests}/WorkflowTest.mm")
+    target_compile_options(m7arc_workflow_tests PRIVATE -fobjc-arc)
+    target_link_libraries(m7arc_workflow_tests PRIVATE "-framework Automator" "-framework Foundation")
+    set(actions "${CMAKE_CURRENT_FUNCTION_LIST_DIR}/../resources/quick-actions")
+    add_test(NAME platform.quick_actions COMMAND m7arc_workflow_tests
+        "${actions}/M7Arc Compress.workflow/Contents/document.wflow"
+        "${actions}/M7Arc Extract.workflow/Contents/document.wflow"
+        "${actions}/M7Arc Test.workflow/Contents/document.wflow")
+endfunction()
+
 function(m7arc_add_macos_integrations application_target)
     set(macos_sources "${CMAKE_CURRENT_FUNCTION_LIST_DIR}/../src/platform")
     target_sources(${application_target} PRIVATE "${macos_sources}/services/MacServices.mm")
@@ -47,36 +85,6 @@ function(m7arc_add_macos_integrations application_target)
             "$<TARGET_BUNDLE_CONTENT_DIR:${application_target}>/PlugIns/M7ArcPreview.appex"
         VERBATIM)
     if(BUILD_TESTING)
-        add_executable(m7arc_services_tests
-            "${macos_sources}/services/ServicesTest.mm"
-            "${macos_sources}/services/MacServices.mm")
-        target_compile_options(m7arc_services_tests PRIVATE -fobjc-arc)
-        target_link_libraries(m7arc_services_tests PRIVATE Qt6::Core "-framework AppKit" "-framework UniformTypeIdentifiers")
-        add_test(NAME platform.services COMMAND m7arc_services_tests)
-        add_executable(m7arc_file_promises_tests
-            "${macos_sources}/drag/FilePromisesTest.cpp"
-            "${macos_sources}/drag/MacFilePromises.mm")
-        target_include_directories(m7arc_file_promises_tests PRIVATE "${macos_sources}/..")
-        target_compile_options(m7arc_file_promises_tests PRIVATE -fobjc-arc)
-        target_link_libraries(m7arc_file_promises_tests PRIVATE m7arc_engine Qt6::Widgets
-            "-framework AppKit" "-framework UniformTypeIdentifiers")
-        add_test(NAME platform.file_promises COMMAND m7arc_file_promises_tests)
-        add_executable(m7arc_preview_tests
-            "${macos_sources}/quicklook/PreviewTest.mm"
-            "${macos_sources}/quicklook/PreviewController.mm")
-        target_compile_options(m7arc_preview_tests PRIVATE -fobjc-arc)
-        target_link_libraries(m7arc_preview_tests PRIVATE m7arc_engine "-framework AppKit" "-framework QuickLookUI")
-        add_dependencies(m7arc_preview_tests m7arc_cli)
-        add_test(NAME platform.quicklook_controller COMMAND "${Python3_EXECUTABLE}"
-            "${macos_sources}/quicklook/PreviewIntegration.py" "${M7ARC_CLI_PATH}" "$<TARGET_FILE:m7arc_preview_tests>")
-        set_tests_properties(platform.quicklook_controller PROPERTIES TIMEOUT 60)
-        add_executable(m7arc_workflow_tests "${macos_sources}/services/WorkflowTest.mm")
-        target_compile_options(m7arc_workflow_tests PRIVATE -fobjc-arc)
-        target_link_libraries(m7arc_workflow_tests PRIVATE "-framework Automator" "-framework Foundation")
-        set(actions "${CMAKE_CURRENT_FUNCTION_LIST_DIR}/../resources/quick-actions")
-        add_test(NAME platform.quick_actions COMMAND m7arc_workflow_tests
-            "${actions}/M7Arc Compress.workflow/Contents/document.wflow"
-            "${actions}/M7Arc Extract.workflow/Contents/document.wflow"
-            "${actions}/M7Arc Test.workflow/Contents/document.wflow")
+        m7arc_define_macos_tests()
     endif()
 endfunction()

@@ -2,6 +2,26 @@
 
 基线：7-Zip 26.03，提交 `0766b733fe3e06dd2a7f9a3cfbf2108ac73abd17`。
 
+## 补丁文件与重放
+
+对 `third_party/7zip` 的全部修改以统一 diff 保存在 `third_party/patches/`，相对基线快照（仓库提交 `8adde2c`）生成，路径从仓库根目录起算。源码中每处修改都带 `M7Arc-patch: <名称>` 标记，名称与补丁文件一一对应：
+
+| 标记 | 补丁文件 | 本文章节 |
+| --- | --- | --- |
+| `extract-results` | `0001-extract-results.patch` | 提取结果与 macOS 元数据 |
+| `update-logical-paths` | `0002-update-logical-paths.patch` | 物理输入与逻辑成员路径 |
+| `zip-comment-utf8` | `0003-zip-comment-utf8.patch` | ZIP 成员注释的 UTF-8 标志 |
+| `shared-codecs` | `0004-shared-codecs.patch` | 内外模块共享方法目录 |
+
+升级上游时，先用新版本的未修改文件替换 `third_party/7zip`，再在仓库根目录按序重放：
+
+```sh
+git apply --check third_party/patches/*.patch   # 先检查是否仍可应用
+git apply third_party/patches/*.patch
+```
+
+某个补丁冲突时，按对应章节的说明在新源码上手工重做该处修改，保留 `M7Arc-patch` 标记，然后重新导出该补丁：`git diff <未修改的新上游提交> -- <该补丁涉及的文件> > third_party/patches/<文件名>`。检查 `git grep M7Arc-patch third_party/7zip` 的标记集合与上表一致，再运行各章节末尾列出的测试。
+
 ## 提取结果与 macOS 元数据
 
 文件：
