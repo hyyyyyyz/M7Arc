@@ -27,6 +27,8 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 include(CTest)
+# Executables and application bundles stay at the top of the build tree whichever directory defines them.
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}")
 include(cmake/engine.cmake)
 
 # Shared by the engine and the applications.
