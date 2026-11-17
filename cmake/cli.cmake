@@ -88,12 +88,10 @@ function(m7arc_attach_tools application_target)
         "${CMAKE_CURRENT_FUNCTION_LIST_DIR}/../src/tools/SfxBuilder.cpp"
         "${CMAKE_CURRENT_FUNCTION_LIST_DIR}/../src/tools/DistributionBuilder.cpp")
     add_executable(M7ArcExtractor
-        "${CMAKE_CURRENT_FUNCTION_LIST_DIR}/../src/extractor/main.cpp"
-        "${CMAKE_CURRENT_FUNCTION_LIST_DIR}/../src/app/Translation.cpp"
-        "${CMAKE_CURRENT_FUNCTION_LIST_DIR}/../src/ui/OperationController.cpp")
+        "${CMAKE_CURRENT_FUNCTION_LIST_DIR}/../src/extractor/main.cpp")
     target_include_directories(M7ArcExtractor PRIVATE "${CMAKE_CURRENT_FUNCTION_LIST_DIR}/../src")
     target_compile_definitions(M7ArcExtractor PRIVATE M7ARC_VERSION="${M7ARC_VERSION}")
-    target_link_libraries(M7ArcExtractor PRIVATE m7arc_engine Qt6::Widgets Qt6::Concurrent)
+    target_link_libraries(M7ArcExtractor PRIVATE m7arc_ui m7arc_app m7arc_engine Qt6::Widgets)
     set_target_properties(M7ArcExtractor PROPERTIES
         BUILD_RPATH "@executable_path/../Frameworks"
         INSTALL_RPATH "@executable_path/../Frameworks")

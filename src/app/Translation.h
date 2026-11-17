@@ -1,7 +1,7 @@
 #pragma once
 
-class QApplication;
+class QCoreApplication;
 
 namespace m7arc {
-void loadTranslations(QApplication& application);
+void loadTranslations(QCoreApplication& application);
 }

@@ -1,4 +1,5 @@
 #include "HelpDialog.h"
+#include "app/Settings.h"
 #include <QApplication>
 #include <QComboBox>
 #include <QDesktopServices>
@@ -11,7 +12,6 @@
 #include <QListWidget>
 #include <QLocale>
 #include <QRegularExpression>
-#include <QSettings>
 #include <QShortcut>
 #include <QSplitter>
 #include <QTextBrowser>
@@ -77,9 +77,7 @@ class HelpDialog final : public QDialog {
             search_->setFocus();
             search_->selectAll();
         });
-        QString language = QSettings().value("ui/language", "system").toString();
-        if (language == "system")
-            language = QLocale::system().language() == QLocale::Chinese ? "zh_CN" : "en";
+        const auto language = app::Settings().effectiveLanguage();
         language_->setCurrentIndex(language == "en" ? 1 : 0);
         load();
     }

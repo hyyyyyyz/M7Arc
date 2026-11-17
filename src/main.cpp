@@ -36,10 +36,16 @@ int main(int argc, char** argv) {
         try {
             m7arc::ArchiveEngine engine;
             auto formats = engine.formats();
+            if (formats.empty())
+                return 1;
+            // Build the real main window so that startup failures in its construction show up here.
+            m7arc::loadTranslations(app);
+            m7arc::ui::MainWindow window;
+            app.processEvents();
             QTextStream(stdout) << "M7Arc " << QCoreApplication::applicationVersion() << "; Qt " << qVersion()
                                 << "; 7-Zip " << QString::fromStdString(engine.version())
-                                << "; formats=" << formats.size() << "\n";
-            return formats.empty() ? 1 : 0;
+                                << "; formats=" << formats.size() << "; window=" << window.windowTitle() << "\n";
+            return 0;
         } catch (const std::exception& e) {
             QTextStream(stderr) << e.what() << "\n";
             return 1;

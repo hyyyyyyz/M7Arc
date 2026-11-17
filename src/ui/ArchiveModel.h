@@ -1,31 +1,14 @@
 #pragma once
+#include "app/ArchiveRows.h"
 #include <QAbstractTableModel>
 #include <QDateTime>
 #include <QIcon>
 #include <QVariantMap>
 
 namespace m7arc::ui {
-struct ArchiveProperty {
-    quint32 id = 0;
-    QString name;
-    QString value;
-};
-struct ArchiveContainer {
-    QString path;
-    QString format;
-    QList<ArchiveProperty> properties;
-    QStringList volumes;
-};
-struct ArchiveRow {
-    quint32 index = 0;
-    QString path;
-    quint64 size = 0, packedSize = 0;
-    bool directory = false, encrypted = false, alternateStream = false;
-    QDateTime modified;
-    QString method;
-    QVariantMap properties;
-    QList<ArchiveProperty> rawProperties;
-};
+using app::ArchiveContainer;
+using app::ArchiveProperty;
+using app::ArchiveRow;
 class ArchiveModel final : public QAbstractTableModel {
     Q_OBJECT
   public:
