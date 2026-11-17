@@ -18,7 +18,7 @@ M7Arc 以 7-Zip 的归档引擎为基础，提供面向 macOS 的 Qt 文件管�
 | P5 | 哈希、基准、分割合并、全部工具、SFX 三类交付和高级命令行能力收齐。 |
 | P6 | 双架构发布包、ad-hoc 签名、文档、本地化、安装与卸载体验；取得证书后增加 Developer ID 签名与公证。 |
 
-`ArchiveSession` 持有归档层级和条目身份；`FolderModel` 负责 Qt 展示；`ArchiveJobs` 调用引擎并桥接进度；`TransferController` 处理文件与归档之间的操作；`MacPlatform` 承担系统 API。格式能力必须包含读取、创建、更新、加密、分卷等独立维度，不能由扩展名或一个“可写”开关推断全部操作。
+`Workspace` 准备引擎作业并报告结果，`JobRunner` 串行执行并桥接进度，`ArchiveRows` 与 `ArchiveModel` 负责条目展示，`Transfer`/`LocalTransfer` 处理文件与归档之间的操作，`apps/desktop/src/platform` 与 `MacMetadata` 承担系统 API。下文各行中的模块名是设计时的命名；对应关系见[总设计](../DESIGN.zh-CN.md)第 4.3 节。格式能力必须包含读取、创建、更新、加密、分卷等独立维度，不能由扩展名或一个“可写”开关推断全部操作。
 
 ## 主窗口与功能入口
 

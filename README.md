@@ -23,7 +23,7 @@ M7Arc 目前是工作名：M 代表 Mac，7 代表 7-Zip，Arc 来自 archive。
 - 原生外部 Codecs/Formats 模块，包含实际加载状态、错误报告和可构建的模块示例。
 - 简体中文和英文界面，包含搜索和快捷键说明的离线帮助。
 
-GUI 通过结构化 C++ API 直接调用引擎。随应用附带的官方 `7zz` 可以单独在终端使用。
+GUI 通过结构化 C++ API 直接调用引擎。命令行程序 `m7arc` 用 Rust 编写，经引擎的 C 接口使用同一套 7-Zip 代码，提供创建、列出、提取、测试、编辑、校验和格式查询，支持 `--json` 与固定的退出码，详见[命令行说明](apps/cli/README.md)。应用包内的 `M7Arc.app/Contents/Helpers/m7arc` 可直接在终端运行，随包还附带官方 `7zz`。
 
 ## 安装与版本
 
@@ -37,7 +37,7 @@ GUI 通过结构化 C++ API 直接调用引擎。随应用附带的官方 `7zz` 
 
 ## 从源码构建
 
-完整源码保存在此项目内，构建不依赖旁边的上游 checkout。需要 macOS 开发工具、CMake、Ninja、Python 和 Qt 6.11.2。
+完整源码保存在此项目内，构建不依赖旁边的上游 checkout。需要 macOS 开发工具、CMake、Ninja、Python 和 Qt 6.11.2；构建并打包 `m7arc` 还需要 Rust（cargo），没有 cargo 时配置会给出提示并跳过它。
 
 ```sh
 cmake --preset release
@@ -46,29 +46,36 @@ ctest --preset release
 open build/release/M7Arc.app
 ```
 
-Qt 安装、架构选择和打包命令见[构建指南](docs/BUILDING.md)。[发行指南](docs/RELEASE.zh-CN.md)说明 Git 标签、GitHub Actions 和 Release 附件流程；[贡献指南](CONTRIBUTING.md)说明开发约定。
+只构建命令行时不需要 Qt：在仓库根目录运行 `cargo build --release`，得到 `build/cargo/release/m7arc`。Qt 安装、架构选择和打包命令见[构建指南](docs/BUILDING.md)。[发行指南](docs/RELEASE.zh-CN.md)说明 Git 标签、GitHub Actions 和 Release 附件流程；[贡献指南](CONTRIBUTING.md)说明开发约定。
 
 ## 项目布局
 
 ```text
 M7Arc/
-├── CMakeLists.txt / CMakePresets.json
+├── CMakeLists.txt / CMakePresets.json   # 顶层入口
+├── Cargo.toml                            # Rust 工作区
 ├── VERSION / CHANGELOG.md
-├── cmake/                    # 引擎清单、CLI、系统扩展与 bundle 配置
+├── cmake/                    # 引擎源清单与 sevenzip_objects / m7arc_engine
 ├── src/
-│   ├── engine/               # 7-Zip API、格式目录与回调
-│   ├── app/                  # 编辑会话、翻译
-│   ├── ui/                   # Qt 文件管理器、参数窗口与工具
-│   ├── platform/             # 元数据、Services、拖放、Quick Look
-│   ├── tools/                # 官方 CLI 和自解压包构建
-│   └── extractor/            # 独立图形提取器
-├── resources/                # 图标、翻译、格式目录与离线帮助
-├── tests/                    # 真实归档、应用和平台集成验证
+│   ├── engine/               # 7-Zip 适配、格式目录与回调；capi/ 是 C 接口
+│   └── platform/             # MacMetadata：元数据采集与恢复
+├── crates/
+│   ├── m7arc-sys/            # C 接口的 Rust 绑定
+│   └── m7arc-core/           # 安全的 Rust API
+├── apps/
+│   ├── cli/                  # m7arc 命令行（Rust）
+│   └── desktop/              # Qt 桌面端
+│       ├── src/              # app/ 应用层、ui/ 界面、platform/ 系统集成、tools/ SFX 构建、extractor/ 提取器
+│       ├── resources/        # 图标、翻译、格式目录、离线帮助、Quick Actions
+│       ├── cmake/            # 官方 7zz 与系统扩展的构建配置、Info.plist
+│       └── tests/            # 应用、平台与工具集成验证
+├── tests/engine/             # 引擎与 C 接口测试
 ├── packaging/macos/          # 部署、ad-hoc 签名、DMG、Release
+├── resources/brand/          # 品牌资产
 ├── docs/                     # 设计、接口、构建与发行文档
 ├── design/                   # 离线交互原型
 ├── website/                  # GitHub Pages 官网与下载入口
-└── third_party/7zip/         # 官方完整源码与原许可证
+└── third_party/              # 7zip/ 官方完整源码、patches/ 本地补丁
 ```
 
 ## 设计资料

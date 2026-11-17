@@ -2,7 +2,7 @@
 
 Build instructions are in [docs/BUILDING.md](docs/BUILDING.md). Product behavior and the migration scope are documented in [DESIGN.zh-CN.md](DESIGN.zh-CN.md) and the feature specifications under `docs/`.
 
-Keep archive algorithms in the bundled upstream source. Application logic belongs in `src/`; platform operations belong in `src/platform`. Changes to bundled 7-Zip files should be narrow and documented alongside the pinned upstream source information.
+Keep archive algorithms in the bundled upstream source. The engine and its C interface live in `src/engine`; Rust code in `crates/` and `apps/cli` builds on that interface. Desktop application logic belongs in `apps/desktop/src/app`, widgets in `apps/desktop/src/ui`, and macOS integration in `apps/desktop/src/platform`; code the engine also needs stays in `src/platform`. Changes to bundled 7-Zip files should be narrow and documented alongside the pinned upstream source information.
 
 Use a separate commit for a coherent change. Explain the user-visible result and how it was checked. For archive operations, exercise a real input that would expose a wrong option, member selection, output path or data loss. Visual adjustments usually need a direct UI check.
 

@@ -214,55 +214,32 @@ CRC SHA 上下文菜单另外支持生成 `.sha256` 清单和“测试压缩包�
 
 ## 4. Qt 模块落点
 
+当前实现：
+
 ```text
 apps/desktop/src/ui/
-  MainWindow.{h,cpp}
-  actions/CommandRegistry.{h,cpp}
-  actions/CommandState.{h,cpp}
-  panels/FilePanel.{h,cpp}
-  panels/PathBar.{h,cpp}
-  panels/PanelStatusBar.{h,cpp}
-  models/FolderItemModel.{h,cpp}
-  models/FolderSortProxyModel.{h,cpp}
-  models/PropertyTableModel.{h,cpp}
-  dialogs/AddArchiveDialog.{h,cpp}
-  dialogs/ArchiveOptionsDialog.{h,cpp}
-  dialogs/ExtractDialog.{h,cpp}
-  dialogs/OperationDialog.{h,cpp}
-  dialogs/PasswordDialog.{h,cpp}
-  dialogs/OverwriteDialog.{h,cpp}
-  dialogs/MemoryRequestDialog.{h,cpp}
-  dialogs/MessagesDialog.{h,cpp}
-  dialogs/PropertiesDialog.{h,cpp}
-  dialogs/CopyMoveDialog.{h,cpp}
-  dialogs/SplitDialog.{h,cpp}
-  dialogs/LinkDialog.{h,cpp}
-  dialogs/NameDialog.{h,cpp}
-  dialogs/CommentDialog.{h,cpp}
-  dialogs/SelectionDialog.{h,cpp}
-  dialogs/HistoryDialog.{h,cpp}
-  dialogs/TempFilesDialog.{h,cpp}
-  dialogs/HashResultDialog.{h,cpp}
-  dialogs/BenchmarkDialog.{h,cpp}
-  dialogs/PreferencesDialog.{h,cpp}
-  dialogs/AboutDialog.{h,cpp}
-  preferences/{System,Finder,Folders,Editors,Settings,Language}Page.{h,cpp}
-  help/HelpWindow.{h,cpp}
-src/application/
-  FolderSession.{h,cpp}
-  ArchiveOpenRequest.{h,cpp}
-  ExternalEditSession.{h,cpp}
-  OperationService.{h,cpp}
-src/platform/macos/
-  MacShellIntegration.{h,mm}
-  FileAssociations.{h,mm}
-  ClipboardFiles.{h,mm}
-  TrashService.{h,mm}
+  MainWindow.{h,cpp}            # 菜单、工具栏、面板、命令注册，前端对 JobRunner 的询问实现
+  FilePane.{h,cpp}              # 地址栏、列表、状态栏
+  ArchiveModel.{h,cpp}          # 归档条目与属性列的表模型
+  ArchiveDialogs.{h,cpp}        # 添加、提取、覆盖、密码、属性、设置等对话框
+  OperationController.{h,cpp}   # 进度窗口、暂停与取消
+  HashDialog / BenchmarkDialog / SfxDialog / FileMetadataDialog / HelpDialog
+  SystemClipboard / ToolbarIcons
+apps/desktop/src/app/
+  Workspace / JobRunner / Transfer / LocalTransfer / EditSession / TempStore
+  CommandRegistry / PaneState / ArchiveRows / FileSplit / FormatCatalog / Settings / Translation
+apps/desktop/src/platform/
+  services/MacServices.mm       # Finder 服务
+  drag/MacFilePromises.mm       # 文件 promise 拖出
+  quicklook/                    # Quick Look 预览扩展
+src/platform/MacMetadata.*      # 元数据采集与恢复（引擎共用）
 ```
 
-`CommandRegistry` 注册动作、标题、快捷键与回调；`CommandState` 读取焦点、选择和当前 provider 能力。面板与对话框收集参数，`OperationService` 创建可暂停、取消且能够请求密码/覆盖/内存决策的任务。引擎工作线程通过 Qt queued signal 通知主线程，UI 不直接操作 Win32 控件或 Registry。
+`CommandRegistry` 注册命令标识与回调，菜单、工具栏和快捷键只引用标识。面板与对话框收集参数，`Workspace` 准备引擎作业并交给 `JobRunner`；作业可暂停、取消，并通过前端请求密码、覆盖和内存决策。引擎工作线程通过 Qt queued 调用通知主线程，UI 不直接操作 Win32 控件或 Registry。
 
-`FolderItemModel` 保存 provider 的条目索引和属性 ID，不把归档目录转成磁盘目录；`FolderSession` 保存虚拟路径和外层归档栈。类型对应的视图设置进入 `QSettings`；格式、压缩方法、摘要算法与能力来自引擎目录。
+`ArchiveModel` 保存条目索引和属性，不把归档目录转成磁盘目录；嵌套归档的外层栈由面板与 `Workspace` 维护。类型对应的视图设置进入 `QSettings`；格式、压缩方法、摘要算法与能力来自引擎目录。
+
+计划中的拆分：把对话框、面板和设置页拆成 `dialogs/`、`panels/`、`preferences/` 子目录，增加 `CommandState`（按焦点、选择和 provider 能力计算命令可用性）、`FolderItemModel` 与排序代理、`PathBar`/`PanelStatusBar` 独立控件，以及 `FileAssociations`、`TrashService` 等 macOS 服务封装；当前这些职责分别在 `MainWindow`、`FilePane` 和 `MacServices` 中。
 
 原版依赖关系在 [FM.mak:13](../third_party/7zip/CPP/7zip/UI/FileManager/FM.mak#L13) 列出：App、Panel 系列、FSFolder/FSFolderCopy、RootFolder、FSDrives、NetFolder、AltStreamsFolder、Agent/ArchiveFolder、各对话框、回调与视图设置。迁移保持这些职责边界，Win32 窗口层由 Qt 重写，provider、归档算法与操作语义由平台适配后的核心承担。
 
