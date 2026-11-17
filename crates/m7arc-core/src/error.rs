@@ -27,7 +27,7 @@ impl Error {
     pub fn is_password_error(&self) -> bool {
         match self {
             Error::PasswordRequired(_) | Error::PasswordOrCorruption(_) => true,
-            Error::OperationFailed(report) => report.password_may_be_incorrect,
+            Error::OperationFailed(report) => report.password_may_be_incorrect || report.needs_password(),
             _ => false,
         }
     }

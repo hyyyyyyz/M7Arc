@@ -68,6 +68,14 @@ pub struct OperationReport {
     pub password_may_be_incorrect: bool,
 }
 
+impl OperationReport {
+    /// True when the engine stopped because an encrypted member needed a password
+    /// and the call had no password and no password callback.
+    pub fn needs_password(&self) -> bool {
+        self.errors.iter().any(|e| e == "A password is required")
+    }
+}
+
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct FileHash {
     pub path: String,

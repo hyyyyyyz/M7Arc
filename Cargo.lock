@@ -3,6 +3,14 @@
 version = 3
 
 [[package]]
+name = "m7arc-cli"
+version = "0.1.0"
+dependencies = [
+ "m7arc-core",
+ "m7arc-sys",
+]
+
+[[package]]
 name = "m7arc-core"
 version = "0.1.0"
 dependencies = [
