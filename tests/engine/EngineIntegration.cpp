@@ -224,7 +224,7 @@ int main() {
              "Create original for cancellation");
         auto originalBytes = read(existing);
         m7arc::Callbacks cancel;
-        cancel.progress = [](const m7arc::Progress& p) { return p.phase != "Compressing"; };
+        cancel.progress = [](const m7arc::Progress& p) { return p.stage != m7arc::Stage::Compressing; };
         auto cancelled = engine.create({(root / "abc.txt").string()}, existing.string(), {}, cancel);
         check(cancelled.cancelled, "Cancel update callback");
         check(read(existing) == originalBytes, "Cancelled update leaves original bytes unchanged");
@@ -335,7 +335,7 @@ int main() {
               "Replacement updates member metadata");
         auto beforeReplaceCancel = read(prefixArchive);
         m7arc::Callbacks cancelReplace;
-        cancelReplace.progress = [](const m7arc::Progress& p) { return p.phase != "Updating"; };
+        cancelReplace.progress = [](const m7arc::Progress& p) { return p.stage != m7arc::Stage::Updating; };
         check(engine.replace(prefixArchive.string(), replaceIndex, edited.string(), {}, cancelReplace)
                   .cancelled,
               "Cancel member replacement");
@@ -488,7 +488,7 @@ int main() {
         bool changed = false;
         m7arc::Callbacks changeInput;
         changeInput.progress = [&](const m7arc::Progress& p) {
-            if (p.stage == m7arc::Stage::Compressing && p.phase == "Compressing" && !changed) {
+            if (p.stage == m7arc::Stage::Compressing && !changed) {
                 changed = true;
                 std::ofstream(changing) << "newer data";
             }
