@@ -1,0 +1,18 @@
+[package]
+name = "m7arc-cli"
+description = "Command-line interface to the M7Arc archive engine"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+build = "build.rs"
+
+[[bin]]
+name = "m7arc"
+path = "src/main.rs"
+
+[dependencies]
+m7arc-core = { path = "../../crates/m7arc-core" }
+# Not used from code: depending on the -sys crate directly lets build.rs read
+# the engine library directory it exports (DEP_M7ARC_ENGINE_LIBRARY_DIR).
+m7arc-sys = { path = "../../crates/m7arc-sys" }
