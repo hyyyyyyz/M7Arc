@@ -4,6 +4,15 @@ Application versions follow [Semantic Versioning](docs/VERSIONING.zh-CN.md). The
 
 ## Unreleased
 
+### Added
+
+- The `m7arc` command line is built with the application and shipped in `M7Arc.app/Contents/Helpers`.
+
+### Changed
+
+- The desktop application lives in `apps/desktop`; the engine, its C interface and the Rust crates keep their places under `src/engine` and `crates/`.
+- Job progress handling uses the engine's stage enumeration instead of comparing phase text.
+
 ## 0.1.0-alpha.2
 
 ### Changed
