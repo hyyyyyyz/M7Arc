@@ -7,10 +7,10 @@
 
 namespace m7arc::app {
 namespace {
-// The engine names the phase in which it opens an archive; the path reported then is the archive a
+// The engine reports the Opening stage while it opens an archive; the path reported then is the archive a
 // password failure has to be retried against.
 bool isOpeningPhase(const Progress& progress) {
-    return progress.phase == "Opening";
+    return progress.stage == Stage::Opening;
 }
 QStringList toList(const std::vector<std::string>& values) {
     QStringList list;

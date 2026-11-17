@@ -59,6 +59,15 @@ def thin_architectures(app, architecture):
         thin.replace(path)
 
 
+def drop_build_rpaths(app):
+    """Remove rpaths that point into the build tree; the bundle resolves everything through @-relative ones."""
+    for path in mach_objects(app):
+        output = run("otool", "-l", path, capture=True)
+        for rpath in re.findall(r"^\s*cmd LC_RPATH\n\s*cmdsize \d+\n\s*path (.+?) \(offset \d+\)$", output, re.M):
+            if rpath.startswith("/"):
+                run("install_name_tool", "-delete_rpath", rpath, path)
+
+
 def verify_runtime(app, architecture):
     required = {"arm64", "x86_64"} if architecture == "universal2" else {architecture}
     objects = mach_objects(app)
@@ -112,9 +121,10 @@ def main():
     qt_prefix = args.qt_prefix.resolve()
     output = args.output.resolve()
     macdeployqt = qt_prefix / "bin/macdeployqt"
-    for executable in ("M7Arc", "M7ArcExtractor", "7zz", "7zCon.sfx"):
-        if not (app / "Contents/MacOS" / executable).is_file():
-            parser.error(f"Required executable {executable} is missing from {app}; build the complete application before packaging")
+    for executable in ("MacOS/M7Arc", "MacOS/M7ArcExtractor", "MacOS/7zz", "MacOS/7zCon.sfx", "Helpers/m7arc"):
+        if not (app / "Contents" / executable).is_file():
+            parser.error(f"Required executable {executable} is missing from {app}; build the complete application "
+                         "before packaging (the m7arc command line needs cargo)")
     if not macdeployqt.is_file():
         parser.error(f"macdeployqt was not found at {macdeployqt}")
     with (app / "Contents/Info.plist").open("rb") as stream:
@@ -146,6 +156,7 @@ def main():
         extractor = deployed / "Contents/MacOS/M7ArcExtractor"
         run(macdeployqt, deployed, "-always-overwrite", "-no-codesign", "-verbose=1", f"-executable={extractor}")
         thin_architectures(deployed, architecture)
+        drop_build_rpaths(deployed)
         objects = verify_runtime(deployed, architecture)
         main_executable = deployed / "Contents/MacOS" / info["CFBundleExecutable"]
         for path in sorted(objects, key=lambda item: len(item.parts), reverse=True):
@@ -155,7 +166,7 @@ def main():
             run("codesign", "--force", "--sign", "-", "--timestamp=none", framework)
         for extension in sorted(deployed.rglob("*.appex"), key=lambda item: len(item.parts), reverse=True):
             run("codesign", "--force", "--sign", "-", "--timestamp=none", "--entitlements",
-                PROJECT / "src/platform/quicklook/Preview.entitlements", extension)
+                PROJECT / "apps/desktop/src/platform/quicklook/Preview.entitlements", extension)
         run("codesign", "--force", "--sign", "-", "--timestamp=none", deployed)
         run("codesign", "--verify", "--deep", "--strict", deployed)
         environment = os.environ.copy()
@@ -163,6 +174,7 @@ def main():
             environment.pop(variable, None)
         run(deployed / "Contents/MacOS/M7Arc", "--smoke-test", env=environment, timeout=30, cwd=staging)
         run(extractor, "--smoke-test", env=environment, timeout=30, cwd=staging)
+        run(deployed / "Contents/Helpers/m7arc", "--version", env=environment, timeout=30, cwd=staging)
         (staging / "Applications").symlink_to("/Applications", target_is_directory=True)
         shutil.copytree(licenses, staging / "Licenses")
         for name in ("INSTALL.zh-CN.txt", "INSTALL.en.txt"):

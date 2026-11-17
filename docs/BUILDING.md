@@ -8,6 +8,7 @@ M7Arc is a C++20 and Qt Widgets application for macOS 13 or newer. The complete 
 - CMake 3.24 or newer and Ninja
 - Qt 6.11.2 for macOS, including `qtbase`, `qttools` and the `qtdeclarative` dependency of the Linguist tools
 - Python 3.9 or newer for the packaging, test and upstream build scripts (CI uses 3.13)
+- Rust 1.80 or newer (`cargo`) to build the `m7arc` command line and include it in the app. Without cargo, configuration prints a warning and the app is built without `m7arc`; packaging then stops with a message that it is missing.
 
 The official Qt `clang_64` SDK contains both arm64 and x86_64 libraries. The SDK directory name is `macos`.
 
@@ -36,6 +37,7 @@ cmake --preset release -DCMAKE_PREFIX_PATH=/path/to/Qt/6.11.2/macos
 
 - `M7Arc.app`: the Qt file manager
 - `lib/libm7arc_engine.dylib`: the in-process engine with all built-in formats
+- `M7Arc.app/Contents/Helpers/m7arc`: the Rust command line ([apps/cli](../apps/cli/README.md)); it loads the engine from `Contents/Frameworks`. `build/<preset>/m7arc` is the same binary outside the bundle
 - `M7Arc.app/Contents/MacOS/7zz`: the official full command line application
 - `M7Arc.app/Contents/MacOS/7zCon.sfx`: the console self-extractor module
 
@@ -43,9 +45,9 @@ The engine compiles an explicit source list into an object library. All registra
 
 ## Checks
 
-CTest covers the format/method registry, archive round trips and editing, selected extraction, passwords, cancellation, macOS metadata, CLI registration and console SFX extraction. The app smoke test checks Qt startup and engine loading. These checks use temporary sample files and do not modify user archives.
+CTest covers the format/method registry, the C interface, archive round trips and editing, selected extraction, passwords, cancellation, macOS metadata, CLI registration and console SFX extraction. The app smoke test checks Qt startup and engine loading. These checks use temporary sample files and do not modify user archives.
 
-The graphical self-extractor test `tools.mac_sfx_bundle` needs a deployed `M7Arc.app`. Configure with `-DM7ARC_SFX_SOURCE_APP=<path to M7Arc.app>` to run it; otherwise CTest lists it as skipped. CI runs it against the packaged installation image. Tests for `src/tools` live in `tests/tools`, and tests for `src/platform` in `tests/platform`.
+The graphical self-extractor test `tools.mac_sfx_bundle` needs a deployed `M7Arc.app`. Configure with `-DM7ARC_SFX_SOURCE_APP=<path to M7Arc.app>` to run it; otherwise CTest lists it as skipped. CI runs it against the packaged installation image. Tests for `apps/desktop/src/tools` live in `apps/desktop/tests/tools`, tests for `apps/desktop/src/platform` and `src/platform/MacMetadata.cpp` in `apps/desktop/tests/platform`, and the engine tests in `tests/engine`. The Rust crates have their own tests: `cargo test --workspace` from the repository root.
 
 Changes to `third_party/7zip` are kept as patch files in `third_party/patches`; see the [upstream patch guide](UPSTREAM_PATCHES.zh-CN.md) before updating the snapshot.
 
@@ -55,7 +57,7 @@ Changes to `third_party/7zip` are kept as patch files in `third_party/patches`; 
 python3 packaging/macos/package.py --qt-prefix .qt/6.11.2/macos
 ```
 
-The script stages the app, deploys Qt, embeds third-party licenses, checks runtime dependencies, applies ad-hoc signatures and starts the relocated executable before producing a DMG in `build/dist`. The build directory remains available for development.
+The script stages the app, deploys Qt, embeds third-party licenses, checks runtime dependencies (including `m7arc`), applies ad-hoc signatures and starts the relocated `M7Arc`, `M7ArcExtractor` and `m7arc` before producing a DMG in `build/dist`. The build directory remains available for development.
 
 Published preview packages do not use Developer ID signing or Apple notarization. Installation steps and release commands are in [the release guide](RELEASE.zh-CN.md). Application versioning is defined in [VERSIONING.zh-CN.md](VERSIONING.zh-CN.md).
 

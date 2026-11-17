@@ -27,11 +27,11 @@ M7Arc 目前是工作名：M 代表 Mac，7 代表 7-Zip，Arc 来自 archive。
 
 ```sh
 swift packaging/macos/make_icon.swift out/brand/M7Arc.iconset
-iconutil -c icns out/brand/M7Arc.iconset -o resources/icons/M7Arc.icns
+iconutil -c icns out/brand/M7Arc.iconset -o apps/desktop/resources/icons/M7Arc.icns
 cp out/brand/M7Arc.iconset/icon_512x512@2x.png resources/brand/app-icon.png
 ```
 
-图标集包含 16、32、128、256、512 pt 的 1× 和 2× 版本，最大为 1024 px。提交 Swift 绘制源、PNG 母版和 ICNS；`out/brand` 是本地导出目录。正常应用构建将 [M7Arc.icns](../resources/icons/M7Arc.icns) 放入 `.app`，图形自解压应用沿用同一图标。
+图标集包含 16、32、128、256、512 pt 的 1× 和 2× 版本，最大为 1024 px。提交 Swift 绘制源、PNG 母版和 ICNS；`out/brand` 是本地导出目录。正常应用构建将 [M7Arc.icns](../apps/desktop/resources/icons/M7Arc.icns) 放入 `.app`，图形自解压应用沿用同一图标。
 
 ## 色彩与使用
 

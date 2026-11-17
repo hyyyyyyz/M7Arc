@@ -1,6 +1,6 @@
 find_package(Python3 3.9 REQUIRED COMPONENTS Interpreter)
 
-set(M7ARC_TOOLS_SOURCE "${CMAKE_CURRENT_LIST_DIR}/../third_party/7zip")
+set(M7ARC_TOOLS_SOURCE "${PROJECT_SOURCE_DIR}/third_party/7zip")
 set(M7ARC_TOOLS_SCRIPT "${CMAKE_CURRENT_LIST_DIR}/../src/tools/build_upstream.py")
 set(M7ARC_TOOLS_DIRECTORY "${CMAKE_BINARY_DIR}/tools")
 set(M7ARC_CLI_PATH "${M7ARC_TOOLS_DIRECTORY}/7zz")

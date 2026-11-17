@@ -5,7 +5,7 @@
 
 ## 1. 源码整体结构
 
-7-Zip 已包含官方 macOS 命令行实现。M7Arc 复用同一套压缩、加密和格式代码，将文件管理业务接入 Qt，并补齐 macOS 集成与文件元数据。
+7-Zip 已包含官方 macOS 命令行实现。M7Arc 复用同一套压缩、加密和格式代码，经 `src/engine` 的 C++ 与 C 接口提供给 Qt 桌面端（`apps/desktop`）和 Rust 命令行（`apps/cli`），并补齐 macOS 集成与文件元数据。
 
 | 路径 | 上游职责 | M7Arc 处理方式 |
 | --- | --- | --- |
@@ -21,9 +21,9 @@
 | `CPP/7zip/Archive/` | archive、镜像、文件系统和可执行格式 handler | 完整复用 |
 | `CPP/7zip/Compress/` | 编解码器与分支过滤器 | 完整复用 |
 | `CPP/7zip/Crypto/` | 7z/ZIP/RAR 加密、密码派生和随机源 | 完整复用 |
-| `CPP/7zip/UI/Common/` | 打开、枚举、提取、更新、哈希、benchmark | 保留非可视业务，适配 callback |
-| `CPP/7zip/UI/Agent/` | archive 的文件夹视图、代理树、归档内操作 | 适配后进入同一 engine |
-| `CPP/7zip/UI/FileManager/` | Windows 文件管理器和文件夹接口 | 保留接口语义，Qt 重写窗口与交互 |
+| `CPP/7zip/UI/Common/` | 打开、枚举、提取、更新、哈希、benchmark | 保留非可视业务，经 `ArchiveEngine` 适配 callback；带少量本地补丁 |
+| `CPP/7zip/UI/Agent/` | archive 的文件夹视图、代理树、归档内操作 | 不参与构建；归档内操作由引擎直接驱动 `IOutArchive`，见第 5 节 |
+| `CPP/7zip/UI/FileManager/` | Windows 文件管理器和文件夹接口 | 作为行为参照，Qt 重写窗口与交互 |
 | `CPP/7zip/UI/GUI/` | Windows 压缩、解压和进度对话框 | Qt 重写可视层 |
 | `CPP/7zip/UI/Console/` | CLI 解析、输出和终端 callback | 保留官方 `7zz`；GUI 不解析其输出 |
 | `CPP/7zip/UI/Explorer/` | Windows Shell 扩展 | 由 macOS 系统集成模块承接 |
@@ -83,18 +83,18 @@ Intel 构建配置存在，Intel 运行结果仍需在对应环境确认。
 ## 4. M7Arc 的 engine 组成
 
 采用 `Alone2` 的组合方式，完整保留 [Arc_gcc.mak](../third_party/7zip/CPP/7zip/Bundles/Format7zF/Arc_gcc.mak#L1) 的核心对象组：C、线程、Common、POSIX、7zip Common、Archive、Compress、Crypto。
-[Alone2/makefile.gcc L55](../third_party/7zip/CPP/7zip/Bundles/Alone2/makefile.gcc#L55) 列出的公共操作对象提供文件扫描、打开、提取、更新和哈希；M7Arc 另接入适配后的 Agent 文件夹业务。
+[Alone2/makefile.gcc L55](../third_party/7zip/CPP/7zip/Bundles/Alone2/makefile.gcc#L55) 列出的公共操作对象提供文件扫描、打开、提取、更新和哈希；`cmake/EngineSources.cmake` 的显式清单只取其中的 `UI/Common` 非可视部分。
 
 ```text
-Arc_gcc.mak 全部核心对象 + UI/Common 非可视业务 + Agent 适配
-                              │
-                  CMake OBJECT libraries
-                              │
-                   m7arc_engine SHARED
-                              │
-                 C++ ArchiveSession / Job API
-                              │
-                   Qt 控制器与模型快照
+Arc_gcc.mak 全部核心对象 + UI/Common 非可视业务
+                      │
+          CMake OBJECT library：sevenzip_objects
+                      │
+           m7arc_engine SHARED（libm7arc_engine.dylib）
+              │                          │
+     C++ ArchiveEngine                 C 接口 capi/m7arc_c.h
+              │                          │
+   apps/desktop 应用层与 Qt        crates/m7arc-sys → m7arc-core → apps/cli（m7arc）
 ```
 
 `m7arc_engine` 使用 `UI/Common/LoadCodecs.cpp` 作为唯一格式注册宿主，排除控制台入口和 `ArchiveExports.cpp`。
@@ -105,30 +105,24 @@ P0 使用完整内置格式目录；P5 在同一 LoadCodecs 宿主接通既有�
 OBJECT library 直接提供所有对象，避免普通静态库链接按引用取对象时遗漏仅靠注册生效的格式。
 核心格式、codec 和 hasher 目录应与相同上游版本、相同构建选项的 `7zz i` 对应；缺项意味着对象清单或链接设置需要调整。
 
-适配实现位于 M7Arc 自有目录，保留上游布局和少量明确补丁。Qt 直接调用共享引擎的 C++ API，应用与引擎使用同一工具链构建。
+适配实现位于 `src/engine`，上游文件保持原布局，修改以补丁文件保存在 `third_party/patches`。桌面端直接调用共享引擎的 C++ API；命令行经 C 接口调用同一个动态库，不需要 Qt。
 引擎库使用 macOS bundle 内明确的加载路径和 install name；官方 `Format7zF` 的非 Windows 默认名 `7z.so` 仅作为上游构建事实，见 [7zip_gcc.mak L99](../third_party/7zip/CPP/7zip/7zip_gcc.mak#L99)。
 
 外部扩展沿用 [CreateCoder.h L13](../third_party/7zip/CPP/7zip/Common/CreateCoder.h#L13) 的内部/外部 codec 顺序及 [LoadCodecs.cpp L539](../third_party/7zip/CPP/7zip/UI/Common/LoadCodecs.cpp#L539) 的模块接口检查。相关对象统一启用 `Z7_EXTERNAL_CODECS`；外部 format 访问内建 codec 时还需接通 `EXPORT_CODECS` 和 `SetCodecs`。只适配 [LoadCodecs.cpp L850](../third_party/7zip/CPP/7zip/UI/Common/LoadCodecs.cpp#L850) 的路径入口：跳过独立主 `7z.so`，从应用明确传入的随包和用户扩展目录加载 Codecs/Formats。模块在启动加载、所有会话结束后释放，保留当前官方接口与架构要求。签名和第三方模块加载条件见总设计的引擎组成。
 
-## 5. Agent 与公共操作层的分工
+## 5. 归档内操作与上游 Agent
 
-Agent 提供 archive 条目到文件夹树的映射，保留归档内路径、条目索引和写入语义；Qt 模型负责展示快照。
-[AgentProxy.h L24](../third_party/7zip/CPP/7zip/UI/Agent/AgentProxy.h#L24) 的代理目录记录父子关系与 archive 索引，可支持 archive 中没有显式目录条目的情况。
-[IFolderArchive.h L43](../third_party/7zip/CPP/7zip/UI/Agent/IFolderArchive.h#L43) 提供打开、重新打开和根文件夹绑定；[L65](../third_party/7zip/CPP/7zip/UI/Agent/IFolderArchive.h#L65) 提供删除和归档写操作。
+上游 `UI/Agent` 把 archive 映射为文件夹树，供 Windows File Manager 使用。M7Arc 不编译它：`ArchiveEngine::list` 返回带条目索引与完整路径的平坦快照，桌面端在 `ArchiveRows` 中转成行，目录层级由路径推出，archive 中没有显式目录条目的情况同样适用。
 
-| 接入部分 | M7Arc 适配 |
+| 操作 | 实现 |
 | --- | --- |
-| `Agent.cpp`、`AgentProxy.*` | 保留代理和会话语义；格式对象生命周期归 engine 管理 |
-| `ArchiveFolder.*` | 保留条目属性和目录导航；转为不可变模型快照 |
-| `AgentOut.cpp`、`ArchiveFolderOut.cpp` | 保留归档内修改，接入统一任务与临时输出目录 |
-| `UpdateCallbackAgent.*` | 转发进度、密码、文件错误和替换 archive 阶段 |
-| `ArchiveFolderOpen.cpp` | 分离资源图标读取，格式图标由 Qt/macOS 层提供 |
-| `FileManager/IFolder.h`、`Agent/IFolderArchive.h` | 作为引擎内部接口使用，不直接暴露给 QWidget/model |
-| `UI/Common/WorkDir.*` | 工作目录设置来自任务选项，文件写入和最终替换流程保留 |
+| 浏览、排序、嵌套进入 | 应用层按路径前缀过滤快照；进入内层归档时先提取该成员到临时文件再打开 |
+| 删除 | `remove(path, indices)`：打开归档，写出不含这些条目的新归档（`IOutArchive::UpdateItems`），成功后替换原文件 |
+| 重命名 | `rename` 改单个条目，`renameDirectory` 改路径前缀；同一次更新完成 |
+| 成员替换（外部编辑回写） | `replace(path, index, file)`；`EditSession` 先用新快照校验原索引 |
+| 向归档添加 | `create` 经 `UpdateArchive`，输入的物理路径与归档内逻辑路径由[逻辑路径补丁](UPSTREAM_PATCHES.zh-CN.md)分离 |
 
-[Agent.cpp L23](../third_party/7zip/CPP/7zip/UI/Agent/Agent.cpp#L23) 引入注册表设置头；`Read_ShowDeleted` 位于 [L1664](../third_party/7zip/CPP/7zip/UI/Agent/Agent.cpp#L1664) 的注释块。适配移除无用注册表依赖，显示已删除条目作为显式会话选项。
-[ArchiveFolderOpen.cpp L9](../third_party/7zip/CPP/7zip/UI/Agent/ArchiveFolderOpen.cpp#L9) 的资源字符串和 `HINSTANCE` 图标读取从非可视业务分离。
-[WorkDir.cpp L61](../third_party/7zip/CPP/7zip/UI/Common/WorkDir.cpp#L61) 的配置加载改为输入参数，并保留临时文件到原 archive 的提交路径。
+删除、重命名、替换和注释都写入与原归档同目录的临时文件，完成并保留 macOS 元数据后以文件重命名提交，失败或取消时原归档不变。上游 Agent 的代理树 [AgentProxy.h L24](../third_party/7zip/CPP/7zip/UI/Agent/AgentProxy.h#L24) 与 [IFolderArchive.h L43](../third_party/7zip/CPP/7zip/UI/Agent/IFolderArchive.h#L43) 仍是对照实现的行为参考。
 
 ## 6. 接口映射
 
@@ -230,21 +224,20 @@ GZIP/BZIP2/XZ 是单数据流；目录压缩为 `.tar.gz/.tar.bz2/.tar.xz` 时�
 
 ## 8. 线程、ABI 与生命周期
 
-默认同时只执行一个引擎操作，包括打开、追加读取、压缩、提取、测试和校验。引擎内部的多线程压缩与解压保留。
-Qt 主线程只操作会话描述和浏览快照；模型读取已完成的条目数据，不在 `data()` 或排序过程中同步调用 archive 对象。
-`ArchiveSession` 持有 archive 和流，任务结束后再发布快照；关闭会话、更新完成后的重开及 codec 释放均在引擎执行线程顺序发生。
+一个 `ArchiveEngine` 对象同一时刻只执行一个操作，包括打开、压缩、提取、测试和校验；引擎内部的多线程压缩与解压保留。桌面端的 `JobRunner` 用一个工作线程串行执行作业，其余排队；Qt 主线程只读取已完成的条目快照，不在 `data()` 或排序过程中调用引擎。`m7arc` 每条命令使用一个引擎对象，在调用线程上执行，Ctrl-C 经取消令牌取消。
+C 接口的所有权约定：句柄由调用方释放；通过句柄访问器取得的字符串和数组在句柄释放前有效；错误信息按线程保存，见 `m7arc_c.h` 的文件头。
 
 [IArchive.h L184](../third_party/7zip/CPP/7zip/Archive/IArchive.h#L184) 明确提取 callback 的文件操作函数互不并发，但进度 callback 可能与其并发。
-进度转换为跨线程消息；密码、覆盖和内存询问由引擎任务等待 GUI 回答。取消唤醒等待并在 callback 返回 `E_ABORT`，暂停在 callback 的合作点执行。
-[L214](../third_party/7zip/CPP/7zip/Archive/IArchive.h#L214) 说明进度字节可能代表压缩量或解压量；任务保存阶段、单位和总量是否已知。
+进度转换为跨线程消息；密码、覆盖和内存询问由作业线程等待前端回答。取消在 callback 返回 `E_ABORT`，暂停在进度 callback 的合作点执行。
+[L214](../third_party/7zip/CPP/7zip/Archive/IArchive.h#L214) 说明进度字节可能代表压缩量或解压量；引擎的 `Progress` 同时给出阶段枚举 `Stage`、已完成量、总量及总量是否已知。
 
 `PROPVARIANT`、BSTR 和 COM 对象的初始化与释放遵循 [IArchive.h L20](../third_party/7zip/CPP/7zip/Archive/IArchive.h#L20)，适配使用 `CPropVariant`、`CMyComPtr`。
 Qt 的 UTF-16 `QChar` 与 macOS `wchar_t` 不可直接重解释；`QString/UString/FString` 经明确转换，密码 BSTR 按 [IPassword.h L17](../third_party/7zip/CPP/7zip/IPassword.h#L17) 分配和释放。
 当前接口使用上游 v23 之后的 `IUnknown` 约定，见 [MyWindows.h L147](../third_party/7zip/CPP/Common/MyWindows.h#L147)；应用与引擎共享当前头文件和构建设置。
 
 [Wildcard.cpp L9](../third_party/7zip/CPP/Common/Wildcard.cpp#L9) 的 `g_CaseSensitive` 为进程全局状态，macOS 默认不区分大小写；[Agent.cpp L29](../third_party/7zip/CPP/7zip/UI/Agent/Agent.cpp#L29) 也持有全局 codec 生命周期。
-单引擎操作队列避免任务之间同时修改这些状态。会话保留明确的 archive 名称策略，源卷和目标卷的大小写能力独立处理；处理大小写敏感卷与同名异大小写条目时不沿用单一 Mac 默认值。
-需要并行执行多个引擎操作时，先将相关比较策略和生命周期准确下沉到操作/会话对象。
+单引擎操作队列避免任务之间同时修改这些状态。源卷和目标卷的大小写能力独立处理；处理大小写敏感卷与同名异大小写条目时不沿用单一 Mac 默认值。
+需要并行执行多个引擎操作时，先将相关比较策略和生命周期准确下沉到操作对象（计划见[总设计](../DESIGN.zh-CN.md)第 10 节）。
 
 ## 9. 现有能力边界
 

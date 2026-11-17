@@ -23,7 +23,7 @@ The first build compiles the vendored 7-Zip sources into `libm7arc_engine.dylib`
 |---|---|
 | the engine build directory (`build/engine-rust/lib`, or `M7ARC_ENGINE_LIB_DIR`) | development builds run in place |
 | `@executable_path/../lib` | an installed prefix: `bin/m7arc` next to `lib/libm7arc_engine.dylib` |
-| `@executable_path/../Frameworks` | an app bundle: `Contents/MacOS/m7arc` next to `Contents/Frameworks/` |
+| `@executable_path/../Frameworks` | an app bundle: `Contents/Helpers/m7arc` next to `Contents/Frameworks/` |
 
 Installing into a prefix:
 

@@ -2,7 +2,7 @@
 
 M7Arc 以 7-Zip 的归档引擎为基础，提供面向 macOS 的 Qt 文件管理器。全功能目标覆盖原 File Manager、归档对话框、命令行的可移植能力，以及 macOS 对应的文件与系统操作。各格式的读写范围遵循实际 handler 能力；Windows 特有对象按本表提供 macOS 对应功能。
 
-本表定义目标功能和交付阶段。Qt 应用入口位于 `src/ui/`，引擎与平台实现位于 `src/engine/` 和 `src/platform/`；发行状态见[README](../README.md)。源码链接相对本文件所在的 `docs/` 目录，上游源树位于项目内 `third_party/7zip/`；链接后的数字为当前源码行号。`UI/` 指上游的 `CPP/7zip/UI/`。
+本表定义目标功能和交付阶段。Qt 应用入口位于 `apps/desktop/src/ui/`，引擎与平台实现位于 `src/engine/` 和 `src/platform/`；发行状态见[README](../README.md)。源码链接相对本文件所在的 `docs/` 目录，上游源树位于项目内 `third_party/7zip/`；链接后的数字为当前源码行号。`UI/` 指上游的 `CPP/7zip/UI/`。
 
 [File Manager 规格](FILE_MANAGER_SPEC.zh-CN.md)逐项定义菜单、工具栏、面板与快捷键；[对话框与任务规格](DIALOG_SPEC.zh-CN.md)定义全部表单、提示与工具窗口；[格式与编码能力](FORMAT_CAPABILITIES.zh-CN.md)列出所有 61 个 handler、七类创建、三个 TAR 组合、25 个注册 codec 和十种 hasher。
 
@@ -18,7 +18,7 @@ M7Arc 以 7-Zip 的归档引擎为基础，提供面向 macOS 的 Qt 文件管�
 | P5 | 哈希、基准、分割合并、全部工具、SFX 三类交付和高级命令行能力收齐。 |
 | P6 | 双架构发布包、ad-hoc 签名、文档、本地化、安装与卸载体验；取得证书后增加 Developer ID 签名与公证。 |
 
-`ArchiveSession` 持有归档层级和条目身份；`FolderModel` 负责 Qt 展示；`ArchiveJobs` 调用引擎并桥接进度；`TransferController` 处理文件与归档之间的操作；`MacPlatform` 承担系统 API。格式能力必须包含读取、创建、更新、加密、分卷等独立维度，不能由扩展名或一个“可写”开关推断全部操作。
+`Workspace` 准备引擎作业并报告结果，`JobRunner` 串行执行并桥接进度，`ArchiveRows` 与 `ArchiveModel` 负责条目展示，`Transfer`/`LocalTransfer` 处理文件与归档之间的操作，`apps/desktop/src/platform` 与 `MacMetadata` 承担系统 API。下文各行中的模块名是设计时的命名；对应关系见[总设计](../DESIGN.zh-CN.md)第 4.3 节。格式能力必须包含读取、创建、更新、加密、分卷等独立维度，不能由扩展名或一个“可写”开关推断全部操作。
 
 ## 主窗口与功能入口
 
