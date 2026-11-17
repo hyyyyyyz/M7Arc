@@ -45,7 +45,7 @@ The engine compiles an explicit source list into an object library. All registra
 
 CTest covers the format/method registry, archive round trips and editing, selected extraction, passwords, cancellation, macOS metadata, CLI registration and console SFX extraction. The app smoke test checks Qt startup and engine loading. These checks use temporary sample files and do not modify user archives.
 
-The graphical self-extractor test `tools.mac_sfx_bundle` needs a deployed `M7Arc.app`. Configure with `-DM7ARC_SFX_SOURCE_APP=<path to M7Arc.app>` to run it; otherwise CTest lists it as skipped. CI runs it against the packaged installation image. Tests for `src/tools` live in `tests/tools`, and tests for `src/platform` in `tests/platform`.
+The graphical self-extractor test `tools.mac_sfx_bundle` needs a deployed `M7Arc.app`. Configure with `-DM7ARC_SFX_SOURCE_APP=<path to M7Arc.app>` to run it; otherwise CTest lists it as skipped. CI runs it against the packaged installation image. Tests for `apps/desktop/src/tools` live in `apps/desktop/tests/tools`, and tests for `src/platform` in `apps/desktop/tests/platform`.
 
 Changes to `third_party/7zip` are kept as patch files in `third_party/patches`; see the [upstream patch guide](UPSTREAM_PATCHES.zh-CN.md) before updating the snapshot.
 

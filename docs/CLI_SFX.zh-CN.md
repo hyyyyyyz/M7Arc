@@ -25,7 +25,7 @@ GUI 的归档浏览和操作直接接入引擎。随包 CLI 同时为熟悉 7-Zi
 
 ## 构建接线
 
-根 CMake 设置架构与最低部署目标之后引入 `cmake/cli.cmake`，定义应用 target 后调用 `m7arc_attach_tools(M7Arc)`。该调用为应用加入工具依赖，复制两个工具到 app，并编译 Qt C++ 的 `tools/SfxBuilder.cpp` 与 `tools/DistributionBuilder.cpp`。
+根 CMake 设置架构与最低部署目标之后引入 `apps/desktop/cmake/cli.cmake`，定义应用 target 后调用 `m7arc_attach_tools(M7Arc)`。该调用为应用加入工具依赖，复制两个工具到 app，并编译 Qt C++ 的 `tools/SfxBuilder.cpp` 与 `tools/DistributionBuilder.cpp`。
 
 - `m7arc_cli`：构建官方 `Bundles/Alone2`。
 - `m7arc_sfx`：构建官方 `Bundles/SFXCon`。
@@ -77,7 +77,7 @@ Qt 应用使用 `m7arc::tools::createConsoleSfx(stub, archive, output)`，返回
 
 创建图形包使用已部署 M7Arc 的 `Contents/Frameworks` 与 Qt plugins，因此须从安装包运行 M7Arc，或先按发布流程部署开发构建。构建器将依赖复制到新 app，保持框架签名，再对外层 app 签名并执行严格校验。输出路径必须不存在，取消或失败会清理本次新建的输出。
 
-控制台 SFX 接口位于 `src/tools/SfxBuilder.h`，图形包、DMG 与 Windows 接口位于 `src/tools/DistributionBuilder.h`（`SfxBuilder.h` 会一并包含）：
+控制台 SFX 接口位于 `apps/desktop/src/tools/SfxBuilder.h`，图形包、DMG 与 Windows 接口位于 `apps/desktop/src/tools/DistributionBuilder.h`（`SfxBuilder.h` 会一并包含）：
 
 ```cpp
 SfxBundleOptions options;
@@ -97,7 +97,7 @@ error = createSfxDmg(outputApp, {}, outputDmg);
 
 ## Windows 图形与命令行 SFX
 
-Windows 产物拼接官方 26.03 `7z.sfx` 或 `7zCon.sfx` 与 7z 载荷，输出 `.exe`。两种模块实际为 **PE32 / Intel 80386**，来自官方 x64 安装程序；模块自身架构决定目标，不能按安装程序文件名推断。[官方来源与许可](../src/tools/windows/UPSTREAM.md)
+Windows 产物拼接官方 26.03 `7z.sfx` 或 `7zCon.sfx` 与 7z 载荷，输出 `.exe`。两种模块实际为 **PE32 / Intel 80386**，来自官方 x64 安装程序；模块自身架构决定目标，不能按安装程序文件名推断。[官方来源与许可](../apps/desktop/src/tools/windows/UPSTREAM.md)
 
 图形模块提供 Windows 提取窗口；命令行模块面向终端。默认载荷使用 LZMA2，也可使用 LZMA、PPMd、Copy、对应过滤器和 AES。Windows 输出不经过 macOS `codesign`，不会成为可在 Mac 上运行的程序。
 
@@ -105,7 +105,7 @@ Windows 产物拼接官方 26.03 `7z.sfx` 或 `7zCon.sfx` 与 7z 载荷，输出
 
 ## Windows 安装器配置
 
-“Windows 安装器”是独立输出目标，使用官方 LZMA SDK 26.03 的 `7zSD.sfx`。SDK 原文许可允许分发该 public domain 模块；随应用保存原始 [SDK 说明](../src/tools/windows/LZMA-SDK.txt) 和[安装器配置文档](../src/tools/windows/installer.txt)。
+“Windows 安装器”是独立输出目标，使用官方 LZMA SDK 26.03 的 `7zSD.sfx`。SDK 原文许可允许分发该 public domain 模块；随应用保存原始 [SDK 说明](../apps/desktop/src/tools/windows/LZMA-SDK.txt) 和[安装器配置文档](../apps/desktop/src/tools/windows/installer.txt)。
 
 安装器在 Windows 上运行时，解压到临时目录，执行配置的程序，等待结束后清理临时文件。模块支持 LZMA、LZMA2、Copy 及对应过滤器，不包含 AES 和 PPMd，因此此目标禁用密码、文件名加密和 PPMd。
 
@@ -126,10 +126,10 @@ Windows 产物拼接官方 26.03 `7z.sfx` 或 `7zCon.sfx` 与 7z 载荷，输出
 `tools.windows_sfx` 在 CTest 中验证两种 Windows 输出。`tools.mac_sfx_bundle` 是图形分发测试，配置时传入 `-DM7ARC_SFX_SOURCE_APP=<已部署的 M7Arc.app>` 才会运行，否则 CTest 显示为 Skipped。图形分发测试以已部署 app 为输入，同时生成内嵌和外置 `.app` / DMG，验证独立启动、严格签名、加密提取，并挂载生成的 DMG 后再次执行提取：
 
 ```sh
-python3 tests/tools/DistributionIntegration.py \
+python3 apps/desktop/tests/tools/DistributionIntegration.py \
   --builder build/release/m7arc_distribution_builder_tests \
   --cli build/release/tools/7zz \
-  --windows-stubs src/tools/windows \
+  --windows-stubs apps/desktop/src/tools/windows \
   --source-app /Applications/M7Arc.app
 ```
 

@@ -155,7 +155,7 @@ def main():
             run("codesign", "--force", "--sign", "-", "--timestamp=none", framework)
         for extension in sorted(deployed.rglob("*.appex"), key=lambda item: len(item.parts), reverse=True):
             run("codesign", "--force", "--sign", "-", "--timestamp=none", "--entitlements",
-                PROJECT / "src/platform/quicklook/Preview.entitlements", extension)
+                PROJECT / "apps/desktop/src/platform/quicklook/Preview.entitlements", extension)
         run("codesign", "--force", "--sign", "-", "--timestamp=none", deployed)
         run("codesign", "--verify", "--deep", "--strict", deployed)
         environment = os.environ.copy()

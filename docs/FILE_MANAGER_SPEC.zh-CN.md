@@ -215,7 +215,7 @@ CRC SHA 上下文菜单另外支持生成 `.sha256` 清单和“测试压缩包�
 ## 4. Qt 模块落点
 
 ```text
-src/ui/
+apps/desktop/src/ui/
   MainWindow.{h,cpp}
   actions/CommandRegistry.{h,cpp}
   actions/CommandState.{h,cpp}

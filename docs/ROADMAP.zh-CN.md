@@ -15,7 +15,7 @@ P0 建立完整引擎的可调用边界，P1 交付可用归档浏览与提取�
 | P2 完整创建与更新 | 全参数创建、更新、分卷、成员改写、复合流格式 | `ArchiveDialogs`、`ArchiveEngine` | 十种 GUI 格式预设往返通过 |
 | P3 文件管理工作流 | 双面板、四类传输、嵌套回写、编辑、全部视图 | `MainWindow`、`FilePane`、`EditSession` | 编辑会话与 10 万条目验证通过 |
 | P4 macOS 文件与系统能力 | 元数据、Services、Quick Look、拖放、卷与废纸篓 | `src/platform/` | 元数据互操作与系统入口集成测试通过 |
-| P5 工具与 SFX | 摘要、基准、分割合并、原生模块与七类 SFX | `HashDialog`、`BenchmarkDialog`、`src/tools/` | Mac SFX 分发通过；Windows 实机运行待验收 |
+| P5 工具与 SFX | 摘要、基准、分割合并、原生模块与七类 SFX | `HashDialog`、`BenchmarkDialog`、`apps/desktop/src/tools/` | Mac SFX 分发通过；Windows 实机运行待验收 |
 | P6 发布与稳定性 | 双架构 DMG、ad-hoc 签名、中英文、文档与 CI | `packaging/`、`.github/workflows/` | macOS 13、Intel 真机与完整跨系统样本待验收 |
 
 `0.1.0-alpha.1` 提供上述可执行功能。进入 1.0 前，完成最低支持系统、Intel 真机、Windows SFX 实际运行及更完整的跨系统归档样本验收。实测结果以[发行验证记录](VALIDATION.zh-CN.md)为准。

@@ -52,10 +52,10 @@ jobs:
         shell: bash
         run: |
           images=(build/dist/M7Arc-*-macos-${{ matrix.arch }}.dmg)
-          python3 tests/tools/DistributionIntegration.py \
+          python3 apps/desktop/tests/tools/DistributionIntegration.py \
             --builder "$PWD/build/${{ matrix.arch }}/m7arc_distribution_builder_tests" \
             --cli "$PWD/build/${{ matrix.arch }}/tools/7zz" \
-            --windows-stubs "$PWD/src/tools/windows" \
+            --windows-stubs "$PWD/apps/desktop/src/tools/windows" \
             --source-dmg "${images[0]}"
       - name: Upload disk image
         uses: actions/upload-artifact@v7

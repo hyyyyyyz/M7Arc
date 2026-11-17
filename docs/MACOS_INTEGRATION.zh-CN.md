@@ -44,7 +44,7 @@ M7Arc 的 Finder Services、Quick Actions、文件关联和归档成员拖放共
 
 ## 工程接线
 
-根 CMake 引入 `cmake/macos.cmake`，对 Qt 应用调用 `m7arc_add_macos_integrations(M7Arc)`。应用 Info.plist 插入 `${M7ARC_SERVICES_PLIST}` 与 `${M7ARC_IMPORTED_ARCHIVE_TYPES_PLIST}`。扩展在所有资源固定后独立签名，再签名外层应用。打包临时应用退出测试后注销自己的 LaunchServices 记录。
+根 CMake 引入 `apps/desktop/cmake/macos.cmake`，对 Qt 应用调用 `m7arc_add_macos_integrations(M7Arc)`。应用 Info.plist 插入 `${M7ARC_SERVICES_PLIST}` 与 `${M7ARC_IMPORTED_ARCHIVE_TYPES_PLIST}`。扩展在所有资源固定后独立签名，再签名外层应用。打包临时应用退出测试后注销自己的 LaunchServices 记录。
 
 | 接口 | 职责 |
 | --- | --- |

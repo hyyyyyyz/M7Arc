@@ -46,19 +46,19 @@ Qt 框架与插件合计 48.6 MB，占 82%。Qt 的翻译（`qtbase_zh_CN.qm`、
 
 ### 现有界面用到的 Qt 能力
 
-自有代码约 9,400 行，其中界面相关（`src/ui`、`src/app`、`src/extractor`、`src/main.cpp`）5,714 行。
+自有代码约 9,400 行，其中界面相关（`apps/desktop/src/ui`、`apps/desktop/src/app`、`apps/desktop/src/extractor`、`apps/desktop/src/main.cpp`）5,714 行。
 
 | 能力 | 用法与规模 | 换工具包时的含义 |
 | --- | --- | --- |
 | 主窗口、菜单、工具栏 | `QMainWindow`，7 个顶层菜单、25 处快捷键，统一标题栏工具栏；工具栏图标是自绘 `QIconEngine`（139 行） | AppKit 有对应的 `NSToolbar`/`NSMenu`；图标可换 SF Symbols 或保留自绘 |
 | 双栏文件表格 | `FilePane`（448 行）：`QTreeView` + `QListView` 图标视图，在 `QFileSystemModel`（本地）和 `ArchiveModel`（`QAbstractTableModel`，187 行）间切换，嵌套归档栈、排序、多选、地址栏 | 本地目录需自建模型（`NSTableView` + `FileManager`/FSEvents）；归档模型逻辑可移植 |
 | 对话框 | `CreateDialog`、`ExtractDialog`、设置、`BenchmarkDialog`、`HelpDialog`、`FileMetadataDialog`、`HashDialog`、`SfxDialog` 共 8 个，另有 `QMessageBox` 82 处、`QInputDialog` 14 处、`QFileDialog` 23 处、`QDialogButtonBox` 79 处 | 重做量集中在这里：`ArchiveDialogs.cpp` 875 行、`MainWindow.cpp` 1,905 行 |
-| 拖放 | 内部拖放用 `QMimeData`（`application/x-m7arc-members`）；拖出到 Finder 用 `src/platform/drag/MacFilePromises.mm` 的 `NSFilePromiseProvider`（194 行）。Qt 仅提供 `QString` 与 `Qt::QueuedConnection` | 文件承诺本来就是 AppKit 代码，原生化后更简单 |
+| 拖放 | 内部拖放用 `QMimeData`（`application/x-m7arc-members`）；拖出到 Finder 用 `apps/desktop/src/platform/drag/MacFilePromises.mm` 的 `NSFilePromiseProvider`（194 行）。Qt 仅提供 `QString` 与 `Qt::QueuedConnection` | 文件承诺本来就是 AppKit 代码，原生化后更简单 |
 | Services / Quick Look | `MacServices.mm`（110 行）、`PreviewController.mm`（121 行）。Quick Look 扩展不链接 Qt | 与工具包无关，原样保留 |
 | 国际化 | `tr()` 约 508 处，`m7arc_en.ts` 含 572 条消息；中文是源语言，英文走 `QTranslator`；另有 `HelpDialog` 自带选择函数和双份 `formats.json` | 需转换到 `.strings`/`.xcstrings` 或 JS 词表 |
 | 设置 | `QSettings`，约 16 个键，字面量分散 | macOS 上 `QSettings` 落在 CFPreferences，可用 `UserDefaults` 读同一份域 |
 | 并发 | `QtConcurrent::run` + `QFutureWatcher`（`OperationController`），3 处 `BlockingQueuedConnection` 回主线程询问密码/覆盖/内存 | 任何目标工具包都要重写成该工具包的主线程调度 |
-| 其他 Qt 基础类 | `QString` 398 处、`QDir` 99、`QFileInfo` 94、`QFile` 48、`QProcess` 11、`QTemporaryDir` 21、`QJson*` 24、`QRegularExpression` 16 | `src/app/EditSession` 与 `src/tools` 也依赖，换工具包时要一并处理 |
+| 其他 Qt 基础类 | `QString` 398 处、`QDir` 99、`QFileInfo` 94、`QFile` 48、`QProcess` 11、`QTemporaryDir` 21、`QJson*` 24、`QRegularExpression` 16 | `apps/desktop/src/app/EditSession` 与 `apps/desktop/src/tools` 也依赖，换工具包时要一并处理 |
 
 ## 二、候选对比
 
