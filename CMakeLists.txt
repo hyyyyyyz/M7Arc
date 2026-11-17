@@ -34,4 +34,5 @@ add_library(m7arc_platform STATIC src/platform/MacMetadata.cpp)
 target_include_directories(m7arc_platform PUBLIC src)
 set_target_properties(m7arc_platform PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
+add_subdirectory(apps/cli)
 add_subdirectory(apps/desktop)

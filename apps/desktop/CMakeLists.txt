@@ -91,6 +91,17 @@ if(APPLE)
         VERBATIM)
 endif()
 
+# The command line lives in Contents/Helpers and finds the engine in ../Frameworks. It cannot sit in
+# Contents/MacOS: the volume is case-insensitive and m7arc would replace the M7Arc executable.
+if(TARGET m7arc_command_line)
+    add_custom_target(m7arc_bundle_command_line
+        COMMAND "${CMAKE_COMMAND}" -E make_directory "$<TARGET_BUNDLE_CONTENT_DIR:M7Arc>/Helpers"
+        COMMAND "${CMAKE_COMMAND}" -E copy_if_different "${M7ARC_CLI_BINARY}" "$<TARGET_BUNDLE_CONTENT_DIR:M7Arc>/Helpers/m7arc"
+        DEPENDS m7arc_command_line
+        VERBATIM)
+    add_dependencies(M7Arc m7arc_bundle_command_line)
+endif()
+
 if(BUILD_TESTING)
     add_executable(m7arc_edit_session_tests tests/app/EditSessionTest.cpp)
     target_link_libraries(m7arc_edit_session_tests PRIVATE m7arc_app)
