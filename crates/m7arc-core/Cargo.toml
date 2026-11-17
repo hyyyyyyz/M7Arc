@@ -1,0 +1,10 @@
+[package]
+name = "m7arc-core"
+description = "Safe Rust API over the M7Arc archive engine"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+
+[dependencies]
+m7arc-sys = { path = "../m7arc-sys" }

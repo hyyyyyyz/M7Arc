@@ -1,0 +1,9 @@
+[package]
+name = "m7arc-sys"
+description = "Raw bindings to the M7Arc engine C interface"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+links = "m7arc_engine"
+build = "build.rs"

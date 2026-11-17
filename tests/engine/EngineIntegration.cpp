@@ -450,6 +450,37 @@ int main() {
              "Delete archived filtered sources");
         check(!fs::exists(root / "delete-filter/yes.cpp") && fs::exists(root / "delete-filter/no.txt"),
               "Only archived source files deleted");
+        fs::create_directories(root / "delete-dirs/unmatched-empty");
+        fs::create_directories(root / "delete-dirs/kept");
+        std::ofstream(root / "delete-dirs/kept/yes.cpp") << "included";
+        std::ofstream(root / "delete-dirs/no.txt") << "excluded";
+        good(engine.create({(root / "delete-dirs").string()}, (root / "delete-dirs.7z").string(),
+                           deleteFiltered),
+             "Delete archived sources with an unmatched empty directory");
+        check(fs::exists(root / "delete-dirs/unmatched-empty") && !fs::exists(root / "delete-dirs/kept/yes.cpp") &&
+                  fs::exists(root / "delete-dirs/no.txt"),
+              "Empty directories excluded by include patterns are neither archived nor deleted");
+        {
+            bool listedEmpty = false;
+            for (const auto& e : engine.list((root / "delete-dirs.7z").string()).entries)
+                listedEmpty = listedEmpty || e.path.find("unmatched-empty") != std::string::npos;
+            check(!listedEmpty, "Unmatched empty directory is absent from the filtered archive");
+        }
+        m7arc::CreateOptions tarGz;
+        tarGz.format = "tar.gz";
+        good(engine.create({(root / "input").string()}, (root / "cancel.tar.gz").string(), tarGz),
+             "Create compressed TAR for cancellation");
+        {
+            m7arc::Callbacks cancelInner;
+            cancelInner.progress = [](const m7arc::Progress& p) { return p.stage != m7arc::Stage::Extracting; };
+            bool cancelledKind = false;
+            try {
+                engine.list((root / "cancel.tar.gz").string(), {}, cancelInner);
+            } catch (const m7arc::EngineError& e) {
+                cancelledKind = e.kind() == m7arc::EngineErrorKind::Cancelled;
+            }
+            check(cancelledKind, "Cancelling the inner TAR extraction reports the Cancelled error kind");
+        }
         auto changing = root / "changing.txt";
         std::ofstream(changing) << "before";
         m7arc::CreateOptions deleteChanging;
@@ -457,7 +488,7 @@ int main() {
         bool changed = false;
         m7arc::Callbacks changeInput;
         changeInput.progress = [&](const m7arc::Progress& p) {
-            if (p.phase == "Compressing" && !changed) {
+            if (p.stage == m7arc::Stage::Compressing && p.phase == "Compressing" && !changed) {
                 changed = true;
                 std::ofstream(changing) << "newer data";
             }

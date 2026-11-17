@@ -93,6 +93,39 @@ std::string operationError(Int32 code) {
         return "Archive operation failed (" + std::to_string(code) + ")";
     }
 }
+const char* stageName(Stage stage) {
+    switch (stage) {
+    case Stage::Scanning:
+        return "Scanning";
+    case Stage::Opening:
+        return "Opening";
+    case Stage::Compressing:
+        return "Compressing";
+    case Stage::Committing:
+        return "Committing";
+    case Stage::Testing:
+        return "Testing";
+    case Stage::Extracting:
+        return "Extracting";
+    case Stage::RestoringMacMetadata:
+        return "Restoring Mac metadata";
+    case Stage::PreservingMacMetadata:
+        return "Preserving Mac metadata";
+    case Stage::Updating:
+        return "Updating";
+    case Stage::Hashing:
+        return "Hashing";
+    case Stage::Benchmark:
+        return "Benchmark";
+    case Stage::BenchmarkCompressing:
+        return "Benchmark: compressing";
+    case Stage::BenchmarkDecompressing:
+        return "Benchmark: decompressing";
+    case Stage::None:
+        break;
+    }
+    return "";
+}
 struct OperationContext {
     const Callbacks& callbacks;
     std::string password;
@@ -135,9 +168,9 @@ struct OperationContext {
         }
         return S_OK;
     }
-    HRESULT phase(const std::string& name, const std::string& path = {}) {
+    HRESULT phase(Stage stage, const std::string& path = {}) {
         std::lock_guard lock(mutex);
-        progress = {name, path, 0, 0, false};
+        progress = {stageName(stage), path, 0, 0, false, stage};
         return report();
     }
     HRESULT item(const std::string& name) {
@@ -346,16 +379,16 @@ class UpdateCallback final : public IUpdateCallbackUI2 {
         return r;
     }
     HRESULT StartScanning() override {
-        return ctx.phase("Scanning");
+        return ctx.phase(Stage::Scanning);
     }
     HRESULT FinishScanning(const CDirItemsStat&) override {
         return ctx.check();
     }
     HRESULT StartOpenArchive(const wchar_t* name) override {
-        return ctx.phase("Opening", utf8(name));
+        return ctx.phase(Stage::Opening, utf8(name));
     }
     HRESULT StartArchive(const wchar_t* name, bool) override {
-        return ctx.phase("Compressing", utf8(name));
+        return ctx.phase(Stage::Compressing, utf8(name));
     }
     HRESULT FinishArchive(const CFinishArchiveStat&) override {
         return ctx.check();
@@ -367,7 +400,7 @@ class UpdateCallback final : public IUpdateCallbackUI2 {
         return ctx.check();
     }
     HRESULT MoveArc_Start(const wchar_t*, const wchar_t* dest, UInt64 size, Int32) override {
-        ctx.phase("Committing", utf8(dest));
+        ctx.phase(Stage::Committing, utf8(dest));
         return ctx.report({}, size);
     }
     HRESULT MoveArc_Progress(UInt64 total, UInt64 current) override {
@@ -572,6 +605,41 @@ bool matchesPattern(const NWildcard::CCensorNode& node, const fs::path& relative
     bool include = false;
     return node.CheckPathVect(parts, file, include) && include;
 }
+fs::path archiveRelative(const fs::path& member, const fs::path& source, const fs::path& prefix,
+                         ArchivePathMode mode) {
+    return prefix / (mode == ArchivePathMode::Relative ? member.lexically_relative(source.parent_path())
+                                                       : member.relative_path());
+}
+// The single include/exclude rule for create(): excluded members are dropped; with include
+// patterns, a member is kept when it matches (files and directories alike) or lies on the path
+// to a matching member. Directories that match nothing are not archived.
+struct MemberSelection {
+    std::vector<fs::path> members;
+    std::set<fs::path> kept;
+};
+MemberSelection selectMembers(const fs::path& source, const fs::path& prefix, const CreateOptions& options,
+                              const NWildcard::CCensorNode& includeFilter,
+                              const NWildcard::CCensorNode& excludeFilter) {
+    MemberSelection selection;
+    selection.members.push_back(source);
+    if (fs::is_directory(fs::symlink_status(source)))
+        for (const auto& e : fs::recursive_directory_iterator(source))
+            selection.members.push_back(e.path());
+    for (const auto& member : selection.members) {
+        const auto relative = archiveRelative(member, source, prefix, options.pathMode);
+        const bool file = !fs::is_directory(fs::symlink_status(member));
+        if (matchesPattern(excludeFilter, relative, file))
+            continue;
+        if (options.includePatterns.empty() || matchesPattern(includeFilter, relative, file)) {
+            fs::path p = member;
+            while (p != source.parent_path() && !p.empty()) {
+                selection.kept.insert(p);
+                p = p.parent_path();
+            }
+        }
+    }
+    return selection;
+}
 struct SourceState {
     fs::path path;
     struct stat info;
@@ -581,21 +649,12 @@ std::vector<SourceState> sourceStates(const std::vector<std::string>& inputs, co
     NWildcard::CCensorNode include, exclude;
     addPatterns(include, options.includePatterns);
     addPatterns(exclude, options.excludePatterns);
+    const fs::path prefix = fs::path(options.archivePrefix).lexically_normal();
     for (const auto& input : inputs) {
         const auto source = fs::absolute(input).lexically_normal();
-        std::vector<fs::path> members{source};
-        if (fs::is_directory(fs::symlink_status(source)))
-            for (const auto& e : fs::recursive_directory_iterator(source))
-                members.push_back(e.path());
-        for (const auto& member : members) {
-            const auto relative =
-                fs::path(options.archivePrefix) / (options.pathMode == ArchivePathMode::Relative
-                                                       ? member.lexically_relative(source.parent_path())
-                                                       : member.relative_path());
-            const bool file = !fs::is_directory(fs::symlink_status(member));
-            if (matchesPattern(exclude, relative, file))
-                continue;
-            if (file && !options.includePatterns.empty() && !matchesPattern(include, relative, true))
+        const auto selection = selectMembers(source, prefix, options, include, exclude);
+        for (const auto& member : selection.members) {
+            if (!selection.kept.contains(member))
                 continue;
             SourceState state{member, {}};
             if (lstat(member.c_str(), &state.info) != 0)
@@ -654,7 +713,7 @@ struct ArchiveEngine::Impl {
                 ctx.passwordDefined = true;
                 break;
             }
-        require(ctx.phase("Opening", path), "Open cancelled");
+        require(ctx.phase(Stage::Opening, path), "Open cancelled");
         COpenOptions op;
         op.codecs = codecs;
         op.filePath = wide(path);
@@ -710,7 +769,8 @@ struct ArchiveEngine::Impl {
             if (!result.ok())
                 throw EngineError(result.cancelled ? "Operation cancelled"
                                                    : (result.errors.empty() ? "Cannot open compressed TAR"
-                                                                            : result.errors.front()));
+                                                                            : result.errors.front()),
+                              result.cancelled ? EngineErrorKind::Cancelled : EngineErrorKind::General);
             fs::path payload;
             for (const auto& entry : fs::directory_iterator(directory))
                 if (entry.is_regular_file()) {
@@ -830,7 +890,7 @@ struct ArchiveEngine::Impl {
         CArchiveExtractCallback_Closer closer(extract);
         if (!testing)
             require(extract->PrepareHardLinks(&selected), "Prepare links");
-        ctx.phase(testing ? "Testing" : "Extracting");
+        ctx.phase(testing ? Stage::Testing : Stage::Extracting);
         HRESULT hr = arc.Archive->Extract(selected.ConstData(), selected.Size(), testing ? 1 : 0, extract);
         const HRESULT closeResult = closer.Close();
         if (hr == S_OK)
@@ -874,7 +934,7 @@ struct ArchiveEngine::Impl {
                                       FString((metadataDirectory.path.string() + "/").c_str()), noRemoval,
                                       false, arc.GetEstmatedPhySize());
                 CArchiveExtractCallback_Closer metadataCloser(metadataExtract);
-                ctx.phase("Restoring Mac metadata");
+                ctx.phase(Stage::RestoringMacMetadata);
                 HRESULT metadataResult = arc.Archive->Extract(metadataIndices.ConstData(),
                                                               metadataIndices.Size(), 0, metadataExtract);
                 const HRESULT metadataClose = metadataCloser.Close();
@@ -1150,7 +1210,7 @@ OperationResult ArchiveEngine::create(const std::vector<std::string>& inputs, co
         const fs::path data = staging.path / "data";
         fs::create_directories(data);
         OperationContext ctx(callbacks);
-        require(ctx.phase("Preserving Mac metadata"), "Compression cancelled");
+        require(ctx.phase(Stage::PreservingMacMetadata), "Compression cancelled");
         std::vector<std::string> stagedInputs;
         std::vector<std::pair<std::string, std::string>> sourceMappings;
         std::map<std::pair<dev_t, ino_t>, fs::path> hardLinks;
@@ -1166,32 +1226,12 @@ OperationResult ArchiveEngine::create(const std::vector<std::string>& inputs, co
             if (fs::exists(copied) || fs::is_symlink(copied))
                 throw EngineError("Multiple selected inputs map to the same archive path: " + name.string());
             mac::copyItem(source, copied, [&](std::uint64_t bytes) { return ctx.report(bytes) == S_OK; });
-            std::vector<fs::path> members{source};
-            if (fs::is_directory(fs::symlink_status(source)))
-                for (const auto& e : fs::recursive_directory_iterator(source))
-                    members.push_back(e.path());
-            std::set<fs::path> kept;
-            for (const auto& member : members) {
-                const auto relative = prefix / (options.pathMode == ArchivePathMode::Relative
-                                                    ? member.lexically_relative(source.parent_path())
-                                                    : member.relative_path());
-                const bool file = !fs::is_directory(fs::symlink_status(member));
-                if (matchesPattern(excludeFilter, relative, file))
-                    continue;
-                if (options.includePatterns.empty() || matchesPattern(includeFilter, relative, file)) {
-                    fs::path p = member;
-                    while (p != source.parent_path() && !p.empty()) {
-                        kept.insert(p);
-                        p = p.parent_path();
-                    }
-                }
-            }
+            const auto selection = selectMembers(source, prefix, options, includeFilter, excludeFilter);
+            const auto& members = selection.members;
+            const auto& kept = selection.kept;
             for (auto it = members.rbegin(); it != members.rend(); ++it)
                 if (!kept.contains(*it)) {
-                    const auto relative = prefix / (options.pathMode == ArchivePathMode::Relative
-                                                        ? it->lexically_relative(source.parent_path())
-                                                        : it->relative_path());
-                    fs::remove_all(data / relative);
+                    fs::remove_all(data / archiveRelative(*it, source, prefix, options.pathMode));
                 }
             if (!kept.contains(source))
                 continue;
@@ -1200,9 +1240,7 @@ OperationResult ArchiveEngine::create(const std::vector<std::string>& inputs, co
                 if (!kept.contains(member))
                     continue;
                 require(ctx.item(member.string()), "Compression cancelled");
-                const auto relative = prefix / (options.pathMode == ArchivePathMode::Relative
-                                                    ? member.lexically_relative(source.parent_path())
-                                                    : member.relative_path());
+                const auto relative = archiveRelative(member, source, prefix, options.pathMode);
                 sourceMappings.emplace_back((data / relative).string(), member.string());
                 if (options.storeHardLinks) {
                     struct stat st{};
@@ -1660,7 +1698,7 @@ OperationResult rewriteArchive(CCodecs* codecs, CArchiveLink& link, const std::s
     CMyComPtr<IOutStream> streamRef = stream;
     if (!stream->Create_ALWAYS(temporary.path.c_str()))
         throw EngineError("Cannot create updated archive");
-    ctx.phase("Updating", path);
+    ctx.phase(Stage::Updating, path);
     HRESULT hr = out->UpdateItems(stream, static_cast<UInt32>(callback->items.size()), callback);
     const HRESULT closeResult = stream->Close();
     if (hr == S_OK)
@@ -1668,7 +1706,7 @@ OperationResult rewriteArchive(CCodecs* codecs, CArchiveLink& link, const std::s
     streamRef.Release();
     ctx.finish(hr);
     if (ctx.result.ok()) {
-        require(ctx.phase("Committing", path), "Update cancelled");
+        require(ctx.phase(Stage::Committing, path), "Update cancelled");
         TemporaryFile metadata(fs::absolute(path).parent_path());
         mac::packMetadata(path, metadata.path);
         mac::unpackMetadata(metadata.path, temporary.path);
@@ -1782,7 +1820,7 @@ class HashCallback final : public IHashCallbackUI {
     HashSummary summary;
     HashCallback(OperationContext& context, fs::path parent) : ctx(context), base(std::move(parent)) {}
     HRESULT StartScanning() override {
-        return ctx.phase("Scanning");
+        return ctx.phase(Stage::Scanning);
     }
     HRESULT FinishScanning(const CDirItemsStat&) override {
         return ctx.check();
@@ -1801,7 +1839,7 @@ class HashCallback final : public IHashCallbackUI {
         return ctx.check();
     }
     HRESULT BeforeFirstFile(const CHashBundle&) override {
-        RINOK(ctx.phase("Hashing"))
+        RINOK(ctx.phase(Stage::Hashing))
         return ctx.report(0, totalBytes);
     }
     HRESULT GetStream(const wchar_t* name, bool) override {
@@ -1898,7 +1936,7 @@ class BenchmarkCallback final : public IBenchCallback, public IBenchPrintCallbac
             result.encodeRating = info.GetRating_LzmaEnc(dictionary);
             result.encodeCpuPercent = Benchmark_GetUsage_Percents(info.GetUsage());
         }
-        return ctx.phase("Benchmark: compressing");
+        return ctx.phase(Stage::BenchmarkCompressing);
     }
     HRESULT SetDecodeResult(const CBenchInfo& info, bool final) override {
         if (final) {
@@ -1906,7 +1944,7 @@ class BenchmarkCallback final : public IBenchCallback, public IBenchPrintCallbac
             result.decodeRating = info.GetRating_LzmaDec();
             result.decodeCpuPercent = Benchmark_GetUsage_Percents(info.GetUsage());
         }
-        return ctx.phase("Benchmark: decompressing");
+        return ctx.phase(Stage::BenchmarkDecompressing);
     }
     void Print(const char*) override {}
     void NewLine() override {}
@@ -1924,7 +1962,7 @@ BenchmarkResult ArchiveEngine::benchmark(const BenchmarkOptions& options, const 
     addProperty(props, "mt", std::to_string(options.threads));
     addProperty(props, "d", std::to_string(options.dictionaryBytes) + "b");
     addProperty(props, "time", std::to_string(options.seconds));
-    require(ctx.phase("Benchmark"), "Benchmark cancelled");
+    require(ctx.phase(Stage::Benchmark), "Benchmark cancelled");
     require(Bench(&impl_->runtime->external, &callback, &callback, props, 1, false), "Benchmark");
     return callback.result;
 }

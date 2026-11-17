@@ -15,7 +15,7 @@ elseif(APPLE AND NOT CMAKE_OSX_ARCHITECTURES AND CMAKE_SYSTEM_PROCESSOR STREQUAL
     set_source_files_properties("${M7ARC_7ZIP_ROOT}/C/LzmaDec.c" PROPERTIES COMPILE_DEFINITIONS Z7_LZMA_DEC_OPT)
 endif()
 find_package(Threads REQUIRED)
-add_library(m7arc_engine SHARED ${CMAKE_CURRENT_LIST_DIR}/../src/engine/ArchiveEngine.cpp ${CMAKE_CURRENT_LIST_DIR}/../src/engine/MemoryEstimate.cpp ${CMAKE_CURRENT_LIST_DIR}/../src/engine/EngineRuntime.cpp $<TARGET_OBJECTS:sevenzip_objects>)
+add_library(m7arc_engine SHARED ${CMAKE_CURRENT_LIST_DIR}/../src/engine/ArchiveEngine.cpp ${CMAKE_CURRENT_LIST_DIR}/../src/engine/MemoryEstimate.cpp ${CMAKE_CURRENT_LIST_DIR}/../src/engine/EngineRuntime.cpp ${CMAKE_CURRENT_LIST_DIR}/../src/engine/capi/m7arc_c.cpp $<TARGET_OBJECTS:sevenzip_objects>)
 target_compile_features(m7arc_engine PUBLIC cxx_std_20)
 target_compile_definitions(m7arc_engine PRIVATE Z7_EXTERNAL_CODECS EXPORT_CODECS)
 target_include_directories(m7arc_engine PUBLIC "${CMAKE_CURRENT_LIST_DIR}/../src" PRIVATE "${M7ARC_7ZIP_ROOT}/CPP" "${M7ARC_7ZIP_ROOT}/C")
@@ -25,6 +25,9 @@ if(BUILD_TESTING)
     add_executable(m7arc_engine_tests ${CMAKE_CURRENT_LIST_DIR}/../tests/engine/EngineIntegration.cpp)
     target_link_libraries(m7arc_engine_tests PRIVATE m7arc_engine)
     add_test(NAME engine.integration COMMAND m7arc_engine_tests)
+    add_executable(m7arc_capi_tests ${CMAKE_CURRENT_LIST_DIR}/../tests/engine/CApiTest.c)
+    target_link_libraries(m7arc_capi_tests PRIVATE m7arc_engine)
+    add_test(NAME engine.capi COMMAND m7arc_capi_tests)
     add_library(m7arc_example_module MODULE
         ${CMAKE_CURRENT_LIST_DIR}/../tests/engine/modules/ExampleModule.cpp
         "${M7ARC_7ZIP_ROOT}/CPP/Common/MyWindows.cpp")
