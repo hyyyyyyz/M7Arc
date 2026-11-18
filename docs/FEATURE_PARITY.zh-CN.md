@@ -2,7 +2,7 @@
 
 M7Arc 以 7-Zip 的归档引擎为基础，提供面向 macOS 的 Qt 文件管理器。全功能目标覆盖原 File Manager、归档对话框、命令行的可移植能力，以及 macOS 对应的文件与系统操作。各格式的读写范围遵循实际 handler 能力；Windows 特有对象按本表提供 macOS 对应功能。
 
-本表定义目标功能和交付阶段。Qt 应用入口位于 `apps/desktop/src/ui/`，引擎与平台实现位于 `src/engine/` 和 `src/platform/`；发行状态见[README](../README.md)。源码链接相对本文件所在的 `docs/` 目录，上游源树位于项目内 `third_party/7zip/`；链接后的数字为当前源码行号。`UI/` 指上游的 `CPP/7zip/UI/`。
+本表定义目标功能和交付阶段。Qt 应用入口位于 `apps/desktop/src/ui/`，引擎与平台实现位于 `src/engine/` 和 `src/platform/`；发行状态见[README](../README.zh-CN.md)。源码链接相对本文件所在的 `docs/` 目录，上游源树位于项目内 `third_party/7zip/`；链接后的数字为当前源码行号。`UI/` 指上游的 `CPP/7zip/UI/`。
 
 [File Manager 规格](FILE_MANAGER_SPEC.zh-CN.md)逐项定义菜单、工具栏、面板与快捷键；[对话框与任务规格](DIALOG_SPEC.zh-CN.md)定义全部表单、提示与工具窗口；[格式与编码能力](FORMAT_CAPABILITIES.zh-CN.md)列出所有 61 个 handler、七类创建、三个 TAR 组合、25 个注册 codec 和十种 hasher。
 
