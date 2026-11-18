@@ -42,6 +42,10 @@
 
 ## 提交署名
 
-所有后续 Git 提交均须包含以下 trailer；此约定优先于上文第 9 条关于提交署名的限制：
+提交按实际完成者署名，此约定优先于上文第 9 条关于提交署名的限制。只有 Codex 实际完成的提交才带：
 
 Co-authored-by: Codex <noreply@openai.com>
+
+Claude 完成的提交带：
+
+Co-Authored-By: Claude Fable 5.2 <noreply@anthropic.com>
